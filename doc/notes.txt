@@ -1,0 +1,25 @@
+Member management
+- If Member is the most generic model for a person, it needs to support
+  singing, non-singing, staff, volunteer, alumni, etc.
+- member model same as user or is user different?
+  - (user is model for how one logs in)
+
+Files and Music storage
+- could provide rich model for music
+  - a piece could belong to multiple concerts
+  - it could have multiple versions
+  - songs sould be put in order for the concert
+- this doesn't work so well for other files
+  - some files don't belong to concerts, e.g. board files
+    - some of these could belong to a particular season though
+      - e.g. election info, season subscriptions, non-concert events
+  - some files belong to concerts, but aren't part of the running order
+    - e.g. ticket order forms
+  - some files belong to a concert and a song, but aren't music
+    - rehearsal tracks
+    - choreography videos
+
+User friendliness
+- would need to ask users what they need
+- "everything about ..."
+- action items
