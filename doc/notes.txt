@@ -23,3 +23,20 @@ User friendliness
 - would need to ask users what they need
 - "everything about ..."
 - action items
+
+Calendar
+- subscriptions
+  - customize calendars per user
+- content
+  - rehearsals
+  - performances
+  - memorization dates
+
+Polls
+- bit to indicate whether they are "action required"
+- preferably transform from a generic system to something more semantic
+  - most of them are some sort of question of whether you're going to a
+    sing-out
+  - if you start out with generic polls, figure out how to make this
+    appear seamless to the user
+- poll reminder emails should have form built in to respond
