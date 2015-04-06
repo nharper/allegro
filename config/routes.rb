@@ -54,5 +54,9 @@ Allegro::Application.routes.draw do
   #     resources :products
   #   end
 
-  resources :performers
+  resources :performers do
+    member do
+      get 'photo'
+    end
+  end
 end
