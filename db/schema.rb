@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 20150405223542) do
 
-  create_table "concerts", force: true do |t|
+  create_table "concerts", force: :cascade do |t|
     t.string   "name"
     t.date     "start_date"
     t.date     "end_date"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20150405223542) do
     t.datetime "updated_at"
   end
 
-  create_table "performers", force: true do |t|
+  create_table "performers", force: :cascade do |t|
     t.string   "name"
     t.string   "number"
     t.binary   "photo"
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20150405223542) do
     t.datetime "updated_at"
   end
 
-  create_table "rehearsals", force: true do |t|
+  create_table "rehearsals", force: :cascade do |t|
     t.datetime "date"
     t.integer  "attendance"
     t.integer  "concert_id"
