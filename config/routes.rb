@@ -59,4 +59,7 @@ Allegro::Application.routes.draw do
       get 'photo'
     end
   end
+
+  resources :attendance do
+  end
 end
