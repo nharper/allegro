@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script>
+function updateTile(node, state) {
+	switch (state) {
+		case 'present':
+			node.classList.remove('present-false');
+			node.classList.remove('present-unknown');
+			node.classList.add('present-true');
+			break;
+		case 'not present':
+			node.classList.add('present-false');
+			node.classList.remove('present-unknown');
+			node.classList.remove('present-true');
+			break;
+		default:
+			node.classList.remove('present-false');
+			node.classList.add('present-unknown');
+			node.classList.remove('present-true');
+			break;
+	}
+}
+
+function toggleState(node, rosterEntry, event) {
+	if (!rosterEntry.attendance || rosterEntry.attendance == 'unknown') {
+		rosterEntry.attendance = 'present';
+	} else if (rosterEntry.attendance == 'present') {
+		rosterEntry.attendance = 'not present';
+	} else if (rosterEntry.attendance == 'not present') {
+		rosterEntry.attendance = 'unknown';
+	}
+	updateTile(node, rosterEntry.attendance);
+}
+
+function createTile(num, rosterEntry) {
+	name = rosterEntry.name;
+	stat = rosterEntry['status'];
+	var container = document.createElement("div");
+	container.setAttribute("class", "tile");
+	container.addEventListener("click", toggleState.bind(this, container, rosterEntry));
+
+	var image = document.createElement("img");
+	image.setAttribute("src", num + ".jpg");
+	container.appendChild(image);
+
+	var text_wrapper = document.createElement("span");
+
+	var ch_num = document.createElement("span");
+	ch_num.setAttribute("class", "ch_num");
+	ch_num.appendChild(document.createTextNode(num));
+	text_wrapper.appendChild(ch_num);
+
+	text_wrapper.appendChild(document.createTextNode(" "));
+	var name_node = document.createElement("span");
+	name_node.setAttribute("class", "name");
+	name_node.appendChild(document.createTextNode(name));
+	text_wrapper.appendChild(name_node);
+
+	if (stat) {
+		text_wrapper.appendChild(document.createTextNode(" "));
+		var status_node = document.createElement("span");
+		status_node.setAttribute("class", "status");
+		status_node.appendChild(document.createTextNode(stat));
+		text_wrapper.appendChild(status_node);
+	}
+	container.appendChild(text_wrapper);
+	return container;
+}
+
+function rosterLoadDone() {
+	var tiles = document.getElementById("tiles");
+
+	roster = JSON.parse(this.responseText);
+	var saved_roster = {};
+	try {
+		saved_roster = JSON.parse(window.localStorage.roster);
+	} catch (e) {
+	}
+
+	Object.keys(roster).forEach(function(num) {
+		if (saved_roster[num]) {
+			roster[num].attendance = saved_roster[num].attendance;
+		}
+		var tile = createTile(num, roster[num]);
+		tiles.appendChild(tile);
+		updateTile(tile, roster[num].attendance);
+	});
+}
+
+function saveRoster() {
+	window.localStorage.roster = JSON.stringify(roster);
+	var record = "";
+	Object.keys(roster).forEach(function(num) {
+			record += num + ": ";
+			if (roster[num].attendance == 'present') {
+				record += "_✓_";
+			} else if (roster[num]['status'] == 'LOA') {
+				record += "LOA";
+			} else {
+				record += "___";
+			}
+			record += "\n";
+	});
+	document.getElementById("record").innerHTML = record;
+}
+
+function clearRoster() {
+	window.localStorage.roster = '';
+	document.getElementById('record').innerHTML = '';
+}
+
+function documentLoaded() {
+	// set up roster
+	roster = {};
+	var roster_request = new XMLHttpRequest();
+	roster_request.onload = rosterLoadDone;
+	roster_request.open("GET", "roster.json", true);
+	roster_request.send();
+
+	// set up buttons
+	document.getElementById("save").addEventListener('click', saveRoster);
+	document.getElementById("reset").addEventListener('click', clearRoster);
+}
+</script>
+<style>
+body {
+	font-family: sans-serif;
+	text-align: center;
+}
+
+.tile {
+	display: inline-block;
+	width: 150px;
+	padding: 5px;
+	margin: 10px;
+	border: 1px solid black;
+	background-color: #ccc;
+}
+
+.tile img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
+.present-true {
+	background-color: #cfc;
+}
+
+.present-false {
+	background-color: #fcc;
+}
+
+pre {
+	text-align: left;
+}
+</style>
+</head>
+<body>
+<div id="tiles">
+</div>
+<div>
+	<button id="save">Save</button>
+	<button id="reset">Reset</button>
+	<pre id="record"></pre>
+</div>
+<script>documentLoaded();</script>
+</body>
+</html>
