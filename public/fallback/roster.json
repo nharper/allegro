@@ -20,14 +20,14 @@
 	"119": {
 		"name": "Carmy Reynolds"
 	},
-	"121": {
-		"name": "Theo Crump"
-	},
 	"123": {
 		"name": "Andre Farris"
 	},
 	"125": {
 		"name": "Steve Gallagher"
+	},
+	"127": {
+		"name": "John Constable"
 	},
 	"129": {
 		"name": "Tom Burtch"
@@ -35,14 +35,12 @@
 	"131": {
 		"name": "Jeff Ford"
 	},
-	"133": {
-		"name": "Scott Robinson"
-	},
 	"139": {
 		"name": "Lee Larson"
 	},
 	"141": {
-		"name": "Andrew Marsh"
+		"name": "Andrew Marsh",
+    "status": "LOA"
 	},
 	"143": {
 		"name": "Paul Barnett"
@@ -66,17 +64,11 @@
 	"159": {
 		"name": "Gregory Marks"
 	},
-	"163": {
-		"name": "Julian Gutierrez"
-	},
 	"167": {
 		"name": "Phil Walker"
 	},
 	"169": {
 		"name": "Sky Hunsaker"
-	},
-	"171": {
-		"name": "Jason Andersen"
 	},
 	"173": {
 		"name": "Rylan Carpena"
