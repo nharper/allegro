@@ -2,7 +2,11 @@ require 'base64'
 
 class PerformersController < ApplicationController
   def index
-    @performers = Performer.select('id, name, number, section')
+    if params['section']
+      @performers = Performer.select('id, name, number, section').where(:section => params['section'].upcase)
+    else
+      @performers = Performer.select('id, name, number, section')
+    end
 
     respond_to do |format|
       format.json { render :json => @performers }

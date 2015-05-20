@@ -1,0 +1,27 @@
+<% content_for :head do %>
+<%= stylesheet_link_tag "attendance", media: "all" %>
+<%= javascript_include_tag "attendance" %>
+<% end %>
+
+<%= form_tag update_attendance_path(@rehearsal, @section) do |f| %>
+<%# form_tag '/attendance/update' do |f| %>
+<div id="tiles">
+  <% @performers.each do |performer| %>
+  <div class="tile">
+    <%= image_tag photo_performer_path(performer) %>
+    <span>
+      <span class="ch_num"><%= performer.number %></span>
+      <span class="name"><%= performer.name %></span>
+    </span>
+    <%= select 'attendance', performer.id, ['', 'present', 'absent'] %>
+  </div>
+  <% end %>
+</div>
+
+<div>
+  <button id="save">Save</button>
+  <button id="reset">Reset</button>
+  <pre id="record"></pre>
+</div>
+<% end # form_tag %>
+<script>documentLoaded();</script>
