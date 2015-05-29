@@ -1,5 +1,3 @@
-# run with rails runner
-
 require 'io/console'
 require 'net/http'
 require 'nokogiri'
@@ -107,6 +105,3 @@ class MusettaScraper
   end
 
 end
-
-scraper = MusettaScraper.new
-p scraper.roster
