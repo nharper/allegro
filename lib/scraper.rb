@@ -23,7 +23,8 @@ class MusettaScraper
 
     roster_html = Nokogiri::HTML(roster_resp.body)
     roster = []
-    roster_html.css('#roster .entry .data').each do |data|
+    roster_html.css('#roster .entry').each do |entry_dom|
+      data = entry_dom.at_css('.data')
       entry = {}
       entry['section'] = data.at_css('.section').content
       entry['cn'] = data.at_css('.cn').content.to_i
@@ -34,10 +35,19 @@ class MusettaScraper
           entry[children[0].text.split(':')[0]] = children[1].text
         end
       end
+      img = entry_dom.at_css('img.roster_photo')
+      entry['img'] = img['src']
+
       roster.push(entry)
     end
 
     return roster
+  end
+
+  def scrape_path(path)
+    path_resp = @http_conn.get(path, @headers)
+
+    return path_resp.body
   end
 
   private
