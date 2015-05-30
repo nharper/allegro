@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  performer_id: 
+  rehearsal_id: 
+  present: 
+  notes: MyString
+
+two:
+  performer_id: 
+  rehearsal_id: 
+  present: 
+  notes: MyString

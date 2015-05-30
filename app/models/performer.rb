@@ -3,4 +3,5 @@ class Performer < ActiveRecord::Base
   # def to_param
   #   return "#{name.parameterize}"
   # end
+  has_many :attendance_records
 end

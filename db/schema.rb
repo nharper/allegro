@@ -11,7 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150406003111) do
+ActiveRecord::Schema.define(version: 20150529174307) do
+
+  create_table "attendance_records", force: :cascade do |t|
+    t.integer  "performer_id"
+    t.integer  "rehearsal_id"
+    t.boolean  "present"
+    t.integer  "type"
+    t.string   "notes"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "attendance_records", ["performer_id"], name: "index_attendance_records_on_performer_id"
+  add_index "attendance_records", ["rehearsal_id"], name: "index_attendance_records_on_rehearsal_id"
 
   create_table "concerts", force: :cascade do |t|
     t.string   "name"
