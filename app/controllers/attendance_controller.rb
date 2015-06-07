@@ -6,7 +6,19 @@ class AttendanceController < ApplicationController
     @rehearsal = params['rehearsal']
     @section = params['section']
 
-    @performers = Performer.select('id, name, number, section').where(:section => params['section'].upcase)
+    # TODO(nharper): consider passing ActiveRecord objects to the view instead
+    # of building this hash.
+    @performers = []
+    registrations = Registration.where(:section => params['section'].upcase).includes(:performer)
+    registrations.each do |registration|
+      performer = registration.performer
+      @performers << {
+        id: performer.id,
+        name: performer.name,
+        chorus_number: registration.chorus_number,
+        status: registration.status
+      }
+    end
   end
 
   def update

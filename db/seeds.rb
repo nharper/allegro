@@ -60,7 +60,8 @@ Rehearsal.create([
     section: "T1L"},
   { name: "Justin Taylor",
     number: "157",
-    section: "T1L"}
+    section: "T1L",
+    status: "LOA"}
 ].each do |performer|
   Performer.createWithRegistration(performer, elton)
 end

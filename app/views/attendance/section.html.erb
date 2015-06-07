@@ -9,11 +9,14 @@
   <% @performers.each do |performer| %>
   <div class="tile">
     <%= image_tag photo_performer_path(performer) %>
-    <span>
-      <span class="ch_num"><%= performer.number %></span>
-      <span class="name"><%= performer.name %></span>
-    </span>
-    <%= select 'attendance', performer.id, ['', 'present', 'absent'] %>
+    <p>
+      <span class="ch_num"><%= performer[:chorus_number] %></span>
+      <span class="name"><%= performer[:name] %></span>
+      <% if performer[:status] != 'Active' %>
+      (<%= performer[:status] -%>)
+      <% end %>
+    </p>
+    <%= select 'attendance', performer[:id], ['', 'present', 'absent'] %>
   </div>
   <% end %>
 </div>
