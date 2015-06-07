@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150530162722) do
+ActiveRecord::Schema.define(version: 20150606192544) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id"
@@ -36,15 +36,10 @@ ActiveRecord::Schema.define(version: 20150530162722) do
 
   create_table "performers", force: :cascade do |t|
     t.string   "name"
-    t.string   "number"
     t.binary   "photo"
-    t.string   "section"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "performers", ["number"], name: "index_performers_on_number"
-  add_index "performers", ["section"], name: "index_performers_on_section"
 
   create_table "registrations", force: :cascade do |t|
     t.string   "section"

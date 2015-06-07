@@ -9,6 +9,13 @@ class Performer < ActiveRecord::Base
   # TODO(nharper): add validations
 
   def self.createWithRegistration(performer_hash, concert)
-    # TODO(nharper): finish writing this method or delete it
+    performer = Performer.new({name: performer_hash[:name]})
+    Registration.create({
+      section: performer_hash[:section],
+      chorus_number: performer_hash[:number],
+      status: performer_hash[:status] ? performer_hash[:status] : 'Active',
+      concert: concert,
+      performer: performer
+    })
   end
 end
