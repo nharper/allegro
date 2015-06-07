@@ -94,6 +94,7 @@ function AttendanceGrid(root, storage_key) {
 }
 
 function documentLoaded() {
+  // TODO(nharper): use better key for local storage
   attendanceGrid = new AttendanceGrid(document.getElementById("tiles"), 'attendance:T1L:5-25');
   // set up buttons
   var reset = document.getElementById('reset');
