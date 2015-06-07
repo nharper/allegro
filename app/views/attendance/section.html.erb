@@ -4,7 +4,6 @@
 <% end %>
 
 <%= form_tag update_attendance_path(@rehearsal, @section) do |f| %>
-<%# form_tag '/attendance/update' do |f| %>
 <div id="tiles">
   <% @performers.each do |performer| %>
   <div class="tile">
@@ -26,4 +25,4 @@
   <button type="button" id="reset">Reset</button>
 </div>
 <% end # form_tag %>
-<script>documentLoaded();</script>
+<script>documentLoaded('<%= @rehearsal %>', '<%= @section %>');</script>

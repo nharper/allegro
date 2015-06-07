@@ -4,12 +4,12 @@ class AttendanceController < ApplicationController
   def section
     # TODO(nharper): use real rehearsal, section objects
     @rehearsal = params['rehearsal']
-    @section = params['section']
+    @section = params['section'].upcase
 
     # TODO(nharper): consider passing ActiveRecord objects to the view instead
     # of building this hash.
     @performers = []
-    registrations = Registration.where(:section => params['section'].upcase).includes(:performer)
+    registrations = Registration.where(:section => @section).includes(:performer)
     registrations.each do |registration|
       performer = registration.performer
       @performers << {
