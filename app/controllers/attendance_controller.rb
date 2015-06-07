@@ -19,6 +19,8 @@ class AttendanceController < ApplicationController
         status: registration.status
       }
     end
+
+    @performers.sort! { |a,b| a[:chorus_number] <=> b[:chorus_number] }
   end
 
   def update

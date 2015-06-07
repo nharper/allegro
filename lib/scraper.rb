@@ -32,7 +32,7 @@ class MusettaScraper
       data.css('.item').each do |item|
         children = item.css('span')
         if children.size == 2 && children[0]['class'] == 'title'
-          entry[children[0].text.split(':')[0]] = children[1].text
+          entry[children[0].text.split(':')[0]] = children[1].text.strip
         end
       end
       img = entry_dom.at_css('img.roster_photo')
