@@ -1,0 +1,8 @@
+endpoints needed for attendance:
+
+- photo (params: performer id)
+GET /performer/:id/photo
+- attendance form (params: section, rehearsal)
+GET /attendance/:rehearsal/:section
+- submit attendance form (same params as above)
+POST /attendance/:rehearsal/:section/update

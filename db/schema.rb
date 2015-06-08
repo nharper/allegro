@@ -11,7 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150406003111) do
+ActiveRecord::Schema.define(version: 20150606192544) do
+
+  create_table "attendance_records", force: :cascade do |t|
+    t.integer  "performer_id"
+    t.integer  "rehearsal_id"
+    t.boolean  "present"
+    t.integer  "type"
+    t.string   "notes"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "attendance_records", ["performer_id"], name: "index_attendance_records_on_performer_id"
+  add_index "attendance_records", ["rehearsal_id"], name: "index_attendance_records_on_rehearsal_id"
 
   create_table "concerts", force: :cascade do |t|
     t.string   "name"
@@ -23,15 +36,23 @@ ActiveRecord::Schema.define(version: 20150406003111) do
 
   create_table "performers", force: :cascade do |t|
     t.string   "name"
-    t.string   "number"
     t.binary   "photo"
-    t.string   "section"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "performers", ["number"], name: "index_performers_on_number"
-  add_index "performers", ["section"], name: "index_performers_on_section"
+  create_table "registrations", force: :cascade do |t|
+    t.string   "section"
+    t.string   "chorus_number"
+    t.string   "status"
+    t.integer  "performer_id"
+    t.integer  "concert_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "registrations", ["concert_id"], name: "index_registrations_on_concert_id"
+  add_index "registrations", ["performer_id"], name: "index_registrations_on_performer_id"
 
   create_table "rehearsals", force: :cascade do |t|
     t.datetime "date"

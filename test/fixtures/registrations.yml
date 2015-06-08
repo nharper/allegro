@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  section: MyString
+  chorus_number: MyString
+  status: MyString
+  performer_id: 
+  concert_id: 
+
+two:
+  section: MyString
+  chorus_number: MyString
+  status: MyString
+  performer_id: 
+  concert_id: 

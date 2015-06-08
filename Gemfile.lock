@@ -92,6 +92,7 @@ GEM
     rake (10.4.2)
     rdoc (4.2.0)
       json (~> 1.4)
+    rmagick (2.15.0)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -119,5 +120,6 @@ DEPENDENCIES
   jquery-rails
   mysql
   rails (= 4.2.0)
+  rmagick
   sdoc
   sqlite3

@@ -51,7 +51,7 @@ Rehearsal.create([
     concert: elton }
   ]);
 
-Performer.create([
+[
   { name: "Nick Harper",
     number: "185",
     section: "T1L"},
@@ -60,5 +60,8 @@ Performer.create([
     section: "T1L"},
   { name: "Justin Taylor",
     number: "157",
-    section: "T1L"}
-  ]);
+    section: "T1L",
+    status: "LOA"}
+].each do |performer|
+  Performer.createWithRegistration(performer, elton)
+end
