@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150606192544) do
+ActiveRecord::Schema.define(version: 20150718051413) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id"
@@ -33,6 +33,21 @@ ActiveRecord::Schema.define(version: 20150606192544) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "oauth2_providers", force: :cascade do |t|
+    t.string   "name"
+    t.string   "slug"
+    t.string   "auth_url"
+    t.string   "token_url"
+    t.string   "id_url"
+    t.string   "client_id"
+    t.string   "client_secret"
+    t.text     "auth_params"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "oauth2_providers", ["slug"], name: "index_oauth2_providers_on_slug", unique: true
 
   create_table "performers", force: :cascade do |t|
     t.string   "name"
