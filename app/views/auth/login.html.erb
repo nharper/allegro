@@ -1,0 +1,3 @@
+<% @providers.each do |provider| %>
+  <%= link_to provider.name, login_redirect_uri(provider) %>
+<% end %>
