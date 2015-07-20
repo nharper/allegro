@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150720000847) do
+ActiveRecord::Schema.define(version: 20150720010314) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id"
@@ -94,8 +94,10 @@ ActiveRecord::Schema.define(version: 20150720000847) do
     t.integer  "performer_id"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.string   "login_token"
   end
 
+  add_index "users", ["login_token"], name: "index_users_on_login_token"
   add_index "users", ["performer_id"], name: "index_users_on_performer_id"
 
 end

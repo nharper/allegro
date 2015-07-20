@@ -5,6 +5,19 @@ class AuthController < ApplicationController
   # The |login| controller is used to serve up a view presenting the end-user
   # with options for logging in.
   def login
+    # TODO(nharper): If a user logs in with a token, they should get directed
+    # to link a provided identity with their account (and don't delete their
+    # one-time use token until that's done).
+    #
+    # Perhaps instead of immediately logging them in, put the user id in a
+    # different part of the session that this controller uses (but everthing
+    # else will ignore), so the user doesn't continually use the token link to
+    # log in.
+    if params[:token] && !session[:user_id]
+      user = User.find_by_login_token(params[:token])
+      session[:user_id] = user.id
+      redirect_to '/' and return
+    end
     @providers = Oauth2Provider.all
   end
 
@@ -15,7 +28,7 @@ class AuthController < ApplicationController
       redirect_to error_auth_index_path and return
     end
 
-    @provider = Oauth2Provider.find(params[:id])
+    @provider = Oauth2Provider.where(:slug => params[:id]).first
     if params[:error]
       flash[:error] = 'Failed to obtain access code'
       flash[:error_code] = params[:error]
@@ -82,9 +95,51 @@ class AuthController < ApplicationController
     # +-----------------+-------------------+-----------------------------+
     # | present         | present           | error (do nothing if match) |
     # +-----------------+-------------------+-----------------------------+
-    @id = JSON.parse(id_resp.body)
+
+    begin
+      id_json = JSON.parse(id_resp.body)
+    rescue JSON::ParserError
+      flash[:error] = 'Unable to parse response from provider server'
+      flash[:error_code] = id_resp.body
+      redirect_to error_auth_index_path and return
+    end
+    id = id_json['id']
+    if !id || id.length == 0
+      flash[:error] = 'No ID in response from server'
+      redirect_to error_auth_index_path and return
+    end
+    # TODO(nharper): Turn everything above into a helper method that turns a
+    # code into an id, returning the id and an error message.
+
+    account = UserOauth2Account.where(:oauth2_provider => @provider, :provider_id => id_json['id']).first
+    current_user = User.find(session[:user_id])
+
+    if account && !current_user
+      puts "Found account; no current user is logged in"
+      # Log in the current user
+      session[:user_id] = account.user_id
+      redirect_to '/' and return
+    elsif current_user && !account
+      puts "Current user is logged in; linking account"
+      new_account = UserOauth2Account.new
+      new_account.oauth2_provider = @provider
+      new_account.provider_id = id
+      new_account.user = current_user
+      new_account.save
+      p new_account
+      redirect_to '/' and return
+    end
+
+    p account
+    p current_user
+    redirect_to error_auth_index_path
   end
 
   def error
+  end
+
+  def logout
+    session = nil
+    redirect_to '/'
   end
 end
