@@ -11,18 +11,16 @@ class User < ActiveRecord::Base
 
   def fill_login_token_and_save
     self.fill_login_token
-    self.save
+    self.save!
   end
 
-  # TODO(nharper): Don't clear the token as part of this - create a separate
-  # method to do that.
+  def clear_login_token
+    self.login_token = nil
+    self.save!
+  end
+
   def self.find_by_login_token(token)
     return nil unless token.length == 40
-    user = User.where(:login_token => token).first
-    if user
-      user.login_token = nil
-      user.save!
-    end
-    return user
+    return User.where(:login_token => token).first
   end
 end

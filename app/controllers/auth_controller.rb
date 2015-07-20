@@ -3,20 +3,16 @@ require 'json'
 
 class AuthController < ApplicationController
   # The |login| controller is used to serve up a view presenting the end-user
-  # with options for logging in.
+  # with options for logging in. The same view is also used for a new user
+  # linking an account for the first time.
   def login
-    # TODO(nharper): If a user logs in with a token, they should get directed
-    # to link a provided identity with their account (and don't delete their
-    # one-time use token until that's done).
-    #
-    # Perhaps instead of immediately logging them in, put the user id in a
-    # different part of the session that this controller uses (but everthing
-    # else will ignore), so the user doesn't continually use the token link to
-    # log in.
+    # Only use a login token if there is no user logged in.
     if params[:token] && !session[:user_id]
       user = User.find_by_login_token(params[:token])
-      session[:user_id] = user.id
-      redirect_to '/' and return
+      # Note this key is different than in the if - :new_user_id puts the user
+      # in an half-logged-in state - they aren't actually logged in, but we'll
+      # still remember who they are so they can finish the sign-up flow.
+      session[:new_user_id] = user.id
     end
     @providers = Oauth2Provider.all
   end
@@ -42,19 +38,28 @@ class AuthController < ApplicationController
     end
 
     account = UserOauth2Account.where(:oauth2_provider => @provider, :provider_id => id).first
-    current_user = User.find(session[:user_id])
+    if session[:new_user_id]
+      new_user = User.find(session[:new_user_id])
+    end
 
-    if account && !current_user
-      puts "Found account; no current user is logged in"
+    if account && !(current_user || new_user)
       # Log in the current user
       session[:user_id] = account.user_id
       redirect_to '/' and return
-    elsif current_user && !account
+    elsif (current_user || new_user) && !account
       puts "Current user is logged in; linking account"
+      if new_user
+        new_user.clear_login_token
+        user = new_user
+        session[:user_id] = session[:new_user_id]
+        session.delete :new_user_id
+      else
+        user = current_user
+      end
       if UserOauth2Account.create(
           :oauth2_provider => @provider,
           :provider_id => id,
-          :user => current_user)
+          :user => user)
         redirect_to '/' and return
       else
         flash[:error] = "Unable to link #{@provider.name} account"
@@ -69,7 +74,7 @@ class AuthController < ApplicationController
   end
 
   def logout
-    session = nil
+    reset_session
     redirect_to '/'
   end
 
