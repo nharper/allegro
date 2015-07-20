@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150718051413) do
+ActiveRecord::Schema.define(version: 20150720000847) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id"
@@ -78,5 +78,24 @@ ActiveRecord::Schema.define(version: 20150718051413) do
   end
 
   add_index "rehearsals", ["concert_id"], name: "index_rehearsals_on_concert_id"
+
+  create_table "user_oauth2_accounts", force: :cascade do |t|
+    t.integer  "oauth2_provider_id"
+    t.string   "provider_id"
+    t.integer  "user_id"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+  end
+
+  add_index "user_oauth2_accounts", ["oauth2_provider_id"], name: "index_user_oauth2_accounts_on_oauth2_provider_id"
+  add_index "user_oauth2_accounts", ["user_id"], name: "index_user_oauth2_accounts_on_user_id"
+
+  create_table "users", force: :cascade do |t|
+    t.integer  "performer_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "users", ["performer_id"], name: "index_users_on_performer_id"
 
 end

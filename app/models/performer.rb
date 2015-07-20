@@ -5,6 +5,7 @@ class Performer < ActiveRecord::Base
   # end
   has_many :attendance_records
   has_many :registrations
+  has_one :user
 
   # TODO(nharper): add validations
 

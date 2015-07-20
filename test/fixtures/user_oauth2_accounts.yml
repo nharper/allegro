@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  oauth2_provider_id: 
+  provider_id: MyString
+  user_id: 
+
+two:
+  oauth2_provider_id: 
+  provider_id: MyString
+  user_id: 
