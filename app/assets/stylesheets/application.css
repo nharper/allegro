@@ -10,3 +10,32 @@
  *
  *= require_self
  */
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+}
+
+#topbar {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  background-color: #f34235;
+  color: white;
+  box-shadow: 0 0 4px 4px #ccc;
+  margin-bottom: 10px;
+}
+
+#topbar h1 {
+  margin: 0.5em;
+}
+
+#content-wrapper {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+  /* border: 1px solid black; */
+}
+
+.login-provider {
+  border: 1px solid black;
+}

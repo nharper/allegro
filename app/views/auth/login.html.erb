@@ -1,3 +1,7 @@
+<div class="login-pane">
 <% @providers.each do |provider| %>
+<div class="login-provider">
   <%= link_to provider.name, login_redirect_uri(provider) %>
+</div>
 <% end %>
+</div>

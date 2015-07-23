@@ -27,4 +27,7 @@ class AttendanceController < ApplicationController
     # TODO(nharper): Implement update
     redirect_to section_attendance_url(params['rehearsal'], params['section'])
   end
+
+  def checkin
+  end
 end
