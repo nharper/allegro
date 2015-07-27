@@ -1,4 +1,28 @@
 <% content_for :head do %>
 <%= javascript_include_tag 'checkin' %>
 <% end %>
+<div id="instructions">
+  <span class="time">Current time: <span id="current-time"></span></span>
+  <h2>Town Hall Rehearsal check-in</h2>
+</div>
+<div id="checkin-list"></div>
+
+<div id="numpad-wrap">
+<div id="numpad">
+  <div id="numpad-instructions">Forgot your card? Enter chorus number</div>
+  <div id="numpad-input">&nbsp;</div>
+  <span class="num" id="n1">1</span>
+  <span class="num" id="n2">2</span>
+  <span class="num" id="n3">3</span>
+  <span class="num" id="n4">4</span>
+  <span class="num" id="n5">5</span>
+  <span class="num" id="n6">6</span>
+  <span class="num" id="n7">7</span>
+  <span class="num" id="n8">8</span>
+  <span class="num" id="n9">9</span>
+  <span class="num" id="delete">⌫</span>
+  <span class="num" id="n0">0</span>
+  <span class="num" id="enter">⏎</span>
+</div>
+</div>
 <script>runCheckin()</script>

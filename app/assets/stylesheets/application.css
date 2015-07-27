@@ -19,7 +19,7 @@ body {
 #topbar {
   padding-top: 1px;
   padding-bottom: 1px;
-  background-color: #f34235;
+  background-color: #f44336;
   color: white;
   box-shadow: 0 0 4px 4px #ccc;
   margin-bottom: 10px;
@@ -38,4 +38,75 @@ body {
 
 .login-provider {
   border: 1px solid black;
+}
+
+/* styles for checkin instructions */
+/* TODO(nharper): name conflict with .time below (in cards) */
+.time {
+  float: right;
+}
+/* styles for checkin cards (they're not really cards though) */
+hr {
+  border: 0px;
+  border-top: 1px solid #999;
+  margin: 5px;
+}
+
+.card {
+  padding: 5px;
+  min-height: 50px;
+}
+
+.performer .pic {
+  width: 50px;
+  height: 50px;
+  float: left;
+  padding-right: 5px;
+}
+
+.performer .name {
+  font-weight: bold;
+}
+
+.card .time {
+  float: right;
+}
+
+/* styles for checkin numpad */
+div#numpad {
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+}
+
+span.num {
+  display: inline-block;
+  background-color: #03a9f4;
+  width: 30%;
+  margin: 1%;
+  text-align: center;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  color: #fff;
+}
+
+span.num, div#numpad-input {
+  font-size: 120%;
+  font-weight: bold;
+}
+
+span.num#delete {
+  background-color: #f44336;
+}
+
+span.num#enter {
+  background-color: #4caf50;
+}
+
+div#numpad-wrap {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  background-color: white;
+  width: 100%;
 }
