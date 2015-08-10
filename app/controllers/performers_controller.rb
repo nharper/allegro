@@ -1,6 +1,7 @@
 require 'base64'
 
 class PerformersController < ApplicationController
+  # TODO(nharper): Re-write or remove this - it's currently broken.
   def index
     if params['section']
       @performers = Performer.select('id, name, number, section').where(:section => params['section'].upcase)
