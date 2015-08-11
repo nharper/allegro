@@ -2,16 +2,19 @@ class AttendanceController < ApplicationController
   # TODO(nharper): implement index and show methods
 
   def show
+    # TODO(nharper): Check that @rehearsal is not nil
     @rehearsal = Rehearsal.find(params['rehearsal'])
   end
 
   def index
+    # TODO(nharper): Check that @rehearsals is not nil
     @rehearsals = Rehearsal.where(concert: Concert.current)
   end
 
   def section
-    # TODO(nharper): use real rehearsal, section objects
-    @rehearsal = params['rehearsal']
+    # TODO(nharper): Check that @rehearsal is not nil
+    @rehearsal = Rehearsal.find(params['rehearsal'])
+    # TODO(nharper): use real section object
     @section = params['section'].upcase
 
     # TODO(nharper): consider passing ActiveRecord objects to the view instead
@@ -32,7 +35,21 @@ class AttendanceController < ApplicationController
   end
 
   def update
-    # TODO(nharper): Implement update
+    # TODO(nharper): Check that @rehearsal is not nil
+    @rehearsal = Rehearsal.find(params[:rehearsal])
+    # TODO(nharper): refactor this to be more efficient
+    params[:attendance].each do |performer_id, status|
+      # TODO(nharper): check that performer is not nil
+      performer = Performer.find(performer_id)
+      record = AttendanceRecord.where(:performer => performer, :rehearsal => @rehearsal).first_or_initialize
+      if status == 'present' || status == 'absent'
+        record.present = (status == 'present')
+        record.save
+      end
+      # TODO(nharper): If AttendanceRecord already exists in db and status == ''
+      # then we should change 'present' field in record to nil.
+      puts "Performer id: #{performer_id}, status: #{status}"
+    end
     redirect_to section_attendance_url(params['rehearsal'], params['section'])
   end
 

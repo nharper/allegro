@@ -21,8 +21,9 @@
 </div>
 
 <div>
+  <%= submit_tag %>
 	<%# <button type="button" id="save">Save</button> %>
   <button type="button" id="reset">Reset</button>
 </div>
 <% end # form_tag %>
-<script>documentLoaded('<%= @rehearsal %>', '<%= @section %>');</script>
+<script>documentLoaded('<%= @rehearsal.id %>', '<%= @section %>');</script>
