@@ -5,8 +5,4 @@ class Rehearsal < ActiveRecord::Base
   # TODO(nharper): add validations
 
   enum attendance: {required: 0, optional: 1, mandatory: 2}
-
-  def self.current
-    return Concert.where('start_date <= ? AND end_date >= ?', DateTime.now, DateTime.now).first
-  end
 end
