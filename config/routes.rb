@@ -61,8 +61,9 @@ Allegro::Application.routes.draw do
   end
 
   # TODO(nharper): Clean up all routing
-  resource :attendance, :controller => 'attendance', :only => ['show'] do
-    get ':rehearsal', :action => 'index', :as => 'rehearsal'
+  resource :attendance, :controller => 'attendance', :only => [] do
+    get '', :action => 'index', :as => ''
+    get ':rehearsal', :action => 'show', :as => 'rehearsal'
     get ':rehearsal/checkin', :action => 'checkin', :as => 'checkin'
     get ':rehearsal/:section', :action => 'section', :as => 'section'
     post ':rehearsal/:section/update', :action => 'update', :as => 'update'

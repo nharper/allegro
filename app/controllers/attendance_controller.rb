@@ -1,6 +1,14 @@
 class AttendanceController < ApplicationController
   # TODO(nharper): implement index and show methods
 
+  def show
+    @rehearsal = Rehearsal.find(params['rehearsal'])
+  end
+
+  def index
+    @rehearsals = Rehearsal.where(concert: Concert.current)
+  end
+
   def section
     # TODO(nharper): use real rehearsal, section objects
     @rehearsal = params['rehearsal']

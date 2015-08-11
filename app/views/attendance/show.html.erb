@@ -1,0 +1,6 @@
+<%= @rehearsal.date %>
+<ul>
+<% %W{T1L T1U T2L T2U B1L B1U B2L B2U}.each do |section| %>
+  <li><%= link_to section, section_attendance_path(@rehearsal, section) %></li>
+<% end %>
+</ul>
