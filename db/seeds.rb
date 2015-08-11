@@ -7,9 +7,9 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 elton = Concert.create({
-    name: 'Elton John',
+    name: 'Test Concert',
     start_date: Date.new(2015, 4, 6),
-    end_date: Date.new(2015, 6, 27)
+    end_date: Date.new(3015, 6, 27)
     });
 
 Rehearsal.create([
@@ -61,7 +61,13 @@ Rehearsal.create([
   { name: "Justin Taylor",
     number: "157",
     section: "T1L",
-    status: "LOA"}
+    status: "LOA"},
+  { name: "Jeff Sinclair",
+    number: "105",
+    section: "T1L"},
+  { name: "Steve Gallagher",
+    number: "125",
+    section: "T1L"},
 ].each do |performer|
   Performer.createWithRegistration(performer, elton)
 end
