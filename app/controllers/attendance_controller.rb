@@ -11,6 +11,10 @@ class AttendanceController < ApplicationController
     @rehearsals = Rehearsal.where(concert: Concert.current)
   end
 
+  def list
+    @records = AttendanceRecord.preload(:performer, :rehearsal)
+  end
+
   def section
     # TODO(nharper): Check that @rehearsal is not nil
     @rehearsal = Rehearsal.find_by_slug(params['rehearsal'])

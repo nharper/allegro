@@ -1,0 +1,10 @@
+<table>
+  <tr><th>Performer</th><th>Rehearsal</th><th>attendance</th></tr>
+  <% @records.each do |record| %>
+    <tr>
+      <td><%= record.performer.name %></td>
+      <td><%= link_to record.rehearsal.slug, rehearsal_attendance_path(record.rehearsal) %></td>
+      <td><%= record.present %></td>
+    </tr>
+  <% end %>
+</table>
