@@ -3,7 +3,7 @@ class AttendanceController < ApplicationController
 
   def show
     # TODO(nharper): Check that @rehearsal is not nil
-    @rehearsal = Rehearsal.find(params['rehearsal'])
+    @rehearsal = Rehearsal.find_by_slug(params['rehearsal'])
   end
 
   def index
@@ -13,7 +13,7 @@ class AttendanceController < ApplicationController
 
   def section
     # TODO(nharper): Check that @rehearsal is not nil
-    @rehearsal = Rehearsal.find(params['rehearsal'])
+    @rehearsal = Rehearsal.find_by_slug(params['rehearsal'])
     # TODO(nharper): use real section object
     @section = params['section'].upcase
 
@@ -36,7 +36,7 @@ class AttendanceController < ApplicationController
 
   def update
     # TODO(nharper): Check that @rehearsal is not nil
-    @rehearsal = Rehearsal.find(params[:rehearsal])
+    @rehearsal = Rehearsal.find_by_slug(params[:rehearsal])
     # TODO(nharper): refactor this to be more efficient
     params[:attendance].each do |performer_id, status|
       # TODO(nharper): check that performer is not nil
