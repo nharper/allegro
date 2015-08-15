@@ -11,6 +11,9 @@
 /db/*.sqlite3
 /db/*.sqlite3-journal
 
+# Ignore private db seed files (e.g. containing private secrets)
+/db/seeds/private.rb
+
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
