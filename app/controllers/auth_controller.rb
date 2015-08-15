@@ -2,6 +2,8 @@ require 'net/http'
 require 'json'
 
 class AuthController < ApplicationController
+  skip_before_filter :require_login
+
   # The |login| controller is used to serve up a view presenting the end-user
   # with options for logging in. The same view is also used for a new user
   # linking an account for the first time.
@@ -45,7 +47,7 @@ class AuthController < ApplicationController
     if account && !(current_user || new_user)
       # Log in the current user
       session[:user_id] = account.user_id
-      redirect_to '/' and return
+      return redirect_after_login
     elsif (current_user || new_user) && !account
       puts "Current user is logged in; linking account"
       if new_user
@@ -60,17 +62,20 @@ class AuthController < ApplicationController
           :oauth2_provider => @provider,
           :provider_id => id,
           :user => user)
-        redirect_to '/' and return
+        return redirect_after_login
       else
         flash[:error] = "Unable to link #{@provider.name} account"
         redirect_to error_auth_index_path and return
       end
     end
 
+    flash[:error] = "No user found for that account"
     redirect_to error_auth_index_path
   end
 
   def error
+    p session[:user_id]
+    p session[:new_user_id]
   end
 
   def logout
