@@ -1,6 +1,5 @@
-body {
-	font-family: sans-serif;
-	text-align: center;
+#tiles {
+  text-align: center;
 }
 
 .tile {
@@ -26,8 +25,4 @@ body {
 
 .present-false {
 	background-color: #fcc;
-}
-
-pre {
-	text-align: left;
 }
