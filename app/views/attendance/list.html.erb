@@ -2,14 +2,14 @@
 <table class="summary">
   <tr>
     <th>Performer</th>
-    <% @rehearsals.each do |rehearsal| %>
+    <% @rehearsals.each do |rehearsal| -%>
       <th><%= rehearsal.date.strftime('%-m-%d') %></th>
-    <% end %>
+    <% end -%>
   </tr>
-  <% @performers.each do |performer| %>
+  <% @performers.each do |performer| -%>
     <tr>
     <td><%= performer.name %></td>
-    <% @rehearsals.each do |rehearsal| %>
+    <% @rehearsals.each do |rehearsal| -%>
       <%
         record = @records[performer.id][rehearsal.id] || AttendanceRecord.new
         note = record.notes
@@ -27,14 +27,13 @@
         if note
           display_class += ' note'
         end
-      %>
-      <td class="record <%= display_class %>">
-        <%= symbol %>
-        <% if note %>
-          <span class="note"><%= note %></span>
-        <% end %>
-      </td>
-    <% end %>
+        attrs = {:class => ['record', display_class]}
+        if note
+          attrs[:title] = note
+        end
+      -%>
+      <%= content_tag('td', attrs) {symbol} -%>
+    <% end -%>
     </tr>
-  <% end %>
+  <% end -%>
 </table>
