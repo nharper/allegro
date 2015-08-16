@@ -11,13 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150813055414) do
+ActiveRecord::Schema.define(version: 20150816211626) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id"
     t.integer  "rehearsal_id"
     t.boolean  "present"
-    t.integer  "type"
     t.string   "notes"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
@@ -55,6 +54,21 @@ ActiveRecord::Schema.define(version: 20150813055414) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "raw_attendance_records", force: :cascade do |t|
+    t.integer  "performer_id"
+    t.integer  "rehearsal_id"
+    t.integer  "kind"
+    t.boolean  "present"
+    t.datetime "timestamp"
+    t.integer  "attendance_record_id"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "raw_attendance_records", ["attendance_record_id"], name: "index_raw_attendance_records_on_attendance_record_id"
+  add_index "raw_attendance_records", ["performer_id"], name: "index_raw_attendance_records_on_performer_id"
+  add_index "raw_attendance_records", ["rehearsal_id"], name: "index_raw_attendance_records_on_rehearsal_id"
 
   create_table "registrations", force: :cascade do |t|
     t.string   "section"

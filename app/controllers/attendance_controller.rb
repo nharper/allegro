@@ -15,8 +15,10 @@ class AttendanceController < ApplicationController
     @performers = Concert.current.performers
     @rehearsals = Concert.current.rehearsals
     @records = {}
+    @performers.each do |performer|
+      @records[performer.id] = {}
+    end
     AttendanceRecord.where(:performer => @performers, :rehearsal => @rehearsals).each do |record|
-      @records[record.performer.id] ||= {}
       @records[record.performer.id][record.rehearsal.id] = record
     end
   end
@@ -51,7 +53,7 @@ class AttendanceController < ApplicationController
     params[:attendance].each do |performer_id, status|
       # TODO(nharper): check that performer is not nil
       performer = Performer.find(performer_id)
-      record = AttendanceRecord.where(:performer => performer, :rehearsal => @rehearsal).first_or_initialize
+      record = RawAttendanceRecord.where(:performer => performer, :rehearsal => @rehearsal).first_or_initialize
       if status == 'present' || status == 'absent'
         record.present = (status == 'present')
         record.save

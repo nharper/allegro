@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  performer_id: 
+  rehearsal_id: 
+  kind: 1
+  timestamp: 2015-08-16 14:16:26
+  attendance_record_id: 
+
+two:
+  performer_id: 
+  rehearsal_id: 
+  kind: 1
+  timestamp: 2015-08-16 14:16:26
+  attendance_record_id: 
