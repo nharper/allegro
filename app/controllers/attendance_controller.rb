@@ -12,7 +12,13 @@ class AttendanceController < ApplicationController
   end
 
   def list
-    @records = AttendanceRecord.preload(:performer, :rehearsal)
+    @performers = Concert.current.performers
+    @rehearsals = Concert.current.rehearsals
+    @records = {}
+    AttendanceRecord.where(:performer => @performers, :rehearsal => @rehearsals).each do |record|
+      @records[record.performer.id] ||= {}
+      @records[record.performer.id][record.rehearsal.id] = record
+    end
   end
 
   def section

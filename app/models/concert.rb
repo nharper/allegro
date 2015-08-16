@@ -1,6 +1,7 @@
 class Concert < ActiveRecord::Base
   has_many :rehearsals
   has_many :registrations
+  has_many :performers, :through => :registrations
 
   # TODO(nharper): add validations
 

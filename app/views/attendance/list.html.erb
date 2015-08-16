@@ -1,10 +1,17 @@
 <table>
-  <tr><th>Performer</th><th>Rehearsal</th><th>attendance</th></tr>
-  <% @records.each do |record| %>
+  <tr>
+    <th>Performer</th>
+    <% @rehearsals.each do |rehearsal| %>
+      <th><%= link_to rehearsal.slug, rehearsal_attendance_path(rehearsal) %></th>
+    <% end %>
+  </tr>
+  <% @performers.each do |performer| %>
     <tr>
-      <td><%= record.performer.name %></td>
-      <td><%= link_to record.rehearsal.slug, rehearsal_attendance_path(record.rehearsal) %></td>
-      <td><%= record.present %></td>
+    <td><%= performer.name %></td>
+    <% @rehearsals.each do |rehearsal| %>
+      <% record = @records[performer.id][rehearsal.id] || AttendanceRecord.new %>
+      <td><%= record.present ? 'Present' : '?' %></td>
+    <% end %>
     </tr>
   <% end %>
 </table>
