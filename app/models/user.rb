@@ -6,7 +6,9 @@ class User < ActiveRecord::Base
   validates :performer_id, :uniqueness => true
 
   def fill_login_token
-    self.login_token = SecureRandom.base64(30)
+    # Replace '+' and '/' in the base64 encoding with '-' and '_' to use the url
+    # and filename safe alphabet from RFC 4648.
+    self.login_token = SecureRandom.base64(30).gsub('+', '-').gsub('/', '_')
   end
 
   def fill_login_token_and_save
