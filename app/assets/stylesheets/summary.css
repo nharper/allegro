@@ -1,0 +1,38 @@
+.summary th {
+  font-weight: normal;
+  font-style: oblique;
+  text-align: left;
+}
+
+table.summary td.record {
+  text-align: center;
+}
+
+table.summary td.record.note {
+  text-decoration: underline;
+}
+
+table.summary td.record span.note {
+  display: none;
+}
+
+table.summary td.record:hover span.note {
+  position: absolute;
+  display: block;
+  background-color: #fff;
+  padding: 2px;
+  border: 1px solid black;
+  border-radius: 2px;
+}
+
+table.summary td.present {
+  background-color: #B9F6CA;
+}
+
+table.summary td.absent {
+  background-color: #FF8A80;
+}
+
+table.summary td.unknown {
+  color: #e0e0e0;
+}

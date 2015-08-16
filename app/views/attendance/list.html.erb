@@ -1,16 +1,39 @@
-<table>
+<%# TODO(nharper): Need a better name for this css class. %>
+<table class="summary">
   <tr>
     <th>Performer</th>
     <% @rehearsals.each do |rehearsal| %>
-      <th><%= link_to rehearsal.slug, rehearsal_attendance_path(rehearsal) %></th>
+      <th><%= rehearsal.date.strftime('%-m-%d') %></th>
     <% end %>
   </tr>
   <% @performers.each do |performer| %>
     <tr>
     <td><%= performer.name %></td>
     <% @rehearsals.each do |rehearsal| %>
-      <% record = @records[performer.id][rehearsal.id] || AttendanceRecord.new %>
-      <td><%= record.present ? 'Present' : '?' %></td>
+      <%
+        record = @records[performer.id][rehearsal.id] || AttendanceRecord.new
+        note = record.notes
+        case record.present
+        when true
+          symbol = '✓'
+          display_class = 'present'
+        when false
+          symbol = '✗'
+          display_class = 'absent'
+        when nil
+          symbol = '?'
+          display_class = 'unknown'
+        end
+        if note
+          display_class += ' note'
+        end
+      %>
+      <td class="record <%= display_class %>">
+        <%= symbol %>
+        <% if note %>
+          <span class="note"><%= note %></span>
+        <% end %>
+      </td>
     <% end %>
     </tr>
   <% end %>
