@@ -1,0 +1,14 @@
+<h2>Performers without cards</h2>
+<table>
+<% @performers.each do |performer| %>
+  <tr>
+    <%= form_for(Card.new(:performer => performer)) do |f| %>
+    <th><%= performer.name %></th>
+    <td>
+      <%= f.text_field :card_id %>
+      <%= f.hidden_field :performer_id %>
+      <%= f.submit %>
+    </td>
+  <% end %>
+  </tr>
+<% end %>

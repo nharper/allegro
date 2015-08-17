@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: MyString
+  performer_id: 
+  active: false
+  expiration_date: 2015-08-16 17:56:56
+
+two:
+  id: MyString
+  performer_id: 
+  active: false
+  expiration_date: 2015-08-16 17:56:56

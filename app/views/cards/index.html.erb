@@ -1,0 +1,9 @@
+<table>
+<% @cards.each do |card| %>
+  <tr>
+    <td><%= card.performer.name %></td>
+    <td><%= link_to card.card_id, card_path(card) %></td>
+    <td><%= card.active %></td>
+  </tr>
+<% end %>
+</table>
