@@ -10,6 +10,7 @@ class AuthController < ApplicationController
   def login
     # Only use a login token if there is no user logged in.
     if params[:token] && !session[:user_id]
+      # TODO(nharper): Handle the case that we can't find the user.
       user = User.find_by_login_token(params[:token])
       # Note this key is different than in the if - :new_user_id puts the user
       # in an half-logged-in state - they aren't actually logged in, but we'll
@@ -114,7 +115,7 @@ class AuthController < ApplicationController
     }.to_query
     id_conn = Net::HTTP.new(id_uri.host, 443)
     id_conn.use_ssl = true
-    id_resp = id_conn.get(id_uri)
+    id_resp = id_conn.get(id_uri.to_s)
     if id_resp.code != '200'
       return nil, "Unexpected HTTP status #{id_resp.code} getting user id"
     end
