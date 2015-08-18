@@ -45,61 +45,39 @@ function Numpad(root, enter_callback) {
   };
 };
 
-/* Performer class
- */
-function Performer(name, cn, section) {
-  this.name_ = name;
-  this.cn_ = cn;
-  this.section_ = section;
-
-  this.name = function() { return this.name_; };
-  this.chorus_number = function() { return this.cn_; };
-  this.section = function() {
-    var section = "";
-    if (this.cn_) {
-      section += this.cn_;
-    }
-    if (this.section_) {
-      if (section) {
-        section += " ";
-      }
-      section += this.section_;
-    }
-    return section;
-  };
-
-}
-
 function PerformerStore() {
-  this.table_ = {
-    '03437124': new Performer('Brad Gibson', 291),
-    '03445828': new Performer('David Wallace', 243),
-    '03454788': new Performer('Gregory Sandritter', 213),
-    '07342500': new Performer('Jeff Ford', 131),
-    '07347364': new Performer('Jimmy White', 424),
-    '07347620': new Performer('Kevin Jones', 248),
-    '11405380': new Performer('Kevin Koerner', 138),
-    '11464004': new Performer('Kim Boyd', 327),
-    '11464260': new Performer('Kyle Fowler', 294),
-    '13823648': new Performer('Logan Ahlgren', 214),
-    '13850288': new Performer('Melvin Fujikawa', 397),
-    '14035216': new Performer('Michael Tate', 226),
-    '14214960': new Performer('Peter Hartikka', 420),
-    '14258064': new Performer('Phillip Calvin', 310),
-    '16956068': new Performer('Ross Woodall', 210),
-    '17150692': new Performer('Scott Mills', 175),
-    '17151204': new Performer('Steve Gallagher', 125),
-    '23747876': new Performer('Steven Harvey', 415),
-    '23748900': new Performer('Tony McIntosh', 110),
-    '23750180': new Performer('William Healey', 193),
-  };
+  this.cards_ = {};
+  this.performers_ = {};
+
+  var card_request = new XMLHttpRequest();
+  card_request.onload = function(p) {
+    var cards = JSON.parse(p.target.responseText);
+    cards.forEach(function(card) {
+      this.cards_[card.card_id] = card.performer_id;
+    }.bind(this));
+  }.bind(this);
+  card_request.open('GET', '/cards.json', true);
+  card_request.send();
+
+  var performers_request = new XMLHttpRequest();
+  performers_request.onload = function(p) {
+    var performers = JSON.parse(p.target.responseText);
+    performers.forEach(function(performer) {
+      this.performers_[performer.id] = performer.name;
+    }.bind(this));
+  }.bind(this);
+  performers_request.open('GET', '/performers.json', true);
+  performers_request.send();
 
   this.lookupPerformer = function(id) {
+    // Temporary hack for swipe cards - remove this
     var matches = id.match(/%(.*)\?/);
     if (matches) {
       id = matches[1];
     }
-    return this.table_[id];
+    console.log(this.cards_);
+    console.log(this.performers_);
+    return this.performers_[this.cards_[id]];
   }
 
   this.lookupByChorusNumber = function(num) {
@@ -116,8 +94,7 @@ function performer_card_from_checkin(performer, time) {
   var name = "Card not recognized";
   var section = "";
   if (performer != null) {
-    name = performer.name();
-    section = performer.section();
+    name = performer;
   }
   var div = document.createElement('div');
   div.setAttribute('class', 'card');

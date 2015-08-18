@@ -66,5 +66,6 @@ class AttendanceController < ApplicationController
   end
 
   def checkin
+    @rehearsal = Rehearsal.find_by_slug(params[:rehearsal])
   end
 end

@@ -15,6 +15,14 @@ class Rehearsal < ActiveRecord::Base
     return self.slug
   end
 
+  def display_name
+    display = date.strftime('%-m-%-d')
+    if name
+      display = "#{name} (#{display})"
+    end
+    return display
+  end
+
  protected
   def update_slug
     self.slug = date.strftime('%Y-%m-%d')

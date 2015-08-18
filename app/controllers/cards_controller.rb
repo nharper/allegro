@@ -11,6 +11,14 @@ class CardsController < ApplicationController
   end
 
   def index
-    @cards = Card.all.includes(:performer).order(:active => :desc)
+    respond_to do |format|
+      format.html do
+        @cards = Card.all.includes(:performer).order(:active => :desc)
+      end
+      format.json do
+        @cards = Card.select(:card_id, :performer_id).where(:active => true)
+        render :json => @cards
+      end
+    end
   end
 end
