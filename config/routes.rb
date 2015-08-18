@@ -57,6 +57,7 @@ Allegro::Application.routes.draw do
   resources :performers do
     member do
       get 'photo'
+      get 'newcard'
     end
   end
 

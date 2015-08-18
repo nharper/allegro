@@ -26,4 +26,8 @@ class PerformersController < ApplicationController
       render :text => Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=='), :content_type => 'image/png'
     end
   end
+
+  def newcard
+    @card = Card.new(:performer => Performer.find(params[:id]))
+  end
 end
