@@ -47,7 +47,8 @@ function Numpad(root, enter_callback) {
 
 function PerformerStore() {
   this.cards_ = {};
-  this.performers_ = {};
+  this.by_id_ = {};
+  this.by_chorus_number_ = {};
 
   var card_request = new XMLHttpRequest();
   card_request.onload = function(p) {
@@ -63,38 +64,30 @@ function PerformerStore() {
   performers_request.onload = function(p) {
     var performers = JSON.parse(p.target.responseText);
     performers.forEach(function(performer) {
-      this.performers_[performer.id] = performer.name;
+      this.by_id_[performer.id] = performer;
+      this.by_chorus_number_[performer.chorus_number] = performer;
     }.bind(this));
   }.bind(this);
   performers_request.open('GET', '/performers.json', true);
   performers_request.send();
 
   this.lookupPerformer = function(id) {
-    // Temporary hack for swipe cards - remove this
-    var matches = id.match(/%(.*)\?/);
-    if (matches) {
-      id = matches[1];
-    }
-    console.log(this.cards_);
-    console.log(this.performers_);
-    return this.performers_[this.cards_[id]];
+    return this.by_id_[this.cards_[id]];
   }
 
   this.lookupByChorusNumber = function(num) {
-    for (var id in this.table_) {
-      var performer = this.table_[id];
-      if (performer.chorus_number() == num) {
-        return performer;
-      }
-    }
+    return this.by_chorus_number_[num];
   }
 }
 
 function performer_card_from_checkin(performer, time) {
   var name = "Card not recognized";
   var section = "";
+  var photo_path = "";
   if (performer != null) {
-    name = performer;
+    name = performer.name;
+    section = performer.section;
+    photo_path = performer.photo_path;
   }
   var div = document.createElement('div');
   div.setAttribute('class', 'card');
@@ -108,6 +101,7 @@ function performer_card_from_checkin(performer, time) {
   performer_div.setAttribute('class', 'performer');
   var img = document.createElement('img');
   img.setAttribute('class', 'pic');
+  img.src = photo_path;
   performer_div.appendChild(img);
   var name_span = document.createElement('span');
   name_span.setAttribute('class', 'name');
