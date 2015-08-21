@@ -39,10 +39,10 @@ function Numpad(root, enter_callback) {
     this.value_ = '';
     this.updateDisplay();
   }.bind(this));
+};
 
-  this.updateDisplay = function() {
-    this.display_dom_node_.innerHTML = this.value_ ? this.value_ : "&nbsp;";
-  };
+Numpad.prototype.updateDisplay = function() {
+  this.display_dom_node_.innerHTML = this.value_ ? this.value_ : "&nbsp;";
 };
 
 function PerformerStore() {
@@ -70,31 +70,35 @@ function PerformerStore() {
   }.bind(this);
   performers_request.open('GET', '/performers.json', true);
   performers_request.send();
-
-  this.lookupPerformer = function(id) {
-    return this.by_id_[this.cards_[id]];
-  }
-
-  this.lookupByChorusNumber = function(num) {
-    return this.by_chorus_number_[num];
-  }
 }
 
-function performer_card_from_checkin(performer, time) {
+PerformerStore.prototype.lookupPerformer = function(id) {
+  return this.by_id_[this.cards_[id]];
+}
+
+PerformerStore.prototype.lookupByChorusNumber = function(num) {
+  return this.by_chorus_number_[num];
+}
+
+function CheckinDisplay(parent_node) {
+  this.node = parent_node;
+}
+
+CheckinDisplay.prototype._cardFromCheckin = function(checkin) {
   var name = "Card not recognized";
   var section = "";
   var photo_path = "";
-  if (performer != null) {
-    name = performer.name;
-    section = performer.section;
-    photo_path = performer.photo_path;
+  if (checkin.performer != null) {
+    name = checkin.performer.name;
+    section = checkin.performer.section;
+    photo_path = checkin.performer.photo_path;
   }
   var div = document.createElement('div');
   div.setAttribute('class', 'card');
 
   var time_span = document.createElement('span');
   time_span.setAttribute('class', 'time');
-  time_span.appendChild(document.createTextNode(format_time(time)));
+  time_span.appendChild(document.createTextNode(format_time(checkin.time)));
   div.appendChild(time_span);
 
   var performer_div = document.createElement('div');
@@ -117,6 +121,16 @@ function performer_card_from_checkin(performer, time) {
   return div;
 }
 
+CheckinDisplay.prototype.add = function(checkin) {
+  var card = this._cardFromCheckin(checkin);
+  if (this.node.firstChild) {
+    this.node.insertBefore(document.createElement('hr'), this.node.firstChild);
+    this.node.insertBefore(card, this.node.firstChild);
+  } else {
+    this.node.appendChild(card);
+  }
+}
+
 function format_time(time) {
   var h = time.getHours();
   var m = time.getMinutes();
@@ -126,30 +140,41 @@ function format_time(time) {
   return h + ":" + m + (pm ? " PM" : " AM");
 }
 
-function addCheckin(performer, time) {
-  var card = performer_card_from_checkin(performer, time);
-  var container = document.getElementById('checkin-list');
-  if (container.firstChild) {
-    container.insertBefore(document.createElement('hr'), container.firstChild);
-    container.insertBefore(card, container.firstChild);
-  } else {
-    container.appendChild(card);
-  }
+function Checkin(performer, time) {
+  this.performer = performer;
+  this.time = time;
 }
 
 function runCheckin() {
+  checkins = [];
   var store = new PerformerStore();
-  var k = new KeyboardListener(function(str) {
-    var performer = store.lookupPerformer(str);
-    addCheckin(performer, new Date());
-  });
-  var numpad = new Numpad(document.getElementById('numpad'), function(str) {
-    var performer = store.lookupByChorusNumber(str);
-    addCheckin(performer, new Date());
-  });
+  var display = new CheckinDisplay(document.getElementById('checkin-list'));
+  var callback = function(lookup_callback, str) {
+    var performer = lookup_callback(str);
+    var checkin = new Checkin(performer, new Date());
+    display.add(checkin);
+    checkins.push(checkin);
+  };
+  var k = new KeyboardListener(
+      callback.bind(this, store.lookupPerformer.bind(store)));
+  var numpad = new Numpad(document.getElementById('numpad'),
+      callback.bind(this, store.lookupByChorusNumber.bind(store)));
 
   displayTime();
   setInterval(displayTime, 5000);
+
+  document.getElementById('upload').addEventListener('click', function() {
+    console.log(checkins);
+    var request_data = JSON.stringify(checkins.map(function(checkin) {
+      return {'performer': checkin.performer.id, 'time': checkin.time};
+    }));
+    var csrf_token = document.getElementsByTagName('meta')['csrf-token'].content;
+    var post_request = new XMLHttpRequest();
+    post_request.open('POST', window.location.pathname, true);
+    post_request.setRequestHeader('Content-type', 'application/json');
+    post_request.setRequestHeader('X-CSRF-Token', csrf_token);
+    post_request.send(request_data);
+  });
 }
 
 function displayTime() {

@@ -68,4 +68,23 @@ class AttendanceController < ApplicationController
   def checkin
     @rehearsal = Rehearsal.find_by_slug(params[:rehearsal])
   end
+
+  def checkin_post
+    # TODO(nharper): This is pretty gross - still not checking that @rehearsal
+    # is not nil; kind of record is hardcoded (as checkin); no consideration
+    # around deduplication (although probably not needed for this type);
+    # timestamp is in who knows what timezone (ditto for Rehearsal object
+    # timestamps).
+    @rehearsal = Rehearsal.find_by_slug(params[:rehearsal])
+    params[:_json].each do |checkin|
+      RawAttendanceRecord.create(
+        :performer_id => checkin['performer'],
+        :rehearsal => @rehearsal,
+        :present => true,
+        :kind => RawAttendanceRecord.kinds[:checkin],
+        :timestamp => checkin['time'],
+      )
+    end
+    head :ok, content_type: 'text/html'
+  end
 end

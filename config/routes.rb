@@ -70,6 +70,7 @@ Allegro::Application.routes.draw do
     get 'list', :action => 'list', :as => 'list'
     get ':rehearsal', :action => 'show', :as => 'rehearsal'
     get ':rehearsal/checkin', :action => 'checkin', :as => 'checkin'
+    post ':rehearsal/checkin', :action => 'checkin_post', :as => 'checkin_post'
     get ':rehearsal/:section', :action => 'section', :as => 'section'
     post ':rehearsal/:section/update', :action => 'update', :as => 'update'
   end
