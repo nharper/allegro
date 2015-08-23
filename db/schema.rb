@@ -14,30 +14,30 @@
 ActiveRecord::Schema.define(version: 20150817005656) do
 
   create_table "attendance_records", force: :cascade do |t|
-    t.integer  "performer_id"
-    t.integer  "rehearsal_id"
-    t.boolean  "present"
-    t.string   "notes"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.integer  "performer_id", limit: 4
+    t.integer  "rehearsal_id", limit: 4
+    t.boolean  "present",      limit: 1
+    t.string   "notes",        limit: 255
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
-  add_index "attendance_records", ["performer_id"], name: "index_attendance_records_on_performer_id"
-  add_index "attendance_records", ["rehearsal_id"], name: "index_attendance_records_on_rehearsal_id"
+  add_index "attendance_records", ["performer_id"], name: "index_attendance_records_on_performer_id", using: :btree
+  add_index "attendance_records", ["rehearsal_id"], name: "index_attendance_records_on_rehearsal_id", using: :btree
 
   create_table "cards", force: :cascade do |t|
-    t.string   "card_id"
-    t.integer  "performer_id"
-    t.boolean  "active"
+    t.string   "card_id",         limit: 255
+    t.integer  "performer_id",    limit: 4
+    t.boolean  "active",          limit: 1
     t.datetime "expiration_date"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
-  add_index "cards", ["performer_id"], name: "index_cards_on_performer_id"
+  add_index "cards", ["performer_id"], name: "index_cards_on_performer_id", using: :btree
 
   create_table "concerts", force: :cascade do |t|
-    t.string   "name"
+    t.string   "name",       limit: 255
     t.date     "start_date"
     t.date     "end_date"
     t.datetime "created_at"
@@ -45,87 +45,98 @@ ActiveRecord::Schema.define(version: 20150817005656) do
   end
 
   create_table "oauth2_providers", force: :cascade do |t|
-    t.string   "name"
-    t.string   "slug"
-    t.string   "auth_url"
-    t.string   "token_url"
-    t.string   "id_url"
-    t.string   "client_id"
-    t.string   "client_secret"
-    t.text     "auth_params"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.string   "name",          limit: 255
+    t.string   "slug",          limit: 255
+    t.string   "auth_url",      limit: 255
+    t.string   "token_url",     limit: 255
+    t.string   "id_url",        limit: 255
+    t.string   "client_id",     limit: 255
+    t.string   "client_secret", limit: 255
+    t.text     "auth_params",   limit: 65535
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
-  add_index "oauth2_providers", ["slug"], name: "index_oauth2_providers_on_slug", unique: true
+  add_index "oauth2_providers", ["slug"], name: "index_oauth2_providers_on_slug", unique: true, using: :btree
 
   create_table "performers", force: :cascade do |t|
-    t.string   "name"
-    t.binary   "photo"
+    t.string   "name",       limit: 255
+    t.binary   "photo",      limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "raw_attendance_records", force: :cascade do |t|
-    t.integer  "performer_id"
-    t.integer  "rehearsal_id"
-    t.integer  "kind"
-    t.boolean  "present"
+    t.integer  "performer_id",         limit: 4
+    t.integer  "rehearsal_id",         limit: 4
+    t.integer  "kind",                 limit: 4
+    t.boolean  "present",              limit: 1
     t.datetime "timestamp"
-    t.integer  "attendance_record_id"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.integer  "attendance_record_id", limit: 4
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
   end
 
-  add_index "raw_attendance_records", ["attendance_record_id"], name: "index_raw_attendance_records_on_attendance_record_id"
-  add_index "raw_attendance_records", ["performer_id"], name: "index_raw_attendance_records_on_performer_id"
-  add_index "raw_attendance_records", ["rehearsal_id"], name: "index_raw_attendance_records_on_rehearsal_id"
+  add_index "raw_attendance_records", ["attendance_record_id"], name: "index_raw_attendance_records_on_attendance_record_id", using: :btree
+  add_index "raw_attendance_records", ["performer_id"], name: "index_raw_attendance_records_on_performer_id", using: :btree
+  add_index "raw_attendance_records", ["rehearsal_id"], name: "index_raw_attendance_records_on_rehearsal_id", using: :btree
 
   create_table "registrations", force: :cascade do |t|
-    t.string   "section"
-    t.string   "chorus_number"
-    t.string   "status"
-    t.integer  "performer_id"
-    t.integer  "concert_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.string   "section",       limit: 255
+    t.string   "chorus_number", limit: 255
+    t.string   "status",        limit: 255
+    t.integer  "performer_id",  limit: 4
+    t.integer  "concert_id",    limit: 4
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
-  add_index "registrations", ["concert_id"], name: "index_registrations_on_concert_id"
-  add_index "registrations", ["performer_id"], name: "index_registrations_on_performer_id"
+  add_index "registrations", ["concert_id"], name: "index_registrations_on_concert_id", using: :btree
+  add_index "registrations", ["performer_id"], name: "index_registrations_on_performer_id", using: :btree
 
   create_table "rehearsals", force: :cascade do |t|
     t.datetime "date"
-    t.integer  "attendance"
-    t.integer  "concert_id"
+    t.integer  "attendance", limit: 4
+    t.integer  "concert_id", limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "name"
-    t.string   "slug"
+    t.string   "name",       limit: 255
+    t.string   "slug",       limit: 255
   end
 
-  add_index "rehearsals", ["concert_id"], name: "index_rehearsals_on_concert_id"
-  add_index "rehearsals", ["slug"], name: "index_rehearsals_on_slug"
+  add_index "rehearsals", ["concert_id"], name: "index_rehearsals_on_concert_id", using: :btree
+  add_index "rehearsals", ["slug"], name: "index_rehearsals_on_slug", using: :btree
 
   create_table "user_oauth2_accounts", force: :cascade do |t|
-    t.integer  "oauth2_provider_id"
-    t.string   "provider_id"
-    t.integer  "user_id"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.integer  "oauth2_provider_id", limit: 4
+    t.string   "provider_id",        limit: 255
+    t.integer  "user_id",            limit: 4
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
   end
 
-  add_index "user_oauth2_accounts", ["oauth2_provider_id"], name: "index_user_oauth2_accounts_on_oauth2_provider_id"
-  add_index "user_oauth2_accounts", ["user_id"], name: "index_user_oauth2_accounts_on_user_id"
+  add_index "user_oauth2_accounts", ["oauth2_provider_id"], name: "index_user_oauth2_accounts_on_oauth2_provider_id", using: :btree
+  add_index "user_oauth2_accounts", ["user_id"], name: "index_user_oauth2_accounts_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.integer  "performer_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-    t.string   "login_token"
+    t.integer  "performer_id", limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.string   "login_token",  limit: 255
   end
 
-  add_index "users", ["login_token"], name: "index_users_on_login_token"
-  add_index "users", ["performer_id"], name: "index_users_on_performer_id"
+  add_index "users", ["login_token"], name: "index_users_on_login_token", using: :btree
+  add_index "users", ["performer_id"], name: "index_users_on_performer_id", using: :btree
 
+  add_foreign_key "attendance_records", "performers"
+  add_foreign_key "attendance_records", "rehearsals"
+  add_foreign_key "cards", "performers"
+  add_foreign_key "raw_attendance_records", "attendance_records"
+  add_foreign_key "raw_attendance_records", "performers"
+  add_foreign_key "raw_attendance_records", "rehearsals"
+  add_foreign_key "registrations", "concerts"
+  add_foreign_key "registrations", "performers"
+  add_foreign_key "user_oauth2_accounts", "oauth2_providers"
+  add_foreign_key "user_oauth2_accounts", "users"
+  add_foreign_key "users", "performers"
 end
