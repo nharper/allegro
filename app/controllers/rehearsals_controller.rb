@@ -11,7 +11,9 @@ class RehearsalsController < ApplicationController
   def attendance
     # TODO(nharper): Check that @rehearsal is not nil
     @rehearsal = Rehearsal.find_by_slug(params['id'])
-    @section = params[:section]
+    @path_params = {}
+    @path_params['section'] = params[:section] if params[:section]
+    @path_params['type'] = params[:type] if params[:type]
 
     # TODO(nharper): consider passing ActiveRecord objects to the view instead
     # of building this hash.
@@ -38,10 +40,11 @@ class RehearsalsController < ApplicationController
   def update_attendance
     # TODO(nharper): Check that @rehearsal is not nil
     @rehearsal = Rehearsal.find_by_slug(params['id'])
-    @section = params[:section]
-    p params
-    record_kind = params[:type]
+    record_kind = params[:type].to_i
     record_kind = RawAttendanceRecord.kinds[:unknown] unless record_kind
+    @path_params = {}
+    @path_params['section'] = params[:section] if params[:section]
+    @path_params['type'] = record_kind
 
     params[:attendance].each do |performer_id, status|
       # TODO(nharper): Check that performer is not nil
@@ -53,11 +56,7 @@ class RehearsalsController < ApplicationController
         record.save!
       end
     end if params[:attendance]
-    if @section
-      redirect_to attendance_rehearsal_path(@rehearsal, section: @section)
-    else
-      redirect_to attendance_rehearsal_path(@rehearsal)
-    end
+    redirect_to attendance_rehearsal_path(@rehearsal, @path_params)
   end
 
   def checkin

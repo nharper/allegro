@@ -1,12 +1,4 @@
-<%
-  if @section
-    path = attendance_rehearsal_path(@rehearsal, section: @section)
-  else
-    path = attendance_rehearsal_path(@rehearsal)
-  end
-  p path
-%>
-<%= form_tag path do |f| %>
+<%= form_tag attendance_rehearsal_path(@rehearsal, @path_params) do |f| %>
 <div id="tiles">
   <% @performers.each do |performer| %>
   <div class="tile">
