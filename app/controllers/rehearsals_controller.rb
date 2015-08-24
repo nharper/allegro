@@ -51,9 +51,6 @@ class RehearsalsController < ApplicationController
         record.present = (status == 'present')
         # TODO(nharper): Instead of throwing, present error in better way
         record.save!
-      else
-        # TODO(nharper): Instead of throwing, present error in better way
-        record.destroy!
       end
     end if params[:attendance]
     if @section
