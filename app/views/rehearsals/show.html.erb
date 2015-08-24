@@ -1,6 +1,25 @@
 <h2>Rehearsal: <%= @rehearsal.display_name %></h2>
+<% sections = %w{T1U T1L T2U T2L B1U B1L B2U B2L} %>
 <ul>
-<% %w{T1U T1L T2U T2L B1U B1L B2U B2L}.each do |section| %>
-  <li><%= link_to section, attendance_rehearsal_path(@rehearsal, section: section) %></li>
-<% end %>
+  <li>Take attendance (pre-break):
+    <ul>
+    <% sections.each do |section| %>
+      <li><%= link_to section, attendance_rehearsal_path(@rehearsal, section: section, type: 2) %></li>
+    <% end %>
+    </ul>
+  </li>
+  <li>Take attendance (post-break):
+    <ul>
+    <% sections.each do |section| %>
+      <li><%= link_to section, attendance_rehearsal_path(@rehearsal, section: section, type: 3) %></li>
+    <% end %>
+    </ul>
+  </li>
+  <li>View raw attendance:
+    <ul>
+    <% sections.each do |section| %>
+      <li><%= link_to section, raw_attendance_rehearsal_path(@rehearsal, section: section) %></li>
+    <% end %>
+    </ul>
+  </li>
 </ul>

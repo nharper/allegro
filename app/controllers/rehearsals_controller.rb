@@ -18,12 +18,7 @@ class RehearsalsController < ApplicationController
     # TODO(nharper): consider passing ActiveRecord objects to the view instead
     # of building this hash.
     @performers = []
-    # TODO(nharper): need to restrict Registrations to concert for this rehearsal
-    registrations = Registration.includes(:performer)
-    # TODO(nharper): use real section object
-    if params['section']
-      registrations = registrations.where(:section => params['section'].upcase)
-    end
+    registrations = @rehearsal.registrations(params[:section])
     registrations.each do |registration|
       performer = registration.performer
       @performers << {
@@ -57,6 +52,27 @@ class RehearsalsController < ApplicationController
       end
     end if params[:attendance]
     redirect_to attendance_rehearsal_path(@rehearsal, @path_params)
+  end
+
+  def raw_attendance
+    # TODO(nharper): Check that @rehearsal is not nil
+    @rehearsal = Rehearsal.find_by_slug(params['id'])
+
+    @registrations = @rehearsal.registrations(params[:section])
+    @records = {}
+    @registrations.each do |registration|
+      @records[registration.performer.id] = {
+        'unknown' => [],
+        'checkin' => [],
+        'pre_break' => [],
+        'post_break' => [],
+        'checkout' => [],
+      }
+    end
+    RawAttendanceRecord.where(:rehearsal => @rehearsal).includes(:performer).each do |record|
+      next unless @records[record.performer.id]
+      @records[record.performer.id][record.kind] << record
+    end
   end
 
   def checkin

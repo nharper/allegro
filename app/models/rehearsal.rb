@@ -27,6 +27,14 @@ class Rehearsal < ActiveRecord::Base
     return display
   end
 
+  def registrations(section = nil)
+    registrations = self.concert.registrations.includes(:performer).order(:chorus_number)
+    if section
+      registrations = registrations.where(section: section)
+    end
+    return registrations
+  end
+
  protected
   def update_slug
     self.slug = local_date.strftime('%Y-%m-%d')

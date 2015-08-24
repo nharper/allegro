@@ -73,7 +73,7 @@ Allegro::Application.routes.draw do
       post 'attendance', action: 'update_attendance'
       get 'checkin'
       post 'checkin', action: 'update_checkin'
-      get 'view_attendance'
+      get 'raw_attendance'
       post 'reconcile'
     end
   end
