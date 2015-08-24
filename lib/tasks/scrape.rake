@@ -9,6 +9,7 @@ namespace :scrape do
 
   task :update_roster => :environment do
     concert = Concert.current
+    abort('No current concert for registrations; aborting') unless concert
 
     performers = {}
     Performer.all.each do |performer|

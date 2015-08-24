@@ -1,5 +1,5 @@
 namespace :users do
-  task :list_missing_users => :environment do
+  task :list_missing => :environment do
     performers = Performer.all
     performers.each do |performer|
       next if performer.user
@@ -7,7 +7,7 @@ namespace :users do
     end
   end
 
-  task :create_users => :environment do
+  task :create => :environment do
     performers = Performer.all
     performers.each do |performer|
       next if performer.user
