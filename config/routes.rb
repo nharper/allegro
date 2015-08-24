@@ -54,6 +54,7 @@ Allegro::Application.routes.draw do
   #     resources :products
   #   end
 
+  # TODO(nharper): Most of these routes are incomplete right now
   resources :performers do
     member do
       get 'photo'
@@ -61,18 +62,25 @@ Allegro::Application.routes.draw do
     end
   end
 
+  # TODO(nharper): Most of these routes are incomplete right now
   resources :cards do
+  end
+
+  # TODO(nharper): Most of these routes are incomplete right now
+  resources :rehearsals do
+    member do
+      get 'attendance'
+      post 'attendance', action: 'update_attendance'
+      get 'checkin'
+      post 'checkin', action: 'update_checkin'
+      get 'view_attendance'
+      post 'reconcile'
+    end
   end
 
   # TODO(nharper): Clean up all routing
   resource :attendance, :controller => 'attendance', :only => [] do
-    get '', :action => 'index', :as => ''
     get 'list', :action => 'list', :as => 'list'
-    get ':rehearsal', :action => 'show', :as => 'rehearsal'
-    get ':rehearsal/checkin', :action => 'checkin', :as => 'checkin'
-    post ':rehearsal/checkin', :action => 'checkin_post', :as => 'checkin_post'
-    get ':rehearsal/:section', :action => 'section', :as => 'section'
-    post ':rehearsal/:section/update', :action => 'update', :as => 'update'
   end
 
   resources :auth, :only => [] do

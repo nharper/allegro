@@ -1,0 +1,5 @@
+<ul>
+<% @rehearsals.each do |rehearsal| %>
+  <li><%= link_to rehearsal.display_name, rehearsal_path(rehearsal) %></li>
+<% end %>
+</ul>

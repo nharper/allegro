@@ -15,8 +15,12 @@ class Rehearsal < ActiveRecord::Base
     return self.slug
   end
 
+  def local_date
+    return ActiveSupport::TimeZone['Pacific Time (US & Canada)'].utc_to_local(self.date)
+  end
+
   def display_name
-    display = date.strftime('%-m-%-d')
+    display = local_date.strftime('%-m-%-d')
     if name
       display = "#{name} (#{display})"
     end
@@ -25,7 +29,7 @@ class Rehearsal < ActiveRecord::Base
 
  protected
   def update_slug
-    self.slug = date.strftime('%Y-%m-%d')
+    self.slug = local_date.strftime('%Y-%m-%d')
     if name
       self.slug += '-' + name.gsub(/[^0-9A-Za-z]+/, '-').chomp('-')
     end
