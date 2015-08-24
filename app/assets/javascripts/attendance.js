@@ -58,17 +58,17 @@ function AttendanceGrid(root, storage_key) {
     }
   }
 
-  var toggleTile = function(e, target) {
-    if (target.nodeName == 'SELECT') {
+  var toggleTile = function(e) {
+    if (e.target.nodeName == 'SELECT') {
       return;
     }
-    var value = target.querySelector('select').value;
+    var value = e.target.querySelector('select').value;
     if (value == '') {
-      this.updateTile(target, 'present');
+      this.updateTile(e.target, 'present');
     } else if (value == 'present') {
-      this.updateTile(target, 'absent');
+      this.updateTile(e.target, 'absent');
     } else {
-      this.updateTile(target, '');
+      this.updateTile(e.target, '');
     }
   };
   var updateTileFromSelect = function(e) {
@@ -81,7 +81,7 @@ function AttendanceGrid(root, storage_key) {
   var restore_state = this.restoreState();
   var tiles =  this.container_.querySelectorAll('.tile');
   for (var i = 0; i < tiles.length; i++) {
-    tiles[i].addEventListener('click', toggleTile.bind(this, tiles[i]));
+    tiles[i].addEventListener('click', toggleTile.bind(this));
     var select = tiles[i].querySelector('select');
     select.addEventListener('change', updateTileFromSelect.bind(this));
 
