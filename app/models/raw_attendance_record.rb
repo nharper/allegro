@@ -13,9 +13,9 @@ class RawAttendanceRecord < ActiveRecord::Base
 
   def to_s
     if self.present == true
-      return '✓'
+      return "\u2713"
     elsif self.present == false
-      return '✗'
+      return "\u2717"
     else
       return '?'
     end
