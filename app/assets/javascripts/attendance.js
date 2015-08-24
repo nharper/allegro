@@ -58,11 +58,10 @@ function AttendanceGrid(root, storage_key) {
     }
   }
 
-  var toggleTile = function(target, e) {
+  var toggleTile = function(e, target) {
     if (target.nodeName == 'SELECT') {
       return;
     }
-    console.log(target);
     var value = target.querySelector('select').value;
     if (value == '') {
       this.updateTile(target, 'present');
