@@ -9,5 +9,5 @@ class RawAttendanceRecord < ActiveRecord::Base
   validates_presence_of :rehearsal
   validates_presence_of :kind
   validates :present, :inclusion => {:in => [true, false]}
-  validates_uniqueness_of :performer, :scope => :rehearsal
+  validates_uniqueness_of :performer, :scope => [:rehearsal, :kind]
 end

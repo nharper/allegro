@@ -11,6 +11,7 @@ class RehearsalsController < ApplicationController
   def attendance
     # TODO(nharper): Check that @rehearsal is not nil
     @rehearsal = Rehearsal.find_by_slug(params['id'])
+    @section = params[:section]
 
     # TODO(nharper): consider passing ActiveRecord objects to the view instead
     # of building this hash.
@@ -37,6 +38,8 @@ class RehearsalsController < ApplicationController
   def update_attendance
     # TODO(nharper): Check that @rehearsal is not nil
     @rehearsal = Rehearsal.find_by_slug(params['id'])
+    @section = params[:section]
+    p params
     record_kind = params[:type]
     record_kind = RawAttendanceRecord.kinds[:unknown] unless record_kind
 
@@ -52,8 +55,12 @@ class RehearsalsController < ApplicationController
         # TODO(nharper): Instead of throwing, present error in better way
         record.destroy!
       end
+    end if params[:attendance]
+    if @section
+      redirect_to attendance_rehearsal_path(@rehearsal, section: @section)
+    else
+      redirect_to attendance_rehearsal_path(@rehearsal)
     end
-    redirect_to attendance_rehearsal_path(@rehearsal)
   end
 
   def checkin

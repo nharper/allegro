@@ -1,6 +1,6 @@
 <h2>Rehearsal: <%= @rehearsal.display_name %></h2>
 <ul>
 <% %w{T1U T1L T2U T2L B1U B1L B2U B2L}.each do |section| %>
-  <li><%= link_to section, attendance_rehearsal_path(@rehearsal) %></li>
+  <li><%= link_to section, attendance_rehearsal_path(@rehearsal, section: section) %></li>
 <% end %>
 </ul>
