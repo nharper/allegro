@@ -1,10 +1,10 @@
 <style>
 @media print {
   @page {
-    margin-top: 12mm;
-    margin-right: 12mm;
-    margin-bottom: 15mm;
-    margin-left: 0;
+    margin-bottom: 10mm;
+    margin-left: 11mm;
+    margin-top: 15mm;
+    margin-right: 0;
   }
 
   div#topbar {
@@ -18,6 +18,16 @@
 
   div#print-notes {
     display: none;
+  }
+
+  div.printable_card {
+    /* print the cards upside-down, because the printer misreads the lanyard
+     * slot on the card as the end of the card if it's put in the other way.
+     */
+    transform: rotate(180deg);
+    /* margin-top plus height determines placement, since we're printing
+     * upside-down. */
+    height: 32mm;
   }
 }
 
