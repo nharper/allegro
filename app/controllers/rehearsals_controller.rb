@@ -1,9 +1,11 @@
 class RehearsalsController < ApplicationController
   def index
+    @breadcrumbs = [['Rehearsals', rehearsals_path]]
     @rehearsals = Rehearsal.where('date > ?', DateTime.now)
   end
 
   def all
+    @breadcrumbs = [['Rehearsals', rehearsals_path]]
     @rehearsals = Rehearsal.all.order('date DESC')
     render :action => :index
   end
@@ -11,6 +13,11 @@ class RehearsalsController < ApplicationController
   def show
     # TODO(nharper): Check that @rehearsal is not nil
     @rehearsal = Rehearsal.find_by_slug(params['id'])
+
+    @breadcrumbs = [
+      ['Rehearsals', rehearsals_path],
+      [@rehearsal.display_name, rehearsal_path(@rehearsal)],
+    ]
   end
 
   def attendance
@@ -35,6 +42,11 @@ class RehearsalsController < ApplicationController
     end
 
     @performers.sort! { |a,b| a[:chorus_number] <=> b[:chorus_number] }
+
+    @breadcrumbs = [
+      ['Rehearsals', rehearsals_path],
+      [@rehearsal.display_name, rehearsal_path(@rehearsal)],
+    ]
   end
 
   def update_attendance
@@ -78,6 +90,11 @@ class RehearsalsController < ApplicationController
       next unless @records[record.performer.id]
       @records[record.performer.id][record.kind] << record
     end
+
+    @breadcrumbs = [
+      ['Rehearsals', rehearsals_path],
+      [@rehearsal.display_name, rehearsal_path(@rehearsal)],
+    ]
   end
 
   def checkin
