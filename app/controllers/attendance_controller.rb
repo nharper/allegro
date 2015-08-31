@@ -1,4 +1,6 @@
 class AttendanceController < ApplicationController
+  def home
+  end
 
   def list
     @performers = Concert.current.performers

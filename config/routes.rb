@@ -54,6 +54,8 @@ Allegro::Application.routes.draw do
   #     resources :products
   #   end
 
+  root 'attendance#home'
+
   # TODO(nharper): Most of these routes are incomplete right now
   resources :performers do
     member do

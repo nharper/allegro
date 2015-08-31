@@ -12,7 +12,12 @@
 </head>
 <body>
 <div id="topbar">
-<h1>SFGMC Attendance</h1>
+<ul id="breadcrumbs">
+  <li><%= link_to 'SFGMC Attendance', '/' %></li>
+  <% @breadcrumbs.each do |crumb| %>
+    <li><%= link_to(*crumb) %></li>
+  <% end if @breadcrumbs %>
+</ul>
 </div>
 <div id="content-wrapper">
 <%= yield %>

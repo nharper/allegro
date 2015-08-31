@@ -18,16 +18,33 @@ body {
 }
 
 #topbar {
-  padding-top: 1px;
-  padding-bottom: 1px;
   background-color: #f44336;
   color: white;
   box-shadow: 0 0 4px 4px #ccc;
-  margin-bottom: 10px;
 }
 
-#topbar h1 {
-  margin: 0.5em;
+#topbar #breadcrumbs {
+  margin-top: 0;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  list-style: none;
+}
+
+#topbar #breadcrumbs li {
+  padding-top: 0.5em;
+  display: inline;
+}
+
+#topbar #breadcrumbs li a {
+  color: white;
+}
+
+#topbar #breadcrumbs li:after {
+  content: " >";
+}
+
+#topbar #breadcrumbs li:last-child:after {
+  display: none;
 }
 
 #content-wrapper {
