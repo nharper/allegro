@@ -8,4 +8,8 @@ class Registration < ActiveRecord::Base
 
   # TODO(nharper): consider adding an enum for status and replace
   # string statuses with ints
+
+  def current
+    return Concert.current.registrations.includes(:performer)
+  end
 end

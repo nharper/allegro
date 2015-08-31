@@ -60,6 +60,9 @@ Allegro::Application.routes.draw do
       get 'photo'
       get 'newcard'
     end
+    collection do
+      get 'printcards'
+    end
   end
 
   # TODO(nharper): Most of these routes are incomplete right now
