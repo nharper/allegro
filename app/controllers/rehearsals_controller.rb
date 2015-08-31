@@ -1,11 +1,11 @@
 class RehearsalsController < ApplicationController
   def index
-    @breadcrumbs = [['Rehearsals', rehearsals_path]]
+    @breadcrumbs = ['Rehearsals']
     @rehearsals = Rehearsal.where('date > ?', DateTime.now)
   end
 
   def all
-    @breadcrumbs = [['Rehearsals', rehearsals_path]]
+    @breadcrumbs = ['Rehearsals']
     @rehearsals = Rehearsal.all.order('date DESC')
     render :action => :index
   end
@@ -16,7 +16,7 @@ class RehearsalsController < ApplicationController
 
     @breadcrumbs = [
       ['Rehearsals', rehearsals_path],
-      [@rehearsal.display_name, rehearsal_path(@rehearsal)],
+      @rehearsal.display_name,
     ]
   end
 
@@ -46,6 +46,7 @@ class RehearsalsController < ApplicationController
     @breadcrumbs = [
       ['Rehearsals', rehearsals_path],
       [@rehearsal.display_name, rehearsal_path(@rehearsal)],
+      'Take Attendance'
     ]
   end
 
@@ -94,6 +95,7 @@ class RehearsalsController < ApplicationController
     @breadcrumbs = [
       ['Rehearsals', rehearsals_path],
       [@rehearsal.display_name, rehearsal_path(@rehearsal)],
+      'View Attendance',
     ]
   end
 

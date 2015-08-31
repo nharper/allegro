@@ -15,7 +15,11 @@
 <ul id="breadcrumbs">
   <li><%= link_to 'SFGMC Attendance', '/' %></li>
   <% @breadcrumbs.each do |crumb| %>
-    <li><%= link_to(*crumb) %></li>
+    <% if crumb.kind_of?(Array) %>
+      <li><%= link_to(*crumb) %></li>
+    <% else %>
+      <li><%= crumb %></li>
+    <% end %>
   <% end if @breadcrumbs %>
 </ul>
 </div>
