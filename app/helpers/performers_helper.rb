@@ -5,7 +5,7 @@ module PerformersHelper
   def name_upcase(name)
     name.split(/(?<=[^a-zA-Z])/).map do |part|
       matches = /[A-Z][^A-Z]*$/.match(part)
-      if matches.length > 0
+      if matches && matches.length > 0
         index = matches.offset(0)[0]
         part.slice(0, index) + part.slice(index..-1).upcase
       else
