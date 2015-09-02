@@ -34,7 +34,15 @@ class PerformersController < ApplicationController
     @concert = Concert.current
     @registrations = Registration.where(:concert => @concert).includes(:performer).order('chorus_number')
     if params[:chorus_number]
-      numbers = params[:chorus_number].split(',')
+      numbers = params[:chorus_number].split(',').map do |number|
+        parts = number.split('-')
+        if parts.length == 2
+          Range.new(*parts)
+        else
+          number
+        end
+      end
+
       @registrations = @registrations.where(:chorus_number => numbers)
     end
   end
