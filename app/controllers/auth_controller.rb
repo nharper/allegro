@@ -10,47 +10,57 @@ class AuthController < ApplicationController
   def login
     # Only use a login token if there is no user logged in.
     if params[:token] && !session[:user_id]
-      # TODO(nharper): Handle the case that we can't find the user.
       user = User.find_by_login_token(params[:token])
-      # Note this key is different than in the if - :new_user_id puts the user
-      # in an half-logged-in state - they aren't actually logged in, but we'll
-      # still remember who they are so they can finish the sign-up flow.
-      session[:new_user_id] = user.id
+      if user == nil
+        flash[:error] = 'Login link is invalid.'
+      else
+        # Note this key is different than in the if - :new_user_id puts the user
+        # in an half-logged-in state - they aren't actually logged in, but we'll
+        # still remember who they are so they can finish the sign-up flow.
+        session[:new_user_id] = user.id
+      end
     end
     @providers = Oauth2Provider.all
   end
 
   def finish
     if !params[:state] || !valid_authenticity_token?(session, params[:state])
-      flash[:error] = 'Invalid XSRF token'
-      redirect_to error_auth_index_path and return
+      flash[:error] = 'There was an error when trying to log in.'
+      flash[:error_detail] = 'Invalid XSRF token.'
+      redirect_to login_auth_index_path and return
     end
 
     if params[:error]
       # This likely means that the user cancelled the auth request (instead of
       # accepting).
-      flash[:error] = 'Failed to obtain access code'
-      redirect_to error_auth_index_path and return
+      flash[:error] = 'There was an error when trying to log in.'
+      flash[:error_detail] = 'Failed to obtain access code.'
+      redirect_to login_auth_index_path and return
     end
 
     @provider = Oauth2Provider.where(:slug => params[:id]).first
+    # Get the user id from the OAuth2 provider using the code provided.
     id, error = id_from_code(params[:code], @provider)
     if !id
-      flash[:error] = error
-      redirect_to error_auth_index_path and return
+      flash[:error] = 'There was an error when trying to log in.'
+      flash[:error_detail] = error
+      redirect_to login_auth_index_path and return
     end
 
+    # Look up the account that matches the id from the OAuth2 provider. It's
+    # possible there is no account, if this is a sign-up or link flow.
     account = UserOauth2Account.where(:oauth2_provider => @provider, :provider_id => id).first
     if session[:new_user_id]
       new_user = User.find(session[:new_user_id])
     end
 
-    if account && !(current_user || new_user)
+    if account
       # Log in the current user
       session[:user_id] = account.user_id
       return redirect_after_login
-    elsif (current_user || new_user) && !account
-      puts "Current user is logged in; linking account"
+    # In case I forget when looking at this code later, current_user is a method
+    # defined on ApplicationController. (It's not a local variable.)
+    elsif current_user || new_user
       if new_user
         new_user.clear_login_token
         user = new_user
@@ -65,27 +75,21 @@ class AuthController < ApplicationController
           :user => user)
         return redirect_after_login
       else
-        flash[:error] = "Unable to link #{@provider.name} account"
-        redirect_to error_auth_index_path and return
+        flash[:error] = "There was an error trying to link #{@provider.name} account."
+        redirect_to login_auth_index_path and return
       end
     end
 
-    flash[:error] = "No user found for that account"
-    redirect_to error_auth_index_path
-  end
-
-  def error
-    p session[:user_id]
-    p session[:new_user_id]
+    flash[:error] = 'Unable to find any user account for that login.'
+    redirect_to login_auth_index_path
   end
 
   def logout
     reset_session
-    redirect_to '/'
+    redirect_to login_auth_index_path
   end
 
  private
-  # TODO(nharper): Consider making error messages here more user-friendly.
   def id_from_code(code, provider)
     token_uri = URI(provider[:token_url])
     token_conn = Net::HTTP.new(token_uri.host, 443)

@@ -1,7 +1,27 @@
-<div class="login-pane">
-<% @providers.each do |provider| %>
-<div class="login-provider">
-  <%= link_to provider.name, login_redirect_uri(provider) %>
-</div>
+<% if flash[:error] %>
+  <div class="error">
+    <%= flash[:error] %>
+    <% if flash[:error_detail] %>
+      <a href="#">Show details</a>
+      <div class="detail hidden"><%= flash[:error_detail] %></div>
+    <% end %>
+  </div>
 <% end %>
+<div>
+  <p>
+  Log in to the SFGMC attendance system by clicking
+  <% if @providers.size > 1 %>
+    one of the buttons
+  <% else %>
+    the button
+  <% end %>
+  below.
+  </p>
 </div>
+<ul class="login-providers">
+  <% @providers.each do |provider| %>
+  <li>
+    <%= link_to "Login with #{provider.name}", login_redirect_uri(provider) -%>
+  </li>
+  <% end %>
+</ul>

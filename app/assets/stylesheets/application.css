@@ -17,6 +17,10 @@ body {
   margin: 0;
 }
 
+a {
+  color: #2196f3;
+}
+
 #topbar {
   background-color: #f44336;
   color: white;
@@ -54,8 +58,34 @@ body {
   /* border: 1px solid black; */
 }
 
-.login-provider {
-  border: 1px solid black;
+.error {
+  padding: 1em;
+  background-color: #fff9c4;
+  border: 1px solid #fbc02d;
+  margin-bottom: 1em;
+}
+
+.error .detail.hidden {
+  display: none;
+}
+
+.login-providers {
+  list-style: none;
+  padding-left: 0;
+}
+
+.login-providers li a {
+  padding: 0.5em;
+  background-color: #757575;
+  border-radius: 5px;
+  box-shadow: 0 0 8px 2px #ccc;
+  color: white;
+  text-decoration: none;
+}
+
+.login-providers li a:hover {
+  background-color: #9e9e9e;
+  text-decoration: underline;
 }
 
 /* styles for checkin instructions */
