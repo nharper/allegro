@@ -5,6 +5,7 @@ class Registration < ActiveRecord::Base
   validates_presence_of :performer
   validates_presence_of :concert
   validates_uniqueness_of :performer, :scope => :concert
+  validates_uniqueness_of :chorus_number, :scope => :concert
 
   # TODO(nharper): consider adding an enum for status and replace
   # string statuses with ints
