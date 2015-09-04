@@ -1,25 +1,35 @@
-.summary th {
+table.attendance {
+  border-collapse: collapse;
+  border: 1px solid black;
+}
+
+table.attendance th, table.attendance td {
+  padding: 2px;
+  border: 1px solid black;
+}
+
+table.attendance th {
   font-weight: normal;
   font-style: oblique;
   text-align: left;
 }
 
-table.summary td.record {
+table.attendance td.record {
   text-align: center;
 }
 
-table.summary td.record.note {
+table.attendance td.record.note {
   text-decoration: underline;
 }
 
-table.summary td.present {
+table.attendance td.present {
   background-color: #B9F6CA;
 }
 
-table.summary td.absent {
+table.attendance td.absent {
   background-color: #FF8A80;
 }
 
-table.summary td.unknown {
+table.attendance td.unknown {
   color: #e0e0e0;
 }

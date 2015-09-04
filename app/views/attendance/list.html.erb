@@ -1,6 +1,7 @@
 <%# TODO(nharper): Need a better name for this css class. %>
-<table class="summary">
+<table class="attendance">
   <tr>
+    <th>#</th>
     <th>Performer</th>
     <% @rehearsals.each do |rehearsal| -%>
       <th><%= rehearsal.date.strftime('%-m-%d') %></th>
@@ -8,6 +9,7 @@
   </tr>
   <% @performers.each do |performer| -%>
     <tr>
+    <td></td>
     <td><%= performer.name %></td>
     <% @rehearsals.each do |rehearsal| -%>
       <%
