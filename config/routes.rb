@@ -64,6 +64,8 @@ Allegro::Application.routes.draw do
     end
     collection do
       get 'printcards'
+      get 'import_attendance'
+      post 'post_import_attendance'
     end
   end
 

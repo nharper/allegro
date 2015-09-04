@@ -63,4 +63,38 @@ class PerformersController < ApplicationController
   def newcard
     @card = Card.new(:performer => Performer.find(params[:id]))
   end
+
+  def import_attendance
+  end
+
+  def post_import_attendance
+    @registrations = Registration.where(:concert => Concert.current).includes(:performer)
+    registrations_by_number = {}
+    @registrations.each do |reg|
+      registrations_by_number[reg.chorus_number] = reg unless registrations_by_number[reg.chorus_number]
+    end
+    aug24_rehearsal = Rehearsal.find_by_slug('2015-08-24')
+    aug31_rehearsal = Rehearsal.find_by_slug('2015-08-31')
+    csv = params[:csv].open
+    csv.each do |line|
+      fields = line.strip.split(',')
+      next if fields.length < 8
+      chorus_num = fields[0]
+      aug24 = fields[6]
+      aug31 = fields[7]
+      reg = registrations_by_number[chorus_num]
+      next if reg == nil
+      performer = reg.performer
+      AttendanceRecord.create(
+        :performer => performer,
+        :rehearsal => aug24_rehearsal,
+        :present => aug24.length > 0
+      );
+      AttendanceRecord.create(
+        :performer => performer,
+        :rehearsal => aug31_rehearsal,
+        :present => aug31.length > 0
+      );
+    end
+  end
 end
