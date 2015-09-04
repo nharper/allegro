@@ -3,4 +3,5 @@ class Card < ActiveRecord::Base
 
   validates :active, inclusion: [true, false]
   validates :card_id, presence: true
+  validates :card_id, uniqueness: true
 end

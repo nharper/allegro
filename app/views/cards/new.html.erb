@@ -1,9 +1,14 @@
+<% if flash[:error] %>
+  <div class="error"><%= flash[:error] %></div>
+<% end %>
+<p>View <%= link_to 'performers with cards', cards_path %></p>
 <h2>Performers without cards</h2>
 <table>
-<% @performers.each do |performer| %>
+<% @registrations.each do |registration| %>
   <tr>
-    <%= form_for(Card.new(:performer => performer)) do |f| %>
-    <th><%= performer.name %></th>
+    <%= form_for(Card.new(:performer => registration.performer)) do |f| %>
+    <td><%= registration.chorus_number %></td>
+    <td><%= registration.performer.name %></td>
     <td>
       <%= f.text_field :card_id %>
       <%= f.hidden_field :performer_id %>

@@ -1,9 +1,14 @@
+<p>Names are alphabetic by first name</p>
+<p>View <%= link_to 'performers without cards', new_card_path %></p>
 <table>
 <% @cards.each do |card| %>
   <tr>
     <td><%= card.performer.name %></td>
-    <td><%= link_to card.card_id, card_path(card) %></td>
-    <td><%= card.active %></td>
+    <td>
+      <%= form_for card, :method => :delete do |f| %>
+        <%= f.submit 'Delete' %>
+      <% end %>
+    </td>
   </tr>
 <% end %>
 </table>
