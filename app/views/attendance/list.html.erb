@@ -7,13 +7,13 @@
       <th><%= rehearsal.date.strftime('%-m-%d') %></th>
     <% end -%>
   </tr>
-  <% @performers.each do |performer| -%>
+  <% @registrations.each do |registration| -%>
     <tr>
-    <td></td>
-    <td><%= performer.name %></td>
+    <td><%= registration.chorus_number %></td>
+    <td><%= registration.performer.name %></td>
     <% @rehearsals.each do |rehearsal| -%>
       <%
-        record = @records[performer.id][rehearsal.id] || AttendanceRecord.new
+        record = @records[registration.performer.id][rehearsal.id] || AttendanceRecord.new
         note = record.notes
         case record.present
         when true

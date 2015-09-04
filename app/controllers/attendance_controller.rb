@@ -3,11 +3,13 @@ class AttendanceController < ApplicationController
   end
 
   def list
-    @performers = Concert.current.performers
+    @registrations = Registration.current.order(:chorus_number)
     @rehearsals = Concert.current.rehearsals
+    @performers = []
     @records = {}
-    @performers.each do |performer|
-      @records[performer.id] = {}
+    @registrations.each do |registration|
+      @performers << registration.performer
+      @records[registration.performer.id] = {}
     end
     AttendanceRecord.where(:performer => @performers, :rehearsal => @rehearsals).each do |record|
       @records[record.performer.id][record.rehearsal.id] = record
