@@ -74,6 +74,11 @@ a {
   padding-left: 0;
 }
 
+.login-providers li {
+  margin: 1em;
+  display: block;
+}
+
 .login-providers li a {
   padding: 0.5em;
   background-color: #757575;
@@ -81,6 +86,7 @@ a {
   box-shadow: 0 0 8px 2px #ccc;
   color: white;
   text-decoration: none;
+  display: inline-block;
 }
 
 .login-providers li a:hover {
