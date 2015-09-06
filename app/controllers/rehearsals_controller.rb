@@ -143,8 +143,8 @@ class RehearsalsController < ApplicationController
       record = AttendanceRecord.where(:performer_id => performer_id, :rehearsal => @rehearsal).first_or_initialize
       if status == 'present' || status == 'absent'
         record.present = (status == 'present')
+        record.save!
       end
-      record.save!
     end
     redirect_to raw_attendance_rehearsal_path(@rehearsal, @path_params)
   end
