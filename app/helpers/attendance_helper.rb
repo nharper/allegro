@@ -2,10 +2,10 @@ module AttendanceHelper
   def record_tag(tag_name, record)
     case record.present
     when true
-      symbol = '✓'
+      symbol = "\u2713"
       display_class = 'present'
     when false
-      symbol = '✗'
+      symbol = "\u2717"
       display_class = 'absent'
     else
       symbol = '?'
