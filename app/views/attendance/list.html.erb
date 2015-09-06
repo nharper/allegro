@@ -4,7 +4,7 @@
     <th>#</th>
     <th>Performer</th>
     <% @rehearsals.each do |rehearsal| -%>
-      <th><%= rehearsal.date.strftime('%-m-%d') %></th>
+      <th><%= rehearsal.local_date.strftime('%-m-%d') %></th>
     <% end -%>
   </tr>
   <% @registrations.each do |registration| -%>
