@@ -14,27 +14,8 @@
     <% @rehearsals.each do |rehearsal| -%>
       <%
         record = @records[registration.performer.id][rehearsal.id] || AttendanceRecord.new
-        note = record.notes
-        case record.present
-        when true
-          symbol = '✓'
-          display_class = 'present'
-        when false
-          symbol = '✗'
-          display_class = 'absent'
-        when nil
-          symbol = '?'
-          display_class = 'unknown'
-        end
-        if note
-          display_class += ' note'
-        end
-        attrs = {:class => ['record', display_class]}
-        if note
-          attrs[:title] = note
-        end
-      -%>
-      <%= content_tag('td', attrs) {symbol} -%>
+      %>
+      <%= record_tag('td', record) %>
     <% end -%>
     </tr>
   <% end -%>

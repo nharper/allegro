@@ -75,8 +75,12 @@ class RehearsalsController < ApplicationController
   def raw_attendance
     # TODO(nharper): Check that @rehearsal is not nil
     @rehearsal = Rehearsal.find_by_slug(params['id'])
+    @path_params = {}
+    @path_params['section'] = params[:section] if params[:section]
 
-    @registrations = @rehearsal.registrations(params[:section])
+    # Load the registrations and performers who should be at this rehearsal
+    @registrations = @rehearsal.registrations(params[:section]).includes(:performer)
+
     @records = {}
     @registrations.each do |registration|
       @records[registration.performer.id] = {
@@ -87,9 +91,40 @@ class RehearsalsController < ApplicationController
         'checkout' => [],
       }
     end
+    # Group the raw records by performer, and then by kind of raw record.
     RawAttendanceRecord.where(:rehearsal => @rehearsal).includes(:performer).each do |record|
       next unless @records[record.performer.id]
       @records[record.performer.id][record.kind] << record
+    end
+
+    # Calculate final records for each performer based on the raw records
+    @records.each do |performer_id, record_groups|
+      # TODO(nharper): Look up existing attendance records and use them instead.
+      final_record = AttendanceRecord.where(:performer_id => performer_id, :rehearsal => @rehearsal).first_or_initialize
+      final_record.performer_id = performer_id
+      final_record.rehearsal = @rehearsal
+      checkin = false
+      pre_break = false
+      post_break = false
+      checkout = false
+      record_groups.each do |type,records|
+        records.each do |record|
+          final_record.raw_attendance_records << record
+          if record.kind == :checkin && record.timestamp < @rehearsal.date + 45.minutes
+            checkin = true
+          elsif record.kind == :checkout && record.timestamp > @rehearsal.end_date - 45.minutes
+            checkout = true
+          elsif record.kind == :pre_break
+            pre_break = pre_break || record.present
+          elsif record.kind == :post_break
+            post_break = post_break || record.present
+          end
+        end
+      end
+      if final_record.present == nil
+        final_record.present = (checkin || pre_break) && (checkout || post_break)
+      end
+      record_groups['final'] = final_record
     end
 
     @breadcrumbs = [
@@ -97,6 +132,21 @@ class RehearsalsController < ApplicationController
       [@rehearsal.display_name, rehearsal_path(@rehearsal)],
       'View Attendance',
     ]
+  end
+
+  def reconcile
+    @rehearsal = Rehearsal.find_by_slug(params['id'])
+    @path_params = {}
+    @path_params['section'] = params[:section] if params[:section]
+
+    params[:performer].each do |performer_id, status|
+      record = AttendanceRecord.where(:performer_id => performer_id, :rehearsal => @rehearsal).first_or_initialize
+      if status == 'present' || status == 'absent'
+        record.present = (status == 'present')
+      end
+      record.save!
+    end
+    redirect_to raw_attendance_rehearsal_path(@rehearsal, @path_params)
   end
 
   def checkin
