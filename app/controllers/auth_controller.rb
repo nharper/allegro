@@ -89,6 +89,13 @@ class AuthController < ApplicationController
     redirect_to login_auth_index_path
   end
 
+  def dev_login
+    if Rails.env.development?
+      session[:user_id] = 1
+    end
+    redirect_to '/'
+  end
+
  private
   def id_from_code(code, provider)
     token_uri = URI(provider[:token_url])
