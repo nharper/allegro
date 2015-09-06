@@ -165,7 +165,11 @@ function runCheckin() {
 
   document.getElementById('upload').addEventListener('click', function() {
     console.log(checkins);
-    var request_data = JSON.stringify(checkins.map(function(checkin) {
+    var request_data = JSON.stringify(checkins.filter(function(checkin) {
+      if (checkin.performer) {
+        return checkin;
+      }
+    }).map(function(checkin) {
       return {'performer': checkin.performer.id, 'time': checkin.time};
     }));
     var csrf_token = document.getElementsByTagName('meta')['csrf-token'].content;
