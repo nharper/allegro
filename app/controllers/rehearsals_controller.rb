@@ -151,6 +151,17 @@ class RehearsalsController < ApplicationController
 
   def checkin
     @rehearsal = Rehearsal.find_by_slug(params[:id])
+    @manifest_path = checkin_manifest_rehearsal_path(@rehearsal)
+    render :layout => 'offline'
+  end
+
+  def checkin_manifest
+    # TODO(nharper): consider reducing scope here?
+    @performers = Performer.all
+    # Try to make sure that the client doesn't cache the manifest. This may be
+    # overkill, but it works for now.
+    expires_now
+    render :layout => false, :content_type => 'text/cache-manifest'
   end
 
   def update_checkin

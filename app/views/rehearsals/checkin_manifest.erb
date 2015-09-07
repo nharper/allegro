@@ -1,0 +1,22 @@
+CACHE MANIFEST
+# javascripts
+<% javascript_paths('application').each do |js_path| %>
+<%= js_path %>
+<% end %>
+
+# stylesheets
+<% stylesheet_paths('application').each do |css_path| %>
+<%= css_path %>
+<% end %>
+
+# xhr data fetches
+<%= cards_path(:format => :json) %>
+<%= performers_path(:format => :json) %>
+
+# Photos
+<% @performers.each do |performer| %>
+<%= photo_performer_path(performer) %>
+<% end %>
+
+NETWORK:
+*
