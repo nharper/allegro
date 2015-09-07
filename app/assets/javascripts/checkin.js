@@ -134,8 +134,8 @@ CheckinDisplay.prototype.add = function(checkin) {
 function format_time(time) {
   var h = time.getHours();
   var m = time.getMinutes();
-  var pm = h > 12;
-  h = h % 12;
+  var pm = h >= 12;
+  h = ((h - 1) % 12) + 1;
   m = m < 10 ? "0" + m : m;
   return h + ":" + m + (pm ? " PM" : " AM");
 }
