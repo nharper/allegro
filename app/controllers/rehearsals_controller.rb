@@ -166,7 +166,7 @@ class RehearsalsController < ApplicationController
 
   def update_checkin
     # TODO(nharper): This is pretty gross - still not checking that @rehearsal
-    # is not nil; kind of record is hardcoded (as checkin); no consideration
+    # is not nil; no consideration
     # around deduplication (although probably not needed for this type);
     # timestamp is in who knows what timezone (ditto for Rehearsal object
     # timestamps).
@@ -176,8 +176,8 @@ class RehearsalsController < ApplicationController
         :performer_id => checkin['performer'],
         :rehearsal => @rehearsal,
         :present => true,
-        :kind => RawAttendanceRecord.kinds[:checkin],
-        :timestamp => checkin['time'],
+        :kind => RawAttendanceRecord.kinds[checkin['type']],
+        :timestamp => Time.at(checkin['time'].to_i / 1000).to_datetime,
       )
     end
     head :ok, content_type: 'text/html'

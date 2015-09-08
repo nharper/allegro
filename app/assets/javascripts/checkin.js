@@ -22,30 +22,51 @@ function Numpad(root, enter_callback) {
   this.callback_ = enter_callback;
   this.value_ = '';
   this.display_dom_node_ = root.querySelector("#numpad-input");
-
-  for (var i = 0; i < 10; i++) {
-    var key = this.root_.querySelector("#n" + i);
-    key.addEventListener('click', function(i) {
-      this.value_ += i;
-      this.updateDisplay();
-    }.bind(this, i));
-  }
-  this.root_.querySelector("#delete").addEventListener('click', function(e) {
-    this.value_ = this.value_.slice(0, -1);
-    this.updateDisplay();
-  }.bind(this));
-  this.root_.querySelector("#enter").addEventListener('click', function(e) {
-    this.callback_(this.value_);
-    this.value_ = '';
-    this.updateDisplay();
-  }.bind(this));
+  this._buildDisplay();
 };
 
 Numpad.prototype.updateDisplay = function() {
   this.display_dom_node_.innerHTML = this.value_ ? this.value_ : "&nbsp;";
 };
 
-function PerformerStore() {
+Numpad.prototype._buildDisplay = function() {
+  for (var i = 1; i < 10; i++) {
+    this._addNum(i);
+  }
+  var del = document.createElement('span');
+  del.classList.add('num');
+  del.id = 'delete';
+  del.appendChild(document.createTextNode('⌫'));
+  del.addEventListener('click', function() {
+    this.value_ = this.value_.slice(0, -1);
+    this.updateDisplay();
+  }.bind(this));
+  this.root_.appendChild(del);
+  this._addNum('0');
+  var enter = document.createElement('span');
+  enter.classList.add('num');
+  enter.id = 'enter';
+  enter.appendChild(document.createTextNode('⏎'));
+  enter.addEventListener('click', function() {
+    this.callback_(this.value_);
+    this.value_ = '';
+    this.updateDisplay();
+  }.bind(this));
+  this.root_.appendChild(enter);
+}
+
+Numpad.prototype._addNum = function(num) {
+  var key = document.createElement('span');
+  key.classList.add('num');
+  key.appendChild(document.createTextNode(num));
+  key.addEventListener('click', function(num) {
+    this.value_ += num;
+    this.updateDisplay();
+  }.bind(this, num));
+  this.root_.appendChild(key);
+}
+
+function PerformerStore(loaded_callback) {
   this.cards_ = {};
   this.by_id_ = {};
   this.by_chorus_number_ = {};
@@ -61,19 +82,24 @@ function PerformerStore() {
   card_request.send();
 
   var performers_request = new XMLHttpRequest();
-  performers_request.onload = function(p) {
+  performers_request.onload = function(callback, p) {
     var performers = JSON.parse(p.target.responseText);
     performers.forEach(function(performer) {
       this.by_id_[performer.id] = performer;
       this.by_chorus_number_[performer.chorus_number] = performer;
     }.bind(this));
-  }.bind(this);
+    callback();
+  }.bind(this, loaded_callback);
   performers_request.open('GET', '/performers.json', true);
   performers_request.send();
 }
 
 PerformerStore.prototype.lookupPerformer = function(id) {
   return this.by_id_[this.cards_[id]];
+}
+
+PerformerStore.prototype.lookupById = function(id) {
+  return this.by_id_[id];
 }
 
 PerformerStore.prototype.lookupByChorusNumber = function(num) {
@@ -140,20 +166,108 @@ function format_time(time) {
   return h + ":" + m + (pm ? " PM" : " AM");
 }
 
-function Checkin(performer, time) {
+function Checkin(performer, time, type) {
   this.performer = performer;
   this.time = time;
+  this.type = type;
 }
 
-function runCheckin() {
-  checkins = [];
-  var store = new PerformerStore();
+/* Stores checkin records, and persists them to local storage.
+ */
+function Checkins(performer_store) {
+  this.checkins_ = [];
+  this.checkin_type_ = 'checkin';
+  this.performer_store_ = performer_store;
+  // TODO(nharper): consider using a different storage key?
+  this.storage_key_ = window.location.pathname;
+  this._loadFromLocalStorage();
+}
+
+Checkins.prototype.setCheckinType = function(type) {
+  this.checkin_type_ = type;
+}
+
+Checkins.prototype.addCheckin = function(checkin) {
+  if (!checkin.performer) {
+    return;
+  }
+  checkin.type = this.checkin_type_;
+  this.checkins_.push(checkin);
+  this._updateLocalStorage();
+}
+
+Checkins.prototype._updateLocalStorage = function() {
+  window.localStorage.setItem(this.storage_key_, this.serialize());
+}
+
+Checkins.prototype._clear = function() {
+  window.localStorage.removeItem(this.storage_key_);
+  this.checkins_ = [];
+  // TODO(nharper): view will also want to know that data is cleared. Is caller
+  // going to relay this call to the view, or is this going to propogate it
+  // somehow?
+}
+
+Checkins.prototype._loadFromLocalStorage = function(callback) {
+  try {
+    var checkins = JSON.parse(window.localStorage.getItem(this.storage_key_));
+    for (i in checkins) {
+      console.log(checkins[i].performer);
+      var checkin = new Checkin(
+          this.performer_store_.lookupById(checkins[i].performer),
+          new Date(checkins[i].time),
+          checkins[i].type);
+      this.checkins_.push(checkin);
+      if (callback) {
+        callback(checkin);
+      }
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
+Checkins.prototype.serialize = function() {
+  return JSON.stringify(this.checkins_.map(function(checkin) {
+    return {
+      'performer': checkin.performer.id,
+      'time': checkin.time.getTime(),
+      'type': checkin.type,
+    };
+  }));
+}
+
+Checkins.prototype.saveToServer = function() {
+  var request_data = this.serialize();
+  var csrf_token = document.getElementsByTagName('meta')['csrf-token'].content;
+  var post_request = new XMLHttpRequest();
+  post_request.open('POST', window.location.pathname, true);
+  post_request.setRequestHeader('Content-type', 'application/json');
+  post_request.setRequestHeader('X-CSRF-Token', csrf_token);
+  post_request.onreadystatechange = function(e) {
+    var request = e.target;
+    if (request.readyState != 4) {
+      return;
+    }
+    if (request.status != 200) {
+      // TODO(nharper): Somehow alert that request failed.
+      return;
+    }
+    // TODO(nharper): this._clear needs to clear display as well.
+    this._clear();
+  }.bind(this);
+  post_request.send(request_data);
+}
+
+function performerStoreLoaded() {
+  checkins = new Checkins(store);
   var display = new CheckinDisplay(document.getElementById('checkin-list'));
   var callback = function(lookup_callback, str) {
     var performer = lookup_callback(str);
     var checkin = new Checkin(performer, new Date());
     display.add(checkin);
-    checkins.push(checkin);
+    checkins.addCheckin(checkin);
   };
   var k = new KeyboardListener(
       callback.bind(this, store.lookupPerformer.bind(store)));
@@ -163,22 +277,20 @@ function runCheckin() {
   displayTime();
   setInterval(displayTime, 5000);
 
-  document.getElementById('upload').addEventListener('click', function() {
-    console.log(checkins);
-    var request_data = JSON.stringify(checkins.filter(function(checkin) {
-      if (checkin.performer) {
-        return checkin;
-      }
-    }).map(function(checkin) {
-      return {'performer': checkin.performer.id, 'time': checkin.time};
-    }));
-    var csrf_token = document.getElementsByTagName('meta')['csrf-token'].content;
-    var post_request = new XMLHttpRequest();
-    post_request.open('POST', window.location.pathname, true);
-    post_request.setRequestHeader('Content-type', 'application/json');
-    post_request.setRequestHeader('X-CSRF-Token', csrf_token);
-    post_request.send(request_data);
+  document.getElementById('upload').addEventListener('click', checkins.saveToServer.bind(checkins));
+
+  document.getElementById('type').addEventListener('click', function(e) {
+    var checkin_type = 'checkin';
+    if (e.target.innerText == 'checkin') {
+      checkin_type = 'checkout';
+    }
+    e.target.innerText = checkin_type;
+    checkins.setCheckinType(checkin_type);
   });
+}
+
+function runCheckin() {
+  store = new PerformerStore(performerStoreLoaded);
 }
 
 function displayTime() {

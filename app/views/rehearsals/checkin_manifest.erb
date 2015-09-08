@@ -13,6 +13,8 @@ CACHE MANIFEST
 <%= cards_path(:format => :json) %>
 <%= performers_path(:format => :json) %>
 
+# TODO(nharper): change photo paths to be based on content so that the contents
+# of this file change whenver a photo changes.
 # Photos
 <% @performers.each do |performer| %>
 <%= photo_performer_path(performer) %>

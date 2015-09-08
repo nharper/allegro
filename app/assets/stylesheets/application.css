@@ -96,6 +96,10 @@ a {
 
 /* styles for checkin instructions */
 /* TODO(nharper): name conflict with .time below (in cards) */
+#checkin {
+  font-size: 20pt;
+}
+
 .time {
   float: right;
 }
@@ -144,9 +148,14 @@ span.num {
   color: #fff;
 }
 
-span.num, div#numpad-input {
-  font-size: 120%;
+span.num {
   font-weight: bold;
+}
+
+div#numpad-input {
+  font-weight: bold;
+  font-size: 150%;
+  text-align: center;
 }
 
 span.num#delete {
