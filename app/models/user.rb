@@ -2,8 +2,11 @@ class User < ActiveRecord::Base
   belongs_to :performer
   has_many :user_oauth2_accounts
 
-  validates :performer_id, :presence => true
-  validates :performer_id, :uniqueness => true
+  # TODO(nharper): Rewrite these. I'm ok with users not belonging to a
+  # performer; e.g. role account or staff. I probably want to validate that
+  # performer_id is unique if present (but multiple NULLs are allowed).
+  # validates :performer_id, :presence => true
+  # validates :performer_id, :uniqueness => true
 
   def fill_login_token
     # Replace '+' and '/' in the base64 encoding with '-' and '_' to use the url
