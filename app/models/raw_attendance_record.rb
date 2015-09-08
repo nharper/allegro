@@ -9,7 +9,11 @@ class RawAttendanceRecord < ActiveRecord::Base
   validates_presence_of :rehearsal
   validates_presence_of :kind
   validates :present, :inclusion => {:in => [true, false]}
-  validates_uniqueness_of :performer, :scope => [:rehearsal, :kind]
+  # TODO(nharper):
+  # I still want to enforce uniqueness for pre/post break, but I don't want to
+  # enforce uniqueness for checkin/out, so the following line is commented out
+  # for now (until I write the proper validation).
+  # validates_uniqueness_of :performer, :scope => [:rehearsal, :kind]
   validate :must_have_timestamp_for_checkin
 
   def to_s
