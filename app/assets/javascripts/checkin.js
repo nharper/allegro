@@ -180,7 +180,18 @@ function Checkins(performer_store) {
   this.performer_store_ = performer_store;
   // TODO(nharper): consider using a different storage key?
   this.storage_key_ = window.location.pathname;
+
+  this.listeners_ = {
+    'load': [function(e){console.log('load');console.log(e)}],
+    'error': [function(e){console.log('error');console.log(e)}],
+  };
   this._loadFromLocalStorage();
+}
+
+Checkins.prototype._callListeners = function(eventType, event) {
+  this.listeners_[eventType].forEach(function(listener) {
+    listener(event);
+  }.bind(this));
 }
 
 Checkins.prototype.setCheckinType = function(type) {
@@ -242,22 +253,37 @@ Checkins.prototype.saveToServer = function() {
   var request_data = this.serialize();
   var csrf_token = document.getElementsByTagName('meta')['csrf-token'].content;
   var post_request = new XMLHttpRequest();
-  post_request.open('POST', window.location.pathname, true);
-  post_request.setRequestHeader('Content-type', 'application/json');
-  post_request.setRequestHeader('X-CSRF-Token', csrf_token);
-  post_request.onreadystatechange = function(e) {
+  post_request.addEventListener('load', function(e) {
+    if (e.target.status == 200) {
+      this._callListeners('load', e);
+    } else {
+      this._callListeners('error', e);
+    }
+  }.bind(this));
+  post_request.addEventListener('error', function(e) {
+    this._callListeners('error', e);
+  }.bind(this));
+
+  var csrf_token_request = new XMLHttpRequest();
+  var csrf_token = '';
+  csrf_token_request.addEventListener('load', function(e) {
     var request = e.target;
-    if (request.readyState != 4) {
-      return;
-    }
+    // Check for status == 302 (redirect) - means need to log in again.
     if (request.status != 200) {
-      // TODO(nharper): Somehow alert that request failed.
-      return;
+      this._callListeners('error', e);
     }
-    // TODO(nharper): this._clear needs to clear display as well.
-    this._clear();
-  }.bind(this);
-  post_request.send(request_data);
+    csrf_token = request.responseText;
+
+    post_request.open('POST', window.location.pathname, true);
+    post_request.setRequestHeader('Content-type', 'application/json');
+    post_request.setRequestHeader('X-CSRF-Token', csrf_token);
+    post_request.send(request_data);
+  }.bind(this));
+  csrf_token_request.addEventListener('error', function(e) {
+    this._callListeners('error', e);
+  }.bind(this));
+  csrf_token_request.open('GET', '/auth/token', true);
+  csrf_token_request.send();
 }
 
 function performerStoreLoaded() {
