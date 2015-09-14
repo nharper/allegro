@@ -110,13 +110,13 @@ class RehearsalsController < ApplicationController
       record_groups.each do |type,records|
         records.each do |record|
           final_record.raw_attendance_records << record
-          if record.kind == :checkin && record.timestamp < @rehearsal.date + 45.minutes
+          if record.kind == 'checkin' && record.timestamp < @rehearsal.date + 45.minutes
             checkin = true
-          elsif record.kind == :checkout && record.timestamp > @rehearsal.end_date - 45.minutes
+          elsif record.kind == 'checkout' && record.timestamp > @rehearsal.end_date - 45.minutes
             checkout = true
-          elsif record.kind == :pre_break
+          elsif record.kind == 'pre_break'
             pre_break = pre_break || record.present
-          elsif record.kind == :post_break
+          elsif record.kind == 'post_break'
             post_break = post_break || record.present
           end
         end
