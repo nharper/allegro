@@ -2,7 +2,7 @@ require 'net/http'
 require 'json'
 
 class AuthController < ApplicationController
-  skip_before_filter :require_login
+  skip_before_filter :require_login, :except => [:token]
 
   # The |login| controller is used to serve up a view presenting the end-user
   # with options for logging in. The same view is also used for a new user
@@ -87,6 +87,10 @@ class AuthController < ApplicationController
   def logout
     reset_session
     redirect_to login_auth_index_path
+  end
+
+  def token
+    render :plain => form_authenticity_token
   end
 
   def dev_login

@@ -100,6 +100,7 @@ Allegro::Application.routes.draw do
       get 'login'
       get 'error'
       get 'logout'
+      get 'token'
       if Rails.env.development?
         get 'dev_login'
       end
