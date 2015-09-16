@@ -1,5 +1,7 @@
 class AttendanceController < ApplicationController
   def home
+    @next_rehearsal = Rehearsal.where('date > ?', DateTime.now).order('date ASC').first
+    @prev_rehearsal = Rehearsal.where('date < ?', DateTime.now).order('date DESC').first
   end
 
   def list

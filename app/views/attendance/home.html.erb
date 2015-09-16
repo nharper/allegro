@@ -1,5 +1,19 @@
+<h2>Navigation</h2>
 <ul>
   <li><%= link_to 'Upcoming rehearsals', rehearsals_path %></li>
+  <li><%= link_to 'All rehearsals', all_rehearsals_path %></li>
   <li><%= link_to 'View attendance', list_attendance_path %></li>
   <li><%= link_to 'Register cards', new_card_path %></li>
 </ul>
+<% if @prev_rehearsal or @next_rehearsal %>
+<h2>Useful links?</h2>
+<ul>
+  <% if @next_rehearsal %>
+    <li><%= link_to "Next rehearsal (#{@next_rehearsal.display_name})",
+            rehearsal_path(@next_rehearsal) %></li>
+  <% end %>
+  <% if @prev_rehearsal %>
+    <li><%= link_to "Previous rehearsal (#{@prev_rehearsal.display_name})",
+            rehearsal_path(@prev_rehearsal) %></li>
+  <% end %>
+<% end %>
