@@ -1,7 +1,7 @@
 class RehearsalsController < ApplicationController
   def index
     @breadcrumbs = ['Rehearsals']
-    @rehearsals = Rehearsal.where('date > ?', DateTime.now)
+    @rehearsals = Rehearsal.where('date > ?', DateTime.now).order('date ASC')
   end
 
   def all
