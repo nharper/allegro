@@ -1,14 +1,53 @@
-<p>Names are alphabetic by first name</p>
-<p>View <%= link_to 'performers without cards', new_card_path %></p>
-<table>
-<% @cards.each do |card| %>
-  <tr>
-    <td><%= card.performer.name %></td>
-    <td>
-      <%= form_for card, :method => :delete do |f| %>
-        <%= f.submit 'Delete' %>
-      <% end %>
-    </td>
-  </tr>
+<%# TODO(nharper): Clean up duplication here:
+    - (almost) the same block for performers with and without registrations
+    - applying inline display style to forms
+  %>
+<% if flash[:error] %>
+  <div class="error"><%= flash[:error] %></div>
 <% end %>
-</table>
+<dl>
+  <% @registrations.each do |registration| %>
+    <dt><%= registration.chorus_number %>: <%= registration.performer.name %></dt>
+    <% cards = @cards[registration.performer.id] %>
+    <% if cards %>
+      <% cards.each do |card| %>
+        <dd>
+          Card created at <%= card.created_at %>.
+          <%= form_for card, :method => :delete, :html => {:style => 'display: inline;'} do |f| %>
+            <%= f.submit 'Delete' %>
+          <% end %>
+        </dd>
+      <% end %>
+    <% end %>
+    <dd>
+      New card:
+      <%= form_for(Card.new(:performer => registration.performer), :html => {:style => 'display: inline;'}) do |f| %>
+        <%= f.text_field :card_id %>
+        <%= f.hidden_field :performer_id %>
+        <%= f.submit %>
+      <% end %>
+    </dd>
+  <% end %>
+  <% @other_performers.each do |performer| %>
+    <dt><%= performer.name %></dt>
+    <% cards = @cards[performer.id] %>
+    <% if cards %>
+      <% cards.each do |card| %>
+        <dd>
+          Card created at <%= card.created_at %>.
+          <%= form_for card, :method => :delete, :html => {:style => 'display: inline;'} do |f| %>
+            <%= f.submit 'Delete' %>
+          <% end %>
+        </dd>
+      <% end %>
+    <% end %>
+    <dd>
+      New card:
+      <%= form_for(Card.new(:performer => performer), :html => {:style => 'display: inline;'}) do |f| %>
+        <%= f.text_field :card_id %>
+        <%= f.hidden_field :performer_id %>
+        <%= f.submit %>
+      <% end %>
+    </dd>
+  <% end %>
+</dl>
