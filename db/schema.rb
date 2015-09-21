@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150817005656) do
+ActiveRecord::Schema.define(version: 20150921034151) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id", limit: 4
@@ -60,10 +60,11 @@ ActiveRecord::Schema.define(version: 20150817005656) do
   add_index "oauth2_providers", ["slug"], name: "index_oauth2_providers_on_slug", unique: true, using: :btree
 
   create_table "performers", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.binary   "photo",      limit: 65535
+    t.string   "name",        limit: 255
+    t.binary   "photo",       limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "foreign_key", limit: 255
   end
 
   create_table "raw_attendance_records", force: :cascade do |t|
