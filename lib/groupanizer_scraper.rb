@@ -18,28 +18,31 @@ class GroupanizerScraper
     raise 'Login failed' unless logged_in?
   end
 
+  def roster
+    return active.merge(inactive).merge(alumni)
+  end
+
   def inactive
     path = '/g/members?field_full_name_value=&field_voice_part_tid=All&rid%5B%5D=256320132&field_titles_tid=All&field_skills_tid=All'
-    return members(path)
+    return members(path, :inactive)
   end
 
   def active
     path = '/g/members?field_full_name_value=&field_voice_part_tid=All&rid%5B%5D=4190371&field_titles_tid=All&field_skills_tid=All'
-    return members(path)
+    return members(path, :active)
   end
 
   def alumni
     path = '/g/members?field_full_name_value=&field_voice_part_tid=All&rid%5B%5D=8899772&field_titles_tid=All&field_skills_tid=All'
-    return members(path)
+    return members(path, :alumni)
   end
 
-  def members(path)
+  def members(path, status)
     has_next = true
     members = {}
 
     members_html = nil
     while has_next
-      puts "Fetching path: #{path}"
       members_resp = @http_conn.get(path, @headers)
       update_cookies(members_resp.get_fields('Set-Cookie'))
 
@@ -49,6 +52,7 @@ class GroupanizerScraper
         entry['img'] = row.at_css('img')['src']
         name_link = row.at_css('.views-field-field-full-name a')
         entry['name'] = name_link.content.strip.split(',').map{|n| n.strip}.reverse.join(' ')
+        entry['status'] = status
         entry['foreign_key'] = name_link['href']
         members[entry['name']] = entry
       end
@@ -67,7 +71,8 @@ class GroupanizerScraper
     first_name_index = headers.index("First name")
     last_name_index = headers.index("Last name")
     chorus_number_index = headers.index("Member ID")
-    if !first_name_index || !last_name_index || !chorus_number_index
+    voice_part_index = headers.index("Primary voice part")
+    if !first_name_index || !last_name_index || !chorus_number_index || !voice_part_index
       raise "Unable to find needed columns: Headers are #{headers}"
     end
     csv.each do |line|
@@ -77,36 +82,9 @@ class GroupanizerScraper
         raise "Name found in csv that wasn't scraped: #{name}"
       end
       entry['chorus_number'] = line[chorus_number_index]
+      entry['voice_part'] = line[voice_part_index]
     end
     return members
-  end
-
-  # XXX musetta
-  def roster
-    roster_resp = @http_conn.get('/rosters', @headers)
-    update_cookies(roster_resp.get_fields('Set-Cookie'))
-
-    roster_html = Nokogiri::HTML(roster_resp.body)
-    roster = []
-    roster_html.css('#roster .entry').each do |entry_dom|
-      data = entry_dom.at_css('.data')
-      entry = {}
-      entry['section'] = data.at_css('.section').content
-      entry['cn'] = data.at_css('.cn').content.to_i
-      entry['name'] = data.at_css('.name').content.strip
-      data.css('.item').each do |item|
-        children = item.css('span')
-        if children.size == 2 && children[0]['class'] == 'title'
-          entry[children[0].text.split(':')[0]] = children[1].text.strip
-        end
-      end
-      img = entry_dom.at_css('img.roster_photo')
-      entry['img'] = img['src']
-
-      roster.push(entry)
-    end
-
-    return roster
   end
 
   def scrape_path(path)
@@ -156,7 +134,6 @@ class GroupanizerScraper
     return login_resp['Location'] == 'https://sfgmc.groupanizer.com/g/dashboard'
   end
 
-  # XXX musetta
   def req_console(prompt, tty_echo=true)
     restore_echo = STDIN.echo?
     STDIN.echo = false unless tty_echo
@@ -167,7 +144,6 @@ class GroupanizerScraper
     return retval
   end
 
-  # XXX musetta
   def update_cookies(cookies)
     return unless cookies
     cookies.each do |cookie|
