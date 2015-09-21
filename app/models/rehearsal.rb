@@ -32,7 +32,7 @@ class Rehearsal < ActiveRecord::Base
   end
 
   def registrations(section = nil)
-    registrations = self.concert.registrations.includes(:performer).order(:chorus_number)
+    registrations = self.concert.registrations.where(:status => 'active').includes(:performer).order(:chorus_number)
     if section
       registrations = registrations.where(section: section)
     end

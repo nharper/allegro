@@ -11,6 +11,6 @@ class Registration < ActiveRecord::Base
   # string statuses with ints
 
   def self.current
-    return Concert.current.registrations.includes(:performer)
+    return Concert.current.registrations.where(:status => 'active').includes(:performer)
   end
 end
