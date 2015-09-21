@@ -180,6 +180,9 @@ function Checkins(performer_store) {
   this.performer_store_ = performer_store;
   // TODO(nharper): consider using a different storage key?
   this.storage_key_ = window.location.pathname;
+  // TODO(nharper): this is horribly hacky to get a feature in quickly. Change
+  // this when you rewrite this later.
+  this.status_node_ = document.getElementById('status');
 
   this.listeners_ = {
     'load': [function(e){console.log('load');console.log(e)}],
@@ -250,18 +253,22 @@ Checkins.prototype.serialize = function() {
 }
 
 Checkins.prototype.saveToServer = function() {
+  this.status_node_.innerHTML = "Starting upload";
   var request_data = this.serialize();
   var csrf_token = document.getElementsByTagName('meta')['csrf-token'].content;
   var post_request = new XMLHttpRequest();
   post_request.addEventListener('load', function(e) {
     if (e.target.status == 200) {
       this._callListeners('load', e);
+      this.status_node_.innerHTML = "Data uploaded successfully";
     } else {
       this._callListeners('error', e);
+      this.status_node_.innerHTML = "Error uploading data";
     }
   }.bind(this));
   post_request.addEventListener('error', function(e) {
     this._callListeners('error', e);
+    this.status_node_.innerHTML = "Error uploading data";
   }.bind(this));
 
   var csrf_token_request = new XMLHttpRequest();
@@ -269,8 +276,11 @@ Checkins.prototype.saveToServer = function() {
   csrf_token_request.addEventListener('load', function(e) {
     var request = e.target;
     // Check for status == 302 (redirect) - means need to log in again.
-    if (request.status != 200) {
+    if (request.status == 302) {
+      this.status_node_.innerHTML = "It looks like you need to log in again";
+    } else if (request.status != 200) {
       this._callListeners('error', e);
+      this.status_node_.innerHTML = "Error uploading data";
     }
     csrf_token = request.responseText;
 
@@ -281,6 +291,7 @@ Checkins.prototype.saveToServer = function() {
   }.bind(this));
   csrf_token_request.addEventListener('error', function(e) {
     this._callListeners('error', e);
+    this.status_node_.innerHTML = "Error uploading data";
   }.bind(this));
   csrf_token_request.open('GET', '/auth/token', true);
   csrf_token_request.send();
@@ -317,6 +328,14 @@ function performerStoreLoaded() {
 
 function runCheckin() {
   store = new PerformerStore(performerStoreLoaded);
+
+  var status_node = document.getElementById('status');
+  var observer = new MutationObserver(function(mutations) {
+    if (status_node.innerHTML != "") {
+      setInterval(function() { status_node.innerHTML = "" }, 10000);
+    }
+  });
+  observer.observe(status_node, {attributes: true, childList: true, characterData: true});
 }
 
 function displayTime() {
