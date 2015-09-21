@@ -1,3 +1,4 @@
+require 'groupanizer_scraper'
 require 'scraper'
 
 namespace :scrape do
@@ -5,6 +6,11 @@ namespace :scrape do
     scraper = MusettaScraper.new
     r = scraper.roster
     p r
+  end
+
+  task :test do
+    scraper = GroupanizerScraper.new
+    p scraper.active
   end
 
   task :update_roster => :environment do
