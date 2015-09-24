@@ -6,7 +6,7 @@ class AttendanceController < ApplicationController
 
   def list
     @registrations = Registration.current.order(:chorus_number)
-    @rehearsals = Concert.current.rehearsals
+    @rehearsals = Concert.current.rehearsals.order(:date)
     @performers = []
     @records = {}
     @registrations.each do |registration|
