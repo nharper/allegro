@@ -21,9 +21,9 @@
         rehearsal = @rehearsals[rehearsal_id]
         case rehearsal.attendance
         when 'required'
-          missed += 1 if record.present
+          missed += 1 unless record.present
         when 'optional'
-          sectionals += 1 unless record.present
+          sectionals += 1 if record.present
         end
       end
     %>
