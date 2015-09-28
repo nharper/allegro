@@ -15,6 +15,7 @@ module PerformersHelper
   end
 
   def section(section)
+    return '' if !section.respond_to?(:size) || section.size != 3
     sections = {
       'T1' => 'Tenor 1',
       'T2' => 'Tenor 2',
