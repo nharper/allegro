@@ -58,7 +58,7 @@ namespace :performers do
       }
 
       registration.section = voice_part_to_section[entry['voice_part']]
-      next if !registration.section
+      next if !registration.section && entry['status'] != :active
       registration.chorus_number = entry['chorus_number']
       registration.status = entry['status']
       registration.performer = performer
