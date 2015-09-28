@@ -3,20 +3,39 @@
   <tr>
     <th>#</th>
     <th>Performer</th>
-    <% @rehearsals.each do |rehearsal| -%>
+    <% @rehearsals.each do |_, rehearsal| -%>
       <th><%= rehearsal.local_date.strftime('%-m-%d') %></th>
     <% end -%>
+    <th>Missed Mondays</th>
+    <th>Sectionals Attended</th>
+    <th>Total Missed</th>
   </tr>
   <% @registrations.each do |registration| -%>
     <tr>
     <td><%= registration.chorus_number %></td>
     <td><%= registration.performer.name %></td>
-    <% @rehearsals.each do |rehearsal| -%>
+    <%
+      missed = 0
+      sectionals = 0
+      @records[registration.performer.id].each do |rehearsal_id, record|
+        rehearsal = @rehearsals[rehearsal_id]
+        case rehearsal.attendance
+        when 'required'
+          missed += 1 if record.present
+        when 'optional'
+          sectionals += 1 unless record.present
+        end
+      end
+    %>
+    <% @rehearsals.each do |_, rehearsal| -%>
       <%
         record = @records[registration.performer.id][rehearsal.id] || AttendanceRecord.new
       %>
       <%= record_tag('td', record) %>
     <% end -%>
+    <td><%= missed %></td>
+    <td><%= sectionals %></td>
+    <td><%= missed - sectionals %></td>
     </tr>
   <% end -%>
 </table>
