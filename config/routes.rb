@@ -67,6 +67,9 @@ Allegro::Application.routes.draw do
     end
   end
 
+  resources :registrations do
+  end
+
   # TODO(nharper): Most of these routes are incomplete right now
   resources :cards do
   end

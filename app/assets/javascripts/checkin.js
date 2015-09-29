@@ -90,7 +90,7 @@ function PerformerStore(loaded_callback) {
     }.bind(this));
     callback();
   }.bind(this, loaded_callback);
-  performers_request.open('GET', '/performers.json', true);
+  performers_request.open('GET', '/registrations.json', true);
   performers_request.send();
 }
 
