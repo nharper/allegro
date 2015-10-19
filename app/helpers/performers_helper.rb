@@ -13,22 +13,4 @@ module PerformersHelper
       end
     end.join
   end
-
-  def section(section)
-    return '' if !section.respond_to?(:size) || section.size != 3
-    sections = {
-      'T1' => 'Tenor 1',
-      'T2' => 'Tenor 2',
-      'B1' => 'Baritone',
-      'B2' => 'Bass',
-    }
-    divisi = {
-      'L' => 'Lower ',
-      'U' => 'Upper ',
-    }
-    full_section = sections[section.slice(0,2)];
-    diviso = divisi[section[2]];
-    return section unless full_section and diviso
-    return diviso + full_section
-  end
 end

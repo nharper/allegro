@@ -65,18 +65,8 @@ class PerformersController < ApplicationController
       if registration == nil
         registration = Registration.new
       end
-      voice_part_to_section = {
-        'Upper Tenor 1' => 'T1U',
-        'Lower Tenor 1' => 'T1L',
-        'Upper Tenor 2' => 'T2U',
-        'Lower Tenor 2' => 'T2L',
-        'Upper Baritone' => 'B1U',
-        'Lower Baritone' => 'B1L',
-        'Upper Bass' => 'B2U',
-        'Lower Bass' => 'B2L'
-      }
 
-      registration.section = voice_part_to_section[entry['voice_part']]
+      registration.full_section = entry['voice_part']
       next if !registration.section # && entry['status'] != :active
       registration.chorus_number = entry['chorus_number']
       registration.status = entry['status']

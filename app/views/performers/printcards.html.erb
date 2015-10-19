@@ -60,7 +60,7 @@ div.printable_card p.name {
 <% @registrations.each do |registration| -%>
 <div class="printable_card">
   <p class="name"><%= name_upcase(registration.performer.name).gsub('-', "\u2011") %></p>
-  <p><%= section(registration.section).upcase %></p>
+  <p><%= (registration.full_section || '').upcase %></p>
   <p><%= registration.chorus_number %></p>
 </div>
 <%- end -%>
