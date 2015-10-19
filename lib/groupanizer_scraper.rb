@@ -96,6 +96,48 @@ class GroupanizerScraper
     return members
   end
 
+  def self.parse_csv(data)
+    csv = CSV::parse(data)
+    headers = csv.shift
+    first_name_index = headers.index("First name")
+    last_name_index = headers.index("Last name")
+    chorus_number_index = headers.index("Member ID")
+    voice_part_index = headers.index("Voice part")
+    uid_index = headers.index("UID")
+    roles_index = headers.index("Roles")
+    if !first_name_index ||
+        !last_name_index ||
+        !chorus_number_index ||
+        !voice_part_index ||
+        !uid_index ||
+        !roles_index
+      raise "Unable to find all needed columns: Headers are #{headers}"
+    end
+    members = {}
+    csv.each do |line|
+      entry = {}
+      entry['foreign_key'] = "/user/#{line[uid_index]}"
+      entry['name'] = line[first_name_index].strip + ' ' + line[last_name_index].strip
+      entry['chorus_number'] = line[chorus_number_index]
+      entry['voice_part'] = line[voice_part_index]
+      
+      roles = line[roles_index].split(',')
+      if roles.index('Alumni')
+        entry['status'] = :alumni
+      elsif roles.index('Inactive Member')
+        entry['status'] = :inactive
+      elsif roles.index('Member')
+        entry['status'] = :active
+      else
+        puts "Skipping entry: #{entry}"
+        next
+      end
+
+      members[entry['foreign_key']] = entry
+    end
+    return members
+  end
+
   def scrape_path(path)
     path_resp = @http_conn.get(path, @headers)
 

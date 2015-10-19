@@ -1,0 +1,9 @@
+<p>
+To import data from groupanizer, download the csv from
+<a href="https://sfgmc.groupanizer.com/gs_member_export_csv">here</a>,
+and then upload the file to this form.
+</p>
+<%= form_tag import_performers_path, multipart: true do |f| %>
+  <%= file_field_tag 'csv' %>
+  <%= submit_tag %>
+<% end %>

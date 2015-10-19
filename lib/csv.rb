@@ -1,6 +1,6 @@
 module CSV
   def self.parse(input)
-    lines = input.split("\r\n")
+    lines = input.split(/[\r\n]/)
     out = []
     lines.each do |line|
       quoted = false
