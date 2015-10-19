@@ -37,6 +37,15 @@ class GroupanizerScraper
     return members(path, :alumni)
   end
 
+  # Returns a map from Performer name to a hash containing the following keys:
+  #   - name: the same name (First Last) used as the key for the map
+  #   - status: status passed into this function (generally one of :active,
+  #             :inactive, or :alumni)
+  #   - foreign_key: path on groupanizer to user account (e.g. "/user/17")
+  #   - img: url to profile picture
+  #   - chorus_number: chorus number string (should be e.g. "185", but might be
+  #                    something else if there's a data issue)
+  #   - voice_part: long-form voice part string (e.g. "Lower Tenor 1")
   def members(path, status)
     has_next = true
     members = {}
