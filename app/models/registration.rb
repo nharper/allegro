@@ -39,6 +39,14 @@ class Registration < ActiveRecord::Base
     self.section = FULL_TO_SECTION[section]
   end
 
+  def section_from_number
+    cn = self.chorus_number.to_i
+    return nil if cn < 100 || cn > 499
+    prefix = ['T1', 'T2', 'B1', 'B2'][cn / 100 - 1]
+    suffix = ['U', 'L'][cn % 2]
+    return prefix + suffix
+  end
+
   def self.current
     return Concert.current.registrations.where(:status => 'active').includes(:performer)
   end

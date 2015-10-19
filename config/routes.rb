@@ -70,6 +70,9 @@ Allegro::Application.routes.draw do
   end
 
   resources :registrations do
+    collection do
+      get 'audit'
+    end
   end
 
   # TODO(nharper): Most of these routes are incomplete right now

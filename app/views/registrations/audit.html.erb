@@ -1,0 +1,19 @@
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Status</th>
+    <th>Chorus Number</th>
+    <th>Section</th>
+    <th>Reason</th>
+  </tr>
+<% @bad_registrations.each do |reg| %>
+  <% reg, reason = reg %>
+  <tr>
+    <td><%= reg.performer.name %></td>
+    <td><%= reg.status %></td>
+    <td><%= reg.chorus_number %></td>
+    <td><%= reg.section%></td>
+    <td><%= reason %></td>
+  </tr>
+<% end %>
+</table>
