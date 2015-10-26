@@ -1,12 +1,12 @@
 class RehearsalsController < ApplicationController
   def index
     @breadcrumbs = ['Rehearsals']
-    @rehearsals = Rehearsal.where('date > ?', DateTime.now).order('date ASC')
+    @rehearsals = Rehearsal.where('start_date > ?', DateTime.now).order('start_date ASC')
   end
 
   def all
     @breadcrumbs = ['Rehearsals']
-    @rehearsals = Rehearsal.all.order('date DESC')
+    @rehearsals = Rehearsal.all.order('start_date DESC')
     render :action => :index
   end
 
@@ -110,7 +110,7 @@ class RehearsalsController < ApplicationController
       record_groups.each do |type,records|
         records.each do |record|
           final_record.raw_attendance_records << record
-          if record.kind == 'checkin' && record.timestamp < @rehearsal.date + 45.minutes
+          if record.kind == 'checkin' && record.timestamp < @rehearsal.start_date + 45.minutes
             checkin = true
           elsif record.kind == 'checkout' && record.timestamp > @rehearsal.end_date - 45.minutes
             checkout = true

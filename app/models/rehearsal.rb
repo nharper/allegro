@@ -5,9 +5,14 @@ class Rehearsal < ActiveRecord::Base
   before_validation :update_slug
   validates :slug, presence: true, uniqueness: true
   validates :concert, presence: true
-  validates :date, presence: true
+  validates :start_date, presence: true
 
   # TODO(nharper): add validations
+  # - start_grace_period positive (if present)
+  # - end_grace_period positive (if present)
+  # - end_date greater than start_date
+  # - end_date present
+  # - weight present (if attendance is required or optional)
 
   enum attendance: {required: 0, optional: 1, mandatory: 2}
 
@@ -15,12 +20,8 @@ class Rehearsal < ActiveRecord::Base
     return self.slug
   end
 
-  def end_date
-    return self.date + 3.hours
-  end
-
   def local_date
-    return ActiveSupport::TimeZone['Pacific Time (US & Canada)'].utc_to_local(self.date)
+    return ActiveSupport::TimeZone['Pacific Time (US & Canada)'].utc_to_local(self.start_date)
   end
 
   def display_name

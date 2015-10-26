@@ -21,9 +21,9 @@
         rehearsal = @rehearsals[rehearsal_id]
         case rehearsal.attendance
         when 'required'
-          missed += 1 unless record.present
+          missed += rehearsal.weight unless record.present
         when 'optional'
-          sectionals += 1 if record.present
+          sectionals += rehearsal.weight if record.present
         end
       end
     %>
