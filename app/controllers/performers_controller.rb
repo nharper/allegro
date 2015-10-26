@@ -68,7 +68,10 @@ class PerformersController < ApplicationController
 
       registration.full_section = entry['voice_part']
       next if !registration.section # && entry['status'] != :active
-      registration.chorus_number = entry['chorus_number']
+      cn = entry['chorus_number'].to_i
+      if cn > 100 && cn < 499
+        registration.chorus_number = entry['chorus_number']
+      end
       registration.status = entry['status']
       registration.performer = performer
       registration.concert = concert
