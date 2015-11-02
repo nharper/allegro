@@ -31,7 +31,7 @@
       <%
         record = @records[registration.performer.id][rehearsal.id] || AttendanceRecord.new
       %>
-      <%= record_tag('td', record) %>
+      <%= record_tag('td', record, rehearsal) %>
     <% end -%>
     <td><%= missed %></td>
     <td><%= sectionals %></td>
