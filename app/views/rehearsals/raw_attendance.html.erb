@@ -29,7 +29,7 @@
         final_record = @records[reg.performer.id]['final']
         select_options = ['', 'present', 'absent']
       %>
-      <%= record_tag('td', final_record) %>
+      <%= record_tag('td', final_record, @rehearsal) %>
       <td>
         <%= select "performer", reg.performer.id, options_for_select(select_options, final_record.present ? 'present' : 'absent') %>
       </td>
