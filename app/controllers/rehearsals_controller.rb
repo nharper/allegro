@@ -110,15 +110,31 @@ class RehearsalsController < ApplicationController
       record_groups.each do |type,records|
         records.each do |record|
           final_record.raw_attendance_records << record
-          if record.kind == 'checkin' && record.timestamp < @rehearsal.start_date + 45.minutes
-            checkin = true
-          elsif record.kind == 'checkout' && record.timestamp > @rehearsal.end_date - 45.minutes
-            checkout = true
+          if record.kind == 'checkin' || record.kind == 'checkout'
+            if @rehearsal.start_grace_period && record.timestamp < @rehearsal.start_date + @rehearsal.start_grace_period
+              checkin = true
+            end
+            if @rehearsal.end_grace_period && record.timestamp > @rehearsal.end_date - @rehearsal.end_grace_period
+              checkout = true
+            end
+            # If the grace period is nil on both ends, then any timestamp will do
+            if !@rehearsal.start_grace_period && !@rehearsal.end_grace_period
+              checkin = true
+              checkout = true
+            end
           elsif record.kind == 'pre_break'
             pre_break = pre_break || record.present
           elsif record.kind == 'post_break'
             post_break = post_break || record.present
           end
+        end
+      end
+      if @rehearsal.start_grace_period || @rehearsal.end_grace_period
+        if !@rehearsal.start_grace_period
+          checkin = true
+        end
+        if !@rehearsal.end_grace_period
+          checkout = true
         end
       end
       if final_record.present == nil
