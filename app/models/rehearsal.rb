@@ -7,6 +7,9 @@ class Rehearsal < ActiveRecord::Base
   validates :concert, presence: true
   validates :start_date, presence: true
 
+  # Schema notes
+  # start_grace_period and end_grace_period are in seconds
+
   # TODO(nharper): add validations
   # - start_grace_period positive (if present)
   # - end_grace_period positive (if present)
