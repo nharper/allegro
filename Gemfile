@@ -7,9 +7,6 @@ gem 'rails', '4.2.0'
 gem 'sqlite3'
 gem 'mysql'
 
-# Use jquery as the JavaScript library
-gem 'jquery-rails'
-
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'
 
@@ -23,6 +20,9 @@ end
 
 # For image manipulation
 gem 'rmagick'
+
+# Use React
+gem 'react-rails'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'

@@ -37,8 +37,15 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     arel (6.0.0)
+    babel-source (5.8.27)
+    babel-transpiler (0.7.0)
+      babel-source (>= 4.0, < 6)
+      execjs (~> 2.0)
     builder (3.2.2)
+    coffee-script-source (1.9.1.1)
+    connection_pool (2.2.0)
     erubis (2.7.0)
+    execjs (2.6.0)
     globalid (0.3.3)
       activesupport (>= 4.1.0)
     hike (1.2.3)
@@ -46,10 +53,6 @@ GEM
     jbuilder (1.5.3)
       activesupport (>= 3.0.0)
       multi_json (>= 1.2.0)
-    jquery-rails (4.0.3)
-      rails-dom-testing (~> 1.0)
-      railties (>= 4.2.0)
-      thor (>= 0.14, < 2.0)
     json (1.8.2)
     loofah (2.0.1)
       nokogiri (>= 1.5.9)
@@ -92,6 +95,13 @@ GEM
     rake (10.4.2)
     rdoc (4.2.0)
       json (~> 1.4)
+    react-rails (1.4.1)
+      babel-transpiler (>= 0.7.0)
+      coffee-script-source (~> 1.8)
+      connection_pool
+      execjs
+      rails (>= 3.2)
+      tilt
     rmagick (2.15.0)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
@@ -117,9 +127,9 @@ PLATFORMS
 
 DEPENDENCIES
   jbuilder (~> 1.2)
-  jquery-rails
   mysql
   rails (= 4.2.0)
+  react-rails
   rmagick
   sdoc
   sqlite3
