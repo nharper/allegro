@@ -9,7 +9,6 @@ var AttendanceList = React.createClass({
   },
 
   'render': function() {
-    console.log(this.props);
     return <AttendanceTable rehearsals={this.rehearsals()} performers={this.props.performers} records={this.props.records} />;
   }
 });
@@ -84,7 +83,6 @@ var AttendanceTableRow = React.createClass({
         }
       }
       symbol = symbol.repeat(rehearsal.weight);
-      console.log(rehearsal.display_name);
       var start_date = new Date(rehearsal.start_date);
       var title = (start_date.getMonth() + 1) + '-' + start_date.getDate();
       if (rehearsal.name) {
