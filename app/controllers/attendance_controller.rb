@@ -5,6 +5,8 @@ class AttendanceController < ApplicationController
   end
 
   def list
+    render 'empty_list' and return unless Concert.current
+
     @sections = Registration::SECTION_TO_FULL
     @performers = []
     @records = {}
