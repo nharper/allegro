@@ -1,4 +1,12 @@
 var AttendanceList = React.createClass({
+  'getInitialState': function() {
+    var sections = {};
+    for (var section in this.props.sections) {
+      sections[section] = true;
+    }
+    return {'sections': sections};
+  },
+
   'rehearsals': function() {
     return this.props.rehearsals.map(function(rehearsal) {
       var reh = rehearsal;
@@ -8,8 +16,26 @@ var AttendanceList = React.createClass({
     });
   },
 
+  'performers': function() {
+    return this.props.performers.filter(function(performer) {
+        return this.state.sections[performer.section];
+      }.bind(this));
+  },
+
+  'update': function(section, checked) {
+    this.setState(function(oldState, props) {
+      oldState.sections[section] = checked;
+      return oldState;
+    });
+  },
+
   'render': function() {
-    return <AttendanceTable rehearsals={this.rehearsals()} performers={this.props.performers} records={this.props.records} />;
+    return (
+      <div>
+        <SectionSelector onSectionChange={this.update} sections={this.props.sections} initialSectionState={this.state.sections}/>
+        <AttendanceTable rehearsals={this.rehearsals()} performers={this.performers()} records={this.props.records} />
+      </div>
+    );
   }
 });
 

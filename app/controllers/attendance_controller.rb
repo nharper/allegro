@@ -5,12 +5,14 @@ class AttendanceController < ApplicationController
   end
 
   def list
+    @sections = Registration::SECTION_TO_FULL
     @performers = []
     @records = {}
     Registration.current.order(:chorus_number).each do |registration|
       performer = registration.performer.attributes
       @records[performer['id']] = {}
       performer['chorus_number'] = registration.chorus_number
+      performer['section'] = registration.section_from_number
       @performers << performer
     end
     @rehearsals = Concert.current.rehearsals.order(:start_date)
