@@ -12,6 +12,7 @@ class AttendanceController < ApplicationController
     @records = {}
     Registration.current.order(:chorus_number).each do |registration|
       performer = registration.performer.attributes
+      performer.delete('photo')
       @records[performer['id']] = {}
       performer['chorus_number'] = registration.chorus_number
       performer['section'] = registration.section_from_number

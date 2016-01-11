@@ -29,7 +29,7 @@ var SectionSelector = React.createClass({
             ref={section}
             id={section}
             key={section + '.input'}
-            onChange={function(e) {this.handleChange(section, e.target.checked)}.bind(this)}
+            onChange={function(section, e) {this.handleChange(section, e.target.checked)}.bind(this, section)}
         />
       );
       checks.push(
