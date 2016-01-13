@@ -1,17 +1,13 @@
-class AttendanceController < ApplicationController
-  def home
-    @concert = Concert.current
-    @next_rehearsal = Rehearsal.where('start_date > ?', DateTime.now).order('start_date ASC').first
-    @prev_rehearsal = Rehearsal.where('start_date < ?', DateTime.now).order('start_date DESC').first
-  end
+class ConcertsController < ApplicationController
 
-  def list
-    render 'empty_list' and return unless Concert.current
+  def attendance
+    @concert = Concert.find(params[:id])
+    render 'empty_list' and return unless @concert
 
     @sections = Registration::SECTION_TO_FULL
     @performers = []
     @records = {}
-    Registration.current.order(:chorus_number).each do |registration|
+    Registration.where(:concert => @concert, :status => 'active').includes(:performer).order(:chorus_number).each do |registration|
       performer = registration.performer.attributes
       performer.delete('photo')
       @records[performer['id']] = {}
@@ -19,7 +15,7 @@ class AttendanceController < ApplicationController
       performer['section'] = registration.section_from_number
       @performers << performer
     end
-    @rehearsals = Concert.current.rehearsals.order(:start_date)
+    @rehearsals = @concert.rehearsals.order(:start_date)
 
     AttendanceRecord.where(:performer => @performers.map{|performer| performer['id']}, :rehearsal => @rehearsals).each do |record|
       @records[record.performer.id][record.rehearsal.id] = record
