@@ -1,1 +1,26 @@
+<h2>Untouched performers</h2>
+<% @performers.each do |key, performer| %>
+<p>Performer: <%= performer.inspect %></p>
+<% end %>
+
+<h2>New performers/registrations</h2>
+<% @new.each do |new| %>
+<% (p,r) = new %>
+<p>Performer: <%= p.inspect %></p>
+<p>Registration: <%= r.inspect %></p>
+<% end %>
+
+<h2>Changed performers/registrations</h2>
+<% @changed.each do |new| %>
+<% (p,r) = new %>
+<p>Performer: <%= p.inspect %></p>
+<p>Registration: <%= r.inspect %></p>
+<% end %>
+
+<h2>Unchanged performers/registrations</h2>
+<% @unchanged.each do |new| %>
+<% (p,r) = new %>
+<p>Performer: <%= p.inspect %></p>
+<p>Registration: <%= r.inspect %></p>
+<% end %>
 <p>Import successful. Return <%= link_to 'home', '/' %></p>

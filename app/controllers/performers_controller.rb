@@ -48,14 +48,19 @@ class PerformersController < ApplicationController
     concert = Concert.current
     raise "No current concert" unless concert
 
-    performers = Performer.all.index_by(&:foreign_key)
+    @performers = Performer.all.index_by(&:foreign_key)
     registrations = Registration.where(:concert => concert).index_by(&:performer_id)
 
+    @new = []
+    @unchanged = []
+    @changed = []
     csv_file = params[:csv]
     csv_data = csv_file.read
     GroupanizerScraper::parse_csv(csv_data).each do |_, entry|
-      performer = performers[entry['foreign_key']]
+      new = false
+      performer = @performers.delete(entry['foreign_key'])
       if !performer
+        new = true
         performer = Performer.new
         performer.foreign_key = entry['foreign_key']
       end
@@ -63,11 +68,19 @@ class PerformersController < ApplicationController
 
       registration = registrations[performer.id]
       if registration == nil
+        new = true
         registration = Registration.new
       end
 
       registration.full_section = entry['voice_part']
-      next if !registration.section # && entry['status'] != :active
+      if !registration.section # && entry['status'] != :active
+        if new
+          @new << [performer, registration]
+        else
+          @unchanged << [performer, registration]
+        end
+        next
+      end
       cn = entry['chorus_number'].to_i
       if cn > 100 && cn < 499
         registration.chorus_number = entry['chorus_number']
@@ -84,6 +97,13 @@ class PerformersController < ApplicationController
           registration.chorus_number = "RAND#{800 + SecureRandom.random_number(200)}"
           registration.save!
         end
+      end
+      if new
+        @new << [performer, registration]
+      elsif performer.changed? || registration.changed?
+        @changed << [performer, registration]
+      else
+        @unchanged << [performer, registration]
       end
     end
   end
