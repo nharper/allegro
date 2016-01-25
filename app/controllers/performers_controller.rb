@@ -44,6 +44,35 @@ class PerformersController < ApplicationController
   def upload_csv
   end
 
+  def audit
+    concert = Concert.current
+    raise "No current concert" unless concert
+
+    @performers = Performer.all.index_by(&:foreign_key)
+    registrations = Registration.where(:concert => concert).index_by(&:performer_id)
+
+    @new = []
+    @missing_cn = []
+    @missing_section = []
+    csv_file = params[:csv]
+    csv_data = csv_file.read
+    GroupanizerScraper::parse_csv(csv_data).each do |_, entry|
+      performer = @performers.delete(entry['foreign_key'])
+      if !performer
+        @new << entry
+      end
+      if entry['status'] == :active
+        cn = entry['chorus_number'].to_i
+        if cn < 100 || cn > 499
+          @missing_cn << entry
+        end
+        if !Registration::FULL_TO_SECTION[entry['voice_part']]
+          @missing_section << entry
+        end
+      end
+    end
+  end
+
   def import
     concert = Concert.current
     raise "No current concert" unless concert

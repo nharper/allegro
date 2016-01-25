@@ -7,3 +7,8 @@ and then upload the file to this form.
   <%= file_field_tag 'csv' %>
   <%= submit_tag %>
 <% end %>
+<p>Audit csv import: doesn't change any data - just looks at the data and checks for missing chorus numbers or sections</p>
+<%= form_tag audit_performers_path, multipart: true do |f| %>
+  <%= file_field_tag 'csv' %>
+  <%= submit_tag %>
+<% end %>

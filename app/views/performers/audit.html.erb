@@ -1,0 +1,16 @@
+<h2>Missing Chorus Numbers</h2>
+<dl>
+<% @missing_cn.each do |m| %>
+<dt><%= m['name'] %></dt>
+<dd><%= m['chorus_number'] %></dd>
+<% end %>
+</dl>
+
+<h2>Missing Sections</h2>
+<dl>
+<% @missing_section.each do |m| %>
+<dt><%= m['name'] %></dt>
+<dd><%= m['voice_part'] %></dd>
+<% end %>
+</dl>
+<p>Return <%= link_to 'home', '/' %></p>

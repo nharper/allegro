@@ -66,6 +66,7 @@ Allegro::Application.routes.draw do
       get 'printcards'
       get 'upload_csv'
       post 'import'
+      post 'audit'
     end
   end
 
