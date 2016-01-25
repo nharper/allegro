@@ -73,7 +73,9 @@ class PerformersController < ApplicationController
       end
 
       registration.full_section = entry['voice_part']
-      if !registration.section # && entry['status'] != :active
+      # Skip updating a Performer's Registration if they're active and the
+      # csv data has no section for them.
+      if !registration.section && entry['status'] == :active
         if new
           @new << [performer, registration]
         else
@@ -81,6 +83,7 @@ class PerformersController < ApplicationController
         end
         next
       end
+      # Only set chorus number if it's in range for SFGMC.
       cn = entry['chorus_number'].to_i
       if cn > 100 && cn < 499
         registration.chorus_number = entry['chorus_number']
