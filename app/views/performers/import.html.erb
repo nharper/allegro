@@ -3,24 +3,43 @@
 <p>Performer: <%= performer.inspect %></p>
 <% end %>
 
-<h2>New performers/registrations</h2>
-<% @new.each do |new| %>
-<% (p,r) = new %>
+<h2>Skipped New performers/registrations</h2>
+<% @skipped_new.each do |new| %>
+<% (p,r,e) = new %>
 <p>Performer: <%= p.inspect %></p>
 <p>Registration: <%= r.inspect %></p>
+<p>Entry: <%= e.inspect %></p>
+<% end %>
+
+<h2>Skipped unchanged performers/registrations</h2>
+<% @skipped_unchanged.each do |new| %>
+<% (p,r,e) = new %>
+<p>Performer: <%= p.inspect %></p>
+<p>Registration: <%= r.inspect %></p>
+<p>Entry: <%= e.inspect %></p>
+<% end %>
+
+<h2>New performers/registrations</h2>
+<% @new.each do |new| %>
+<% (p,r,e) = new %>
+<p>Performer: <%= p.inspect %></p>
+<p>Registration: <%= r.inspect %></p>
+<p>Entry: <%= e.inspect %></p>
 <% end %>
 
 <h2>Changed performers/registrations</h2>
 <% @changed.each do |new| %>
-<% (p,r) = new %>
+<% (p,r,e) = new %>
 <p>Performer: <%= p.inspect %></p>
 <p>Registration: <%= r.inspect %></p>
+<p>Entry: <%= e.inspect %></p>
 <% end %>
 
 <h2>Unchanged performers/registrations</h2>
 <% @unchanged.each do |new| %>
-<% (p,r) = new %>
+<% (p,r,e) = new %>
 <p>Performer: <%= p.inspect %></p>
 <p>Registration: <%= r.inspect %></p>
+<p>Entry: <%= e.inspect %></p>
 <% end %>
 <p>Import successful. Return <%= link_to 'home', '/' %></p>

@@ -54,6 +54,8 @@ class PerformersController < ApplicationController
     @new = []
     @unchanged = []
     @changed = []
+    @skipped_new = []
+    @skipped_unchanged = []
     csv_file = params[:csv]
     csv_data = csv_file.read
     GroupanizerScraper::parse_csv(csv_data).each do |_, entry|
@@ -77,9 +79,9 @@ class PerformersController < ApplicationController
       # csv data has no section for them.
       if !registration.section && entry['status'] == :active
         if new
-          @new << [performer, registration]
+          @skipped_new << [performer, registration, entry]
         else
-          @unchanged << [performer, registration]
+          @skipped_unchanged << [performer, registration, entry]
         end
         next
       end
@@ -88,25 +90,29 @@ class PerformersController < ApplicationController
       if cn > 100 && cn < 499
         registration.chorus_number = entry['chorus_number']
       end
+
+      # If status is not active, then set chorus number to nil to avoid
+      # conflicts.
+      if entry['status'] != :active
+        registration.chorus_number = nil
+      end
       registration.status = entry['status']
       registration.performer = performer
       registration.concert = concert
 
       performer.save!
-      if entry['status'] == :alumni
-        registration.destroy!
-      else
-        if !registration.save
-          registration.chorus_number = "RAND#{800 + SecureRandom.random_number(200)}"
-          registration.save!
-        end
+      if !registration.save
+        registration.chorus_number = "RAND#{800 + SecureRandom.random_number(200)}"
+        registration.save!
       end
+
+      # Temporary code for debugging this controller.
       if new
-        @new << [performer, registration]
+        @new << [performer, registration, entry]
       elsif performer.changed? || registration.changed?
-        @changed << [performer, registration]
+        @changed << [performer, registration, entry]
       else
-        @unchanged << [performer, registration]
+        @unchanged << [performer, registration, entry]
       end
     end
   end
