@@ -155,11 +155,13 @@ class RehearsalsController < ApplicationController
     @path_params = {}
     @path_params['section'] = params[:section] if params[:section]
 
-    params[:performer].each do |performer_id, status|
-      record = AttendanceRecord.where(:performer_id => performer_id, :rehearsal => @rehearsal).first_or_initialize
-      if status == 'present' || status == 'absent'
-        record.present = (status == 'present')
-        record.save!
+    ActiveRecord.transaction do
+      params[:performer].each do |performer_id, status|
+        record = AttendanceRecord.where(:performer_id => performer_id, :rehearsal => @rehearsal).first_or_initialize
+        if status == 'present' || status == 'absent'
+          record.present = (status == 'present')
+          record.save!
+        end
       end
     end
     redirect_to raw_attendance_rehearsal_path(@rehearsal, @path_params)
