@@ -155,7 +155,7 @@ class RehearsalsController < ApplicationController
     @path_params = {}
     @path_params['section'] = params[:section] if params[:section]
 
-    ActiveRecord.transaction do
+    AttendanceRecord.transaction do
       params[:performer].each do |performer_id, status|
         record = AttendanceRecord.where(:performer_id => performer_id, :rehearsal => @rehearsal).first_or_initialize
         if status == 'present' || status == 'absent'
