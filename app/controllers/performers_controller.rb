@@ -116,7 +116,7 @@ class PerformersController < ApplicationController
       end
       # Only set chorus number if it's in range for SFGMC.
       cn = entry['chorus_number'].to_i
-      if cn > 100 && cn < 499
+      if cn >= 100 && cn <= 499
         registration.chorus_number = entry['chorus_number']
       end
 
