@@ -103,7 +103,7 @@ class GroupanizerScraper
     last_name_index = headers.index("Last name")
     chorus_number_index = headers.index("Member ID")
     voice_part_index = headers.index("Voice part")
-    uid_index = headers.index("UID")
+    uid_index = headers.index("User ID")
     roles_index = headers.index("Roles")
     if !first_name_index ||
         !last_name_index ||
