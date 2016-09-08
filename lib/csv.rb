@@ -62,14 +62,14 @@ module CSV
       end
       # Handle the field separator
       if input[i] == ','
-        line << field
+        line << field.force_encoding(Encoding::UTF_8)
         field = ''
         next
       end
       # Handle a newline
       if input[i] == "\r" || input[i] == "\n"
         if field.length || line.length
-          line << field
+          line << field.force_encoding(Encoding::UTF_8)
           out << line
           field = ''
           line = []
@@ -81,7 +81,7 @@ module CSV
     end
     # Handle the last record
     if field.length > 0 || line.length > 0
-      line << field
+      line << field.force_encoding(Encoding::UTF_8)
       out << line
     end
     return out
