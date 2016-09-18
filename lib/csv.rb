@@ -40,36 +40,37 @@ module CSV
     fields = []
     line = []
     field = ''
-    i = -1
-    while i < input.length-1
-      i += 1
-      # Handle encountering a quote symbol
-      if input[i] == '"'
-        # If we see a quote, but the next char is also a quote, then this is
-        # an escape sequence, and we should emit a quote (but not toggle state).
-        if i + 1 < input.length && input[i+1] == '"' && quoted
+    last_char_quote = false
+    input.each_char do |c|
+      if c == '"'
+        if !quoted
+          quoted = true
+          next
+        end
+        last_char_quote = !last_char_quote
+        if !last_char_quote
           field += '"'
-          i += 1
-        else
-          quoted = !quoted
         end
         next
       end
-      # Emit the next character while we're still in a quote
-      if quoted
-        field += input[i]
+      if quoted && !last_char_quote
+        field += c
         next
       end
+      if last_char_quote && quoted
+        quoted = false
+        last_char_quote = false
+      end
       # Handle the field separator
-      if input[i] == ','
-        line << field.force_encoding(Encoding::UTF_8)
+      if c == ','
+        line << field
         field = ''
         next
       end
       # Handle a newline
-      if input[i] == "\r" || input[i] == "\n"
+      if c == "\r" || c == "\n"
         if field.length || line.length
-          line << field.force_encoding(Encoding::UTF_8)
+          line << field
           out << line
           field = ''
           line = []
@@ -77,11 +78,11 @@ module CSV
         next
       end
       # Handle any other character
-      field += input[i]
+      field += c
     end
     # Handle the last record
     if field.length > 0 || line.length > 0
-      line << field.force_encoding(Encoding::UTF_8)
+      line << field
       out << line
     end
     return out
