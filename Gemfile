@@ -24,6 +24,8 @@ gem 'rmagick'
 # Use React
 gem 'react-rails'
 
+gem 'unicode_utils'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'
 

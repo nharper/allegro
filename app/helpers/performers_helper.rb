@@ -1,16 +1,20 @@
+require 'unicode_utils/upcase'
+
 module PerformersHelper
   # Upcases a name, but preserves lowercase characters in certain cases. Some
   # names (like McCoy) look weird if entirely upcased, and should be "McCOY"
   # instead.
   def name_upcase(name)
-    name.split(/(?<=[^a-zA-Z])/).map do |part|
+    name.split.map do |part|
       matches = /[A-Z][^A-Z]*$/.match(part)
       if matches && matches.length > 0
         index = matches.offset(0)[0]
-        part.slice(0, index) + part.slice(index..-1).upcase
+        UnicodeUtils.upcase(part.slice(0, index) + part.slice(index..-1))
       else
-        part.upcase
+        UnicodeUtils.upcase(part)
       end
-    end.join
+    end.inject('') do |a, b|
+      a + ' ' + b
+    end
   end
 end

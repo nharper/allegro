@@ -123,6 +123,7 @@ GEM
     tilt (2.0.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    unicode_utils (1.4.0)
 
 PLATFORMS
   ruby
@@ -135,6 +136,7 @@ DEPENDENCIES
   rmagick
   sdoc
   sqlite3
+  unicode_utils
 
 BUNDLED WITH
    1.12.5
