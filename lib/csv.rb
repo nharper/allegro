@@ -35,6 +35,7 @@ module CSV
   # Comma (,): Separator between fields
   # Newline (\r, \n, or \r\n): Line separator. Empty lines are ignored.
   def self.parse(input)
+    input.force_encoding(Encoding::UTF_8)
     out = []
     quoted = false
     fields = []
