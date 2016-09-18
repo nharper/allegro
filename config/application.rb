@@ -21,5 +21,6 @@ module Allegro
     # config.i18n.default_locale = :de
 
     # config.autoload_paths << Rails.root.join('lib')
+    config.encoding = "utf-8"
   end
 end
