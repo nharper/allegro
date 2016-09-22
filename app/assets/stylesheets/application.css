@@ -96,6 +96,11 @@ a {
 
 /* styles for checkin instructions */
 /* TODO(nharper): name conflict with .time below (in cards) */
+#checkin-wrapper {
+  height: 100%;
+  width: 100%;
+}
+
 #checkin {
   font-size: 20pt;
 }
@@ -169,7 +174,7 @@ span.num#enter {
 div#numpad-wrap {
   position: fixed;
   left: 0;
-  bottom: 0;
+  bottom: 80px;
   background-color: white;
   width: 100%;
 }

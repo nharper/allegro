@@ -336,6 +336,28 @@ function runCheckin() {
     }
   });
   observer.observe(status_node, {attributes: true, childList: true, characterData: true});
+
+  var last_y = 0;
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length != 1) {
+      return;
+    }
+    last_y = e.touches[0].clientY;
+  }, false);
+  document.addEventListener('touchmove', function(e) {
+    var y = e.touches[0].clientY;
+    var y_delta = y - last_y;
+    last_y = y;
+    if (window.pageYOffset <= 0 && y_delta > 0) {
+      e.preventDefault();
+      return;
+    }
+  }, false);
+  document.addEventListener('touchend', function(e) {
+    if (!document.webkitFullscreenElement) {
+      document.getElementById('checkin-wrapper').webkitRequestFullscreen();
+    }
+  }, false);
 }
 
 function displayTime() {
