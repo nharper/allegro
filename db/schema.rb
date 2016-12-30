@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151026044309) do
+ActiveRecord::Schema.define(version: 20161230005014) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id", limit: 4
     t.integer  "rehearsal_id", limit: 4
-    t.boolean  "present",      limit: 1
+    t.boolean  "present"
     t.string   "notes",        limit: 255
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
@@ -28,7 +28,7 @@ ActiveRecord::Schema.define(version: 20151026044309) do
   create_table "cards", force: :cascade do |t|
     t.string   "card_id",         limit: 255
     t.integer  "performer_id",    limit: 4
-    t.boolean  "active",          limit: 1
+    t.boolean  "active"
     t.datetime "expiration_date"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
@@ -71,7 +71,7 @@ ActiveRecord::Schema.define(version: 20151026044309) do
     t.integer  "performer_id",         limit: 4
     t.integer  "rehearsal_id",         limit: 4
     t.integer  "kind",                 limit: 4
-    t.boolean  "present",              limit: 1
+    t.boolean  "present"
     t.datetime "timestamp"
     t.integer  "attendance_record_id", limit: 4
     t.datetime "created_at",                     null: false
@@ -112,6 +112,16 @@ ActiveRecord::Schema.define(version: 20151026044309) do
   add_index "rehearsals", ["concert_id"], name: "index_rehearsals_on_concert_id", using: :btree
   add_index "rehearsals", ["slug"], name: "index_rehearsals_on_slug", using: :btree
 
+  create_table "scraper_credentials", force: :cascade do |t|
+    t.integer  "user_id",      limit: 4
+    t.string   "cookie_name",  limit: 255
+    t.string   "cookie_value", limit: 255
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "scraper_credentials", ["user_id"], name: "index_scraper_credentials_on_user_id", using: :btree
+
   create_table "user_oauth2_accounts", force: :cascade do |t|
     t.integer  "oauth2_provider_id", limit: 4
     t.string   "provider_id",        limit: 255
@@ -141,6 +151,7 @@ ActiveRecord::Schema.define(version: 20151026044309) do
   add_foreign_key "raw_attendance_records", "rehearsals"
   add_foreign_key "registrations", "concerts"
   add_foreign_key "registrations", "performers"
+  add_foreign_key "scraper_credentials", "users"
   add_foreign_key "user_oauth2_accounts", "oauth2_providers"
   add_foreign_key "user_oauth2_accounts", "users"
   add_foreign_key "users", "performers"
