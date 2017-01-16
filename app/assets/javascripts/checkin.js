@@ -7,6 +7,10 @@ function KeyboardListener(callback) {
   this.buffer = '';
   document.addEventListener('keypress', function(e) {
     var code = e.keyCode;
+    // Skip over some characters: 59 == ';', 63 == '?'
+    if (code == 59 || code == 63) {
+      return;
+    }
     // 13 is CR, 10 is LF (or NL); recognize either as 'Enter'
     if (code == 13 || code == 10) {
       callback(this.buffer);
