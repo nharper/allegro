@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161230005014) do
+ActiveRecord::Schema.define(version: 20170116071951) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id", limit: 4
@@ -37,11 +37,12 @@ ActiveRecord::Schema.define(version: 20161230005014) do
   add_index "cards", ["performer_id"], name: "index_cards_on_performer_id", using: :btree
 
   create_table "concerts", force: :cascade do |t|
-    t.string   "name",       limit: 255
+    t.string   "name",        limit: 255
     t.date     "start_date"
     t.date     "end_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "foreign_key", limit: 255
   end
 
   create_table "oauth2_providers", force: :cascade do |t|
@@ -107,6 +108,7 @@ ActiveRecord::Schema.define(version: 20161230005014) do
     t.integer  "weight",             limit: 4
     t.integer  "start_grace_period", limit: 4
     t.integer  "end_grace_period",   limit: 4
+    t.string   "foreign_key",        limit: 255
   end
 
   add_index "rehearsals", ["concert_id"], name: "index_rehearsals_on_concert_id", using: :btree
