@@ -122,4 +122,9 @@ Allegro::Application.routes.draw do
     end
     get 'finish', :on => :member
   end
+
+  # Non-resourceful routes for scraping.
+  get 'scraper', to: 'scraper#home'
+  post 'scraper/login', to: 'scraper#login'
+  post 'scraper/update_rehearsals', to: 'scraper#update_rehearsals'
 end

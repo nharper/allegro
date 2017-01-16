@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   belongs_to :performer
   has_many :user_oauth2_accounts
-  has_many :scraper_credentials
+  has_many :scraper_credentials, dependent: :delete_all
 
   # TODO(nharper): Rewrite these. I'm ok with users not belonging to a
   # performer; e.g. role account or staff. I probably want to validate that

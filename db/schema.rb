@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170116071951) do
+ActiveRecord::Schema.define(version: 20170116081445) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id", limit: 4
@@ -117,9 +117,9 @@ ActiveRecord::Schema.define(version: 20170116071951) do
   create_table "scraper_credentials", force: :cascade do |t|
     t.integer  "user_id",      limit: 4
     t.string   "cookie_name",  limit: 255
-    t.string   "cookie_value", limit: 255
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
+    t.string   "cookie_value", limit: 4096
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   add_index "scraper_credentials", ["user_id"], name: "index_scraper_credentials_on_user_id", using: :btree
