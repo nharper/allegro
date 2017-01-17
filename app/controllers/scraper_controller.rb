@@ -7,8 +7,11 @@ class ScraperController < ApplicationController
   def login
     scraper = CCScraper.new
     cookies = scraper.login(params[:username], params[:password])
-    # TODO(nharper): Check if cookies is an array, in which case it is an array
-    # of errors from logging in instead of cookies.
+    if cookies[0].is_a?(String)
+      flash[:error] = cookies[0]
+      redirect_to scraper_path and return
+    end
+
     user = User.find_by_id(session[:user_id])
     # TODO(nharper): The delete_all line might not necessary
     user.scraper_credentials.delete_all
@@ -23,27 +26,35 @@ class ScraperController < ApplicationController
     scraper = CCScraper.new(user.scraper_credentials)
     concerts = scraper.scrape_api('/api/choruses/sfgmc/concerts')
 
-    # TODO(nharper): Check that I got back a valid response before parsing it.
-    concerts.each do |concert|
-      next unless concert['is_active']
-      c = Concert.find_or_initialize_by(:foreign_key => concert['id'])
-      c.name = concert['name']
-      c.save
+    if concerts.is_a?(Hash) and concerts['error'] != nil
+      flash[:error] = concerts['error']
+      redirect_to scraper_path and return
+    end
 
-      concert['events'].each do |event|
-        next unless event['track_attendance']
-        rehearsal = Rehearsal.find_or_initialize_by(:foreign_key => event['id'])
-        rehearsal.concert = c
-        rehearsal.attendance = event['attendance_points'] > 0 ? :required : :optional
-        rehearsal.weight = [event['attendance_points'], 1].max
-        rehearsal.start_grace_period = 45.minutes
-        rehearsal.start_date = time_zone.local_to_utc(Time.at(event['start_time_ms']/1000).utc)
-        rehearsal_end_date = time_zone.local_to_utc(Time.at(event['end_time_ms']/1000).utc)
-        if event['name'] != 'Rehearsal'
-          rehearsal.name = event['name']
+    begin
+      concerts.each do |concert|
+        next unless concert['is_active']
+        c = Concert.find_or_initialize_by(:foreign_key => concert['id'])
+        c.name = concert['name']
+        c.save
+
+        concert['events'].each do |event|
+          next unless event['track_attendance']
+          rehearsal = Rehearsal.find_or_initialize_by(:foreign_key => event['id'])
+          rehearsal.concert = c
+          rehearsal.attendance = event['attendance_points'] > 0 ? :required : :optional
+          rehearsal.weight = [event['attendance_points'], 1].max
+          rehearsal.start_grace_period = 45.minutes
+          rehearsal.start_date = time_zone.local_to_utc(Time.at(event['start_time_ms']/1000).utc)
+          rehearsal_end_date = time_zone.local_to_utc(Time.at(event['end_time_ms']/1000).utc)
+          if event['name'] != 'Rehearsal'
+            rehearsal.name = event['name']
+          end
+          rehearsal.save
         end
-        rehearsal.save
       end
+    rescue Exception => e
+      flash[:error] = e
     end
 
     redirect_to scraper_path

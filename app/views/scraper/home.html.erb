@@ -1,12 +1,24 @@
-<p>
-<%= form_tag scraper_login_path do %>
-  <%= text_field_tag 'username' %>
-  <%= password_field_tag 'password' %>
-  <%= submit_tag %>
+<% if flash[:error] %>
+  <div class="error">
+    <%= flash[:error] %>
+  </div>
 <% end %>
-</p>
-<p>
-<%= form_tag scraper_update_rehearsals_path do %>
-  <%= submit_tag 'Update Rehearsals' %>
-<% end %>
-</p>
+<div>
+  <p>
+    Use the buttons below to update info from Chorus Connection. If update
+    fails, enter the email and password used to log into Chorus Connection,
+    press login, and then try the update again.
+  </p>
+  <p>
+  <%= form_tag scraper_login_path do %>
+    <%= text_field_tag 'username' %>
+    <%= password_field_tag 'password' %>
+    <%= submit_tag 'Login to CC' %>
+  <% end %>
+  </p>
+  <p>
+  <%= form_tag scraper_update_rehearsals_path do %>
+    <%= submit_tag 'Update Rehearsals' %>
+  <% end %>
+  </p>
+</div>
