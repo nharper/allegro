@@ -36,6 +36,7 @@ class ScraperController < ApplicationController
         next unless concert['is_active']
         c = Concert.find_or_initialize_by(:foreign_key => concert['id'])
         c.name = concert['name']
+        c.is_active = concert['is_active']
         c.save
 
         concert['events'].each do |event|

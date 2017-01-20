@@ -2,8 +2,9 @@
 <ul>
   <li><%= link_to 'Upcoming rehearsals', rehearsals_path %></li>
   <li><%= link_to 'All rehearsals', all_rehearsals_path %></li>
-  <% if @concert %>
-  <li><%= link_to 'View attendance', attendance_concert_path(@concert) %></li>
+  <% @concerts.each do |concert| %>
+    <li><%= link_to "Attendance for #{concert.name}",
+            attendance_concert_path(concert) %></li>
   <% end %>
   <li><%= link_to 'Register cards', cards_path %></li>
 </ul>

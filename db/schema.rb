@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170116081445) do
+ActiveRecord::Schema.define(version: 20170120041219) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id", limit: 4
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20170116081445) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "foreign_key", limit: 255
+    t.boolean  "is_active"
   end
 
   create_table "oauth2_providers", force: :cascade do |t|
