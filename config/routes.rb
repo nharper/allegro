@@ -98,14 +98,11 @@ Allegro::Application.routes.draw do
 
   resources :concerts, :only => [] do
     member do
-      get'attendance'
+      get 'attendance'
     end
   end
 
   # TODO(nharper): Clean up all routing
-  resource :attendance, :controller => 'attendance', :only => [] do
-    get 'list', :action => 'list', :as => 'list'
-  end
 
   resources :auth, :only => [] do
     # TODO(nharper): The following collection routes generate helpers like
