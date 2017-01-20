@@ -71,9 +71,6 @@ Allegro::Application.routes.draw do
   end
 
   resources :registrations do
-    collection do
-      get 'audit'
-    end
   end
 
   # TODO(nharper): Most of these routes are incomplete right now
@@ -99,6 +96,7 @@ Allegro::Application.routes.draw do
   resources :concerts, :only => [] do
     member do
       get 'attendance'
+      get 'audit'
     end
   end
 

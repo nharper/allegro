@@ -21,4 +21,22 @@ class ConcertsController < ApplicationController
       @records[record.performer.id][record.rehearsal.id] = record
     end
   end
+
+  def audit
+    @concert = Concert.find(params[:id])
+    @registrations = Registration.where(:concert => @concert).includes(:performer)
+    @bad_registrations = []
+
+    @registrations.each do |reg|
+      cn = reg.chorus_number.to_i
+      if cn < 100 || cn > 499
+        @bad_registrations << [reg, "CN out of range"]
+        next
+      end
+      if reg.section_from_number != reg.section
+        @bad_registrations << [reg, "Mismatch"]
+        next
+      end
+    end
+  end
 end
