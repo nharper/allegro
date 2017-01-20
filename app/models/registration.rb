@@ -46,8 +46,4 @@ class Registration < ActiveRecord::Base
     suffix = ['U', 'L'][cn % 2]
     return prefix + suffix
   end
-
-  def self.current
-    return Concert.current.registrations.where(:status => 'active').includes(:performer)
-  end
 end
