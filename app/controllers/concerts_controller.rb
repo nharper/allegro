@@ -1,4 +1,10 @@
 class ConcertsController < ApplicationController
+  def rehearsals
+    @concert = Concert.find(params[:id])
+    @breadcrumbs = ["Rehearsals (#{@concert.name})"]
+    @rehearsals = Rehearsal.where(:concert => @concert).order('start_date ASC')
+    render :template => 'rehearsals/index'
+  end
 
   def attendance
     @concert = Concert.find(params[:id])

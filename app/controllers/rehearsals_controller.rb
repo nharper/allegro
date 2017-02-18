@@ -4,12 +4,6 @@ class RehearsalsController < ApplicationController
     @rehearsals = Rehearsal.where('start_date > ?', DateTime.now).order('start_date ASC')
   end
 
-  def all
-    @breadcrumbs = ['Rehearsals']
-    @rehearsals = Rehearsal.all.order('start_date DESC')
-    render :action => :index
-  end
-
   def show
     # TODO(nharper): Check that @rehearsal is not nil
     @rehearsal = Rehearsal.find_by_slug(params['id'])

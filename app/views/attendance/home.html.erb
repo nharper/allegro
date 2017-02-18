@@ -1,16 +1,6 @@
-<h2>Navigation</h2>
+<h2>Rehearsals</h2>
 <ul>
   <li><%= link_to 'Upcoming rehearsals', rehearsals_path %></li>
-  <li><%= link_to 'All rehearsals', all_rehearsals_path %></li>
-  <% @concerts.each do |concert| %>
-    <li><%= link_to "Attendance for #{concert.name}",
-            attendance_concert_path(concert) %></li>
-  <% end %>
-  <li><%= link_to 'Register cards', cards_path %></li>
-</ul>
-<% if @prev_rehearsal or @next_rehearsal %>
-<h2>Useful links?</h2>
-<ul>
   <% if @next_rehearsal %>
     <li><%= link_to "Next rehearsal (#{@next_rehearsal.display_name})",
             rehearsal_path(@next_rehearsal) %></li>
@@ -19,4 +9,16 @@
     <li><%= link_to "Previous rehearsal (#{@prev_rehearsal.display_name})",
             rehearsal_path(@prev_rehearsal) %></li>
   <% end %>
+</ul>
+<h2>Concerts</h2>
+<% @concerts.each do |concert| %>
+  <h3><%= concert.name %></h3>
+  <ul>
+    <li><%= link_to 'Attendance', attendance_concert_path(concert) %></li>
+    <li><%= link_to 'Rehearsals', rehearsals_concert_path(concert) %></li>
+  </ul>
 <% end %>
+<h2>Management</h2>
+<ul>
+  <li><%= link_to 'Register cards', cards_path %></li>
+</ul>

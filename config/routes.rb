@@ -88,13 +88,11 @@ Allegro::Application.routes.draw do
       get 'raw_attendance'
       post 'reconcile'
     end
-    collection do
-      get 'all'
-    end
   end
 
   resources :concerts, :only => [] do
     member do
+      get 'rehearsals'
       get 'attendance'
       get 'audit'
     end
