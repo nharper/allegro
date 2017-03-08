@@ -96,6 +96,7 @@ class PerformersController < ApplicationController
         performer.foreign_key = entry['foreign_key']
       end
       performer.name = entry['name']
+      performer.email = entry['email']
 
       registration = registrations[performer.id]
       if registration == nil

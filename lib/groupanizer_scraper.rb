@@ -105,12 +105,14 @@ class GroupanizerScraper
     voice_part_index = headers.index("Voice part")
     uid_index = headers.index("User ID")
     roles_index = headers.index("Roles")
+    email_index = headers.index("Email")
     if !first_name_index ||
         !last_name_index ||
         !chorus_number_index ||
         !voice_part_index ||
         !uid_index ||
-        !roles_index
+        !roles_index ||
+        !email_index
       raise "Unable to find all needed columns: Headers are #{headers}"
     end
     members = {}
@@ -120,6 +122,7 @@ class GroupanizerScraper
       entry['name'] = line[first_name_index].strip + ' ' + line[last_name_index].strip
       entry['chorus_number'] = line[chorus_number_index]
       entry['voice_part'] = line[voice_part_index]
+      entry['email'] = line[email_index]
       
       roles = line[roles_index].split(',')
       if roles.index('Alumni')
