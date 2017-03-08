@@ -61,6 +61,106 @@ class ScraperController < ApplicationController
     redirect_to scraper_path
   end
 
+  def update_performers
+    user = User.find_by_id(session[:user_id])
+    scraper = CCScraper.new(user.scraper_credentials)
+    members = scraper.scrape_api('/api/choruses/sfgmc/chorus_members')
+
+    if members.is_a?(Hash) and members['error'] != nil
+      flash[:error] = members['error']
+      redirect_to scraper_path and return
+    end
+
+    if !members.is_a?(Array) or members.size == 0
+      flash[:error] = 'Unexpected output from CC'
+      redirect_to scraper_path and return
+    end
+
+    performers = Performer.all.index_by(&:email)
+    concerts = Concert.where(:is_active => true)
+    registrations = Registration.where(:concert => concerts).index_by {|registration|
+      "#{registration.concert_id}:#{registration.performer_id}"
+    }
+
+    begin
+      members.each do |member|
+        # Update performer model
+        performer = performers[member['email']]
+        if performer == nil
+          performer = Performer.new
+          performer.email = member['email']
+        end
+        performer.name = member['name']
+        performer.foreign_key = member['id']
+        performer.photo_handle = member['cloudinary_image_id']
+        performer.save!
+
+        # Update registrations
+        concerts.each do |concert|
+          key = "#{concert.id}:#{performer.id}"
+          registration = registrations[key]
+          if registration == nil
+            registration = Registration.new
+            registration.concert = concert
+            registration.performer = performer
+          end
+
+          case member['status']
+          when 'Active'
+            registration.status = :active
+          when 'Inactive'
+            registration.status = :inactive
+          when 'Alumni'
+            registration.status = :alumni
+          else
+            puts "Unknown status '#{member['status']}'"
+          end
+
+          section = ''
+          case member['section']
+          when '1st Tenor'
+            section = 'T1'
+          when '2nd Tenor'
+            section = 'T2'
+          when 'Baritone'
+            section = 'B1'
+          when 'Bass'
+            section = 'B2'
+          end
+          case member['section_split']
+          when 'upper'
+            section += 'U'
+          when 'lower'
+            section += 'L'
+          end
+
+          if Registration::SECTION_TO_FULL[section] != nil
+            registration.section = section
+          end
+
+          if registration.status != :active
+            registration.chorus_number = nil
+            registration.save!
+            next
+          end
+
+          if match = /Member ID: (\d+)/.match(member['notes'])
+            registration.chorus_number = match[1]
+          end
+
+          if !registration.save
+            registration.chorus_number = "RAND#{800 + SecureRandom.random_number(200)}"
+            registration.save!
+          end
+        end
+      end
+    rescue Exception => e
+      flash[:error] = e
+    end
+
+    redirect_to scraper_path
+  end
+
   private
 end
 

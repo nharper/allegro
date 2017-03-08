@@ -120,4 +120,5 @@ Allegro::Application.routes.draw do
   get 'scraper', to: 'scraper#home'
   post 'scraper/login', to: 'scraper#login'
   post 'scraper/update_rehearsals', to: 'scraper#update_rehearsals'
+  post 'scraper/update_performers', to: 'scraper#update_performers'
 end
