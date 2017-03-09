@@ -31,6 +31,11 @@ class ScraperController < ApplicationController
       redirect_to scraper_path and return
     end
 
+    if !concerts.is_a?(Array) or concerts.size == 0
+      flash[:error] = 'Unexpected output from CC'
+      redirect_to scraper_path and return
+    end
+
     begin
       concerts.each do |concert|
         next unless concert['is_active']
@@ -76,10 +81,7 @@ class ScraperController < ApplicationController
       redirect_to scraper_path and return
     end
 
-    performers = Performer.all.index_by do |performer|
-      next '' unless performer.email
-      performer.email.downcase
-    end
+    performers = Performer.all.index_by(&:foreign_key)
     concerts = Concert.where(:is_active => true)
     registrations = Registration.where(:concert => concerts).index_by {|registration|
       "#{registration.concert_id}:#{registration.performer_id}"
@@ -89,13 +91,13 @@ class ScraperController < ApplicationController
       problems = []
       members.each do |member|
         # Update performer model
-        performer = performers[member['email']]
+        performer = performers[member['id']]
         if performer == nil
           performer = Performer.new
-          performer.email = member['email']
+          performer.foreign_key = member['id']]
         end
         performer.name = member['name']
-        performer.foreign_key = member['id']
+        performer.email = member['email']
         performer.photo_handle = member['cloudinary_image_id']
         performer.save!
 
