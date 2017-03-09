@@ -94,7 +94,7 @@ class ScraperController < ApplicationController
         performer = performers[member['id']]
         if performer == nil
           performer = Performer.new
-          performer.foreign_key = member['id']]
+          performer.foreign_key = member['id']
         end
         performer.name = member['name']
         performer.email = member['email']
