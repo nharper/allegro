@@ -55,7 +55,7 @@ class ScraperController < ApplicationController
         end
       end
     rescue Exception => e
-      flash[:error] = e
+      flash[:error] = e.to_s
     end
 
     redirect_to scraper_path
@@ -76,13 +76,17 @@ class ScraperController < ApplicationController
       redirect_to scraper_path and return
     end
 
-    performers = Performer.all.index_by(&:email)
+    performers = Performer.all.index_by do |performer|
+      next '' unless performer.email
+      performer.email.downcase
+    end
     concerts = Concert.where(:is_active => true)
     registrations = Registration.where(:concert => concerts).index_by {|registration|
       "#{registration.concert_id}:#{registration.performer_id}"
     }
 
     begin
+      problems = []
       members.each do |member|
         # Update performer model
         performer = performers[member['email']]
@@ -107,11 +111,11 @@ class ScraperController < ApplicationController
 
           case member['status']
           when 'Active'
-            registration.status = :active
+            registration.status = 'active'
           when 'Inactive'
-            registration.status = :inactive
+            registration.status = 'inactive'
           when 'Alumni'
-            registration.status = :alumni
+            registration.status = 'alumni'
           else
             puts "Unknown status '#{member['status']}'"
           end
@@ -138,24 +142,35 @@ class ScraperController < ApplicationController
             registration.section = section
           end
 
-          if registration.status != :active
+          if registration.status != 'active'
             registration.chorus_number = nil
             registration.save!
             next
           end
 
           if match = /Member ID: (\d+)/.match(member['notes'])
-            registration.chorus_number = match[1]
+            cn = match[1].to_i
+            if cn >= 100 && cn <= 499
+              registration.chorus_number = match[1]
+            end
           end
 
           if !registration.save
-            registration.chorus_number = "RAND#{800 + SecureRandom.random_number(200)}"
-            registration.save!
+            problems << member
           end
         end
       end
     rescue Exception => e
-      flash[:error] = e
+      puts "Got exception: #{e}"
+      p e
+      flash[:error] = e.to_s
+    end
+
+    if problems
+      puts "Problems:"
+      problems.each do |problem|
+        p problem
+      end
     end
 
     redirect_to scraper_path
