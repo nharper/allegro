@@ -13,6 +13,7 @@
 
 .tile img {
 	display: block;
+	max-width: 150px;
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 5px;

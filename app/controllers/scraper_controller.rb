@@ -60,7 +60,7 @@ class ScraperController < ApplicationController
         end
       end
     rescue Exception => e
-      flash[:error] = e.to_s
+      flash[:error] = e.to_s[0..1024]
     end
 
     redirect_to scraper_path
@@ -98,7 +98,13 @@ class ScraperController < ApplicationController
         end
         performer.name = member['name']
         performer.email = member['email']
-        performer.photo_handle = member['cloudinary_image_id']
+        old_photo_id = performer.photo_handle
+        new_photo_id = member['cloudinary_image_id']
+        if old_photo_id != new_photo_id and new_photo_id != nil
+        # if new_photo_id != nil
+          performer.photo_handle = new_photo_id
+          performer.photo = CCScraper.scrape_photo(new_photo_id)
+        end
         performer.save!
 
         # Update registrations
@@ -165,7 +171,7 @@ class ScraperController < ApplicationController
     rescue Exception => e
       puts "Got exception: #{e}"
       p e
-      flash[:error] = e.to_s
+      flash[:error] = e.to_s[0..1024]
     end
 
     if problems
@@ -230,5 +236,12 @@ class CCScraper
 
   def update_cookie_header
     @headers['Cookie'] = @cookies.map {|c| "#{c.cookie_name}=#{c.cookie_value}" }.join('; ')
+  end
+
+  def self.scrape_photo(id)
+    conn = Net::HTTP.new('res.cloudinary.com', 443)
+    conn.use_ssl = true
+    img_resp = conn.get("/chorus-connection/image/upload/c_fill,g_face,h_300,w_300/#{id}.png")
+    return img_resp.body
   end
 end
