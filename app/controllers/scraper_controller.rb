@@ -91,10 +91,10 @@ class ScraperController < ApplicationController
       problems = []
       members.each do |member|
         # Update performer model
-        performer = performers[member['id']]
+        performer = performers[member['id'].to_s]
         if performer == nil
           performer = Performer.new
-          performer.foreign_key = member['id']
+          performer.foreign_key = member['id'].to_s
         end
         performer.name = member['name']
         performer.email = member['email']
