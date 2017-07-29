@@ -56,6 +56,12 @@ Allegro::Application.routes.draw do
 
   root 'attendance#home'
 
+  namespace :api, :defaults => { :format => 'json' } do
+    resources :concerts, :only => ['index']
+    resources :performers, :only => ['index']
+    resources :rehearsals, :only => ['index']
+  end
+
   # TODO(nharper): Most of these routes are incomplete right now
   resources :performers do
     member do
