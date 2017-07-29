@@ -1,4 +1,4 @@
-class Api::RehearsalsController < ApplicationController
+class Api::RehearsalsController < Api::BaseController
   def index
     @rehearsals = Rehearsal.all
     render :json => @rehearsals

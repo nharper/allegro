@@ -1,4 +1,4 @@
-class Api::PerformersController < ApplicationController
+class Api::PerformersController < Api::BaseController
   def index
     @performers = Performer.all
     performers = []
