@@ -53,7 +53,7 @@ class ScraperController < ApplicationController
           rehearsal.start_grace_period = 20.minutes
           rehearsal.start_date = time_zone.local_to_utc(Time.at(event['start_time_ms']/1000).utc)
           rehearsal.end_grace_period = 20.minutes
-          rehearsal_end_date = time_zone.local_to_utc(Time.at(event['end_time_ms']/1000).utc)
+          rehearsal.end_date = time_zone.local_to_utc(Time.at(event['end_time_ms']/1000).utc)
           if event['name'] != 'Rehearsal'
             rehearsal.name = event['name']
           end
