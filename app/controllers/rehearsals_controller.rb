@@ -108,6 +108,8 @@ class RehearsalsController < ApplicationController
             if @rehearsal.start_grace_period && record.timestamp < @rehearsal.start_date + @rehearsal.start_grace_period
               checkin = true
             end
+            # TODO(nharper): If a rehearsal has an end_grace_period but no
+            # end_date, this will fail by attempting to subtract from nil.
             if @rehearsal.end_grace_period && record.timestamp > @rehearsal.end_date - @rehearsal.end_grace_period
               checkout = true
             end
