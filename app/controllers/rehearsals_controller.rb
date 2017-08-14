@@ -74,10 +74,17 @@ class RehearsalsController < ApplicationController
 
     # Load the registrations and performers who should be at this rehearsal
     @registrations = @rehearsal.registrations(params[:section]).includes(:performer)
+    performer_ids = @registrations.map { |reg| reg.performer_id }
+    raw_records = RawAttendanceRecord.where(:rehearsal => @rehearsal)
 
+    # Compute what should be the final records
+    final_records = AttendanceRecord.load_or_create_from_raw(raw_records, @rehearsal, performer_ids)
+
+    # Re-arrange data to have raw records grouped by performer_id, and then by
+    # type. First, set up the categories for all performers we care about.
     @records = {}
     @registrations.each do |registration|
-      @records[registration.performer.id] = {
+      @records[registration.performer_id] = {
         'unknown' => [],
         'checkin' => [],
         'pre_break' => [],
@@ -85,58 +92,21 @@ class RehearsalsController < ApplicationController
         'checkout' => [],
       }
     end
-    # Group the raw records by performer, and then by kind of raw record.
-    RawAttendanceRecord.where(:rehearsal => @rehearsal).includes(:performer).each do |record|
-      next unless @records[record.performer.id]
-      @records[record.performer.id][record.kind] << record
+    # Now, add the raw records.
+    raw_records.each do |record|
+      next unless @records[record.performer_id]
+      @records[record.performer_id][record.kind] << record
     end
 
-    # Calculate final records for each performer based on the raw records
-    @records.each do |performer_id, record_groups|
-      # TODO(nharper): Look up existing attendance records and use them instead.
-      final_record = AttendanceRecord.where(:performer_id => performer_id, :rehearsal => @rehearsal).first_or_initialize
-      final_record.performer_id = performer_id
-      final_record.rehearsal = @rehearsal
-      checkin = false
-      pre_break = false
-      post_break = false
-      checkout = false
-      record_groups.each do |type,records|
-        records.each do |record|
-          final_record.raw_attendance_records << record
-          if record.kind == 'checkin' || record.kind == 'checkout'
-            if @rehearsal.start_grace_period && record.timestamp < @rehearsal.start_date + @rehearsal.start_grace_period
-              checkin = true
-            end
-            # TODO(nharper): If a rehearsal has an end_grace_period but no
-            # end_date, this will fail by attempting to subtract from nil.
-            if @rehearsal.end_grace_period && record.timestamp > @rehearsal.end_date - @rehearsal.end_grace_period
-              checkout = true
-            end
-            # If the grace period is nil on both ends, then any timestamp will do
-            if !@rehearsal.start_grace_period && !@rehearsal.end_grace_period
-              checkin = true
-              checkout = true
-            end
-          elsif record.kind == 'pre_break'
-            pre_break = pre_break || record.present
-          elsif record.kind == 'post_break'
-            post_break = post_break || record.present
-          end
-        end
-      end
-      if @rehearsal.start_grace_period || @rehearsal.end_grace_period
-        if !@rehearsal.start_grace_period
-          checkin = true
-        end
-        if !@rehearsal.end_grace_period
-          checkout = true
-        end
-      end
-      if final_record.present == nil
-        final_record.present = (checkin || pre_break) && (checkout || post_break)
-      end
-      record_groups['final'] = final_record
+    # Add the computed final records
+    p final_records
+    final_records.each do |final_record|
+      @records[final_record.performer_id]['final'] = final_record
+    end
+
+    # Override computed final records with stored final records if they exist
+    AttendanceRecord.where(:performer_id => performer_ids, :rehearsal => @rehearsal).each do |final_record|
+      @records[final_record.performer_id]['final'] = final_record
     end
 
     @breadcrumbs = [
