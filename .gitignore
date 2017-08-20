@@ -20,3 +20,6 @@
 
 # Ignore generated assets
 /public/assets/
+
+# Ignore vim swap files.
+*.swp
