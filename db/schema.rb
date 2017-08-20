@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170315062409) do
+ActiveRecord::Schema.define(version: 20170810052231) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id", limit: 4
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 20170315062409) do
     t.integer  "start_grace_period", limit: 4
     t.integer  "end_grace_period",   limit: 4
     t.string   "foreign_key",        limit: 255
+    t.integer  "max_missed_time",    limit: 4
   end
 
   add_index "rehearsals", ["concert_id"], name: "index_rehearsals_on_concert_id", using: :btree

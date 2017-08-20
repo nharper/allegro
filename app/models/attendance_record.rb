@@ -46,17 +46,20 @@ class AttendanceRecord < ActiveRecord::Base
       pre_break = false
       post_break = false
       checkout = false
+      missed_time = 0
       record_groups.each do |type,records|
         records.each do |record|
           final_record.raw_attendance_records << record
           if record.kind == 'checkin' || record.kind == 'checkout'
             if rehearsal.start_grace_period && record.timestamp < rehearsal.start_date + rehearsal.start_grace_period
               checkin = true
+              missed_time += record.timestamp - rehearsal.start_date
             end
             # TODO(nharper): If a rehearsal has an end_grace_period but no
             # end_date, this will fail by attempting to subtract from nil.
             if rehearsal.end_grace_period && record.timestamp > rehearsal.end_date - rehearsal.end_grace_period
               checkout = true
+              missed_time += rehearsal.end_date - record.timestamp
             end
             # If the grace period is nil on both ends, then any timestamp will do
             if !rehearsal.start_grace_period && !rehearsal.end_grace_period
@@ -77,6 +80,9 @@ class AttendanceRecord < ActiveRecord::Base
         if !rehearsal.end_grace_period
           checkout = true
         end
+      end
+      if rehearsal.max_missed_time && missed_time > rehearsal.max_missed_time
+        checkout = false
       end
       final_record.present = (checkin || pre_break) && (checkout || post_break)
       final_records << final_record
