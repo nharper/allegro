@@ -133,6 +133,28 @@ class RehearsalsController < ApplicationController
     redirect_to raw_attendance_rehearsal_path(@rehearsal, @path_params)
   end
 
+  def force_records
+    @rehearsal = Rehearsal.find_by_slug(params['id'])
+
+    # Load the registrations and performers who should be at this rehearsal
+    registrations = @rehearsal.registrations(params[:section])
+    performer_ids = registrations.map { |reg| reg.performer_id }
+    raw_records = RawAttendanceRecord.where(:rehearsal => @rehearsal)
+
+    final_records = AttendanceRecord.load_or_create_from_raw(raw_records, @rehearsal, performer_ids)
+
+    new_records = final_records.select do |record|
+      record.id == nil
+    end
+
+    # Only save new records
+    new_records.each do |record|
+      record.save
+    end
+
+    redirect_to rehearsal_path(@rehearsal)
+  end
+
   def checkin
     @rehearsal = Rehearsal.find_by_slug(params[:id])
     @manifest_path = checkin_manifest_rehearsal_path(@rehearsal)

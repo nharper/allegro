@@ -87,8 +87,6 @@ class AttendanceRecord < ActiveRecord::Base
       final_record.present = (checkin || pre_break) && (checkout || post_break)
       final_records << final_record
     end
-    puts "Returning final records:"
-    p final_records
     return final_records
   end
 end
