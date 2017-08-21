@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170810052231) do
+ActiveRecord::Schema.define(version: 20170821052103) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id", limit: 4
@@ -140,10 +140,12 @@ ActiveRecord::Schema.define(version: 20170810052231) do
   add_index "user_oauth2_accounts", ["user_id"], name: "index_user_oauth2_accounts_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.integer  "performer_id", limit: 4
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.string   "login_token",  limit: 255
+    t.integer  "performer_id",  limit: 4
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.string   "login_token",   limit: 255
+    t.string   "permissions",   limit: 255
+    t.string   "subscriptions", limit: 255
   end
 
   add_index "users", ["login_token"], name: "index_users_on_login_token", using: :btree
