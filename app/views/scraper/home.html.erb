@@ -23,6 +23,7 @@
   </p>
   <p>
   <%= form_tag scraper_update_performers_path do %>
+    <%= select('concert', 'id', Concert.all.collect {|c| [c.name, c.id]}, { include_blank: true}) %>
     <%= submit_tag 'Update Performers' %>
   <% end %>
   </p>

@@ -69,6 +69,11 @@ class ScraperController < ApplicationController
   end
 
   def update_performers
+    if params[:concert][:id] == ''
+      flash[:error] = 'No concert selected'
+      redirect_to scraper_path and return
+    end
+    concert = Concert.find(params[:concert][:id])
     user = User.find_by_id(session[:user_id])
     scraper = CCScraper.new(user.scraper_credentials)
     members = scraper.scrape_api('/api/choruses/sfgmc/chorus_members')
@@ -84,9 +89,8 @@ class ScraperController < ApplicationController
     end
 
     performers = Performer.all.index_by(&:foreign_key)
-    concerts = Concert.where(:is_active => true)
-    registrations = Registration.where(:concert => concerts).index_by {|registration|
-      "#{registration.concert_id}:#{registration.performer_id}"
+    registrations = Registration.where(:concert => concert).index_by {|registration|
+      ":#{registration.performer_id}"
     }
 
     begin
@@ -110,64 +114,62 @@ class ScraperController < ApplicationController
         performer.save!
 
         # Update registrations
-        concerts.each do |concert|
-          key = "#{concert.id}:#{performer.id}"
-          registration = registrations[key]
-          if registration == nil
-            registration = Registration.new
-            registration.concert = concert
-            registration.performer = performer
-          end
+        key = ":#{performer.id}"
+        registration = registrations[key]
+        if registration == nil
+          registration = Registration.new
+          registration.concert = concert
+          registration.performer = performer
+        end
 
-          case member['status']
-          when 'Active'
-            registration.status = 'active'
-          when 'Inactive'
-            registration.status = 'inactive'
-          when 'Alumni'
-            registration.status = 'alumni'
-          else
-            puts "Unknown status '#{member['status']}'"
-          end
+        case member['status']
+        when 'Active'
+          registration.status = 'active'
+        when 'Inactive'
+          registration.status = 'inactive'
+        when 'Alumni'
+          registration.status = 'alumni'
+        else
+          puts "Unknown status '#{member['status']}'"
+        end
 
-          section = ''
-          case member['section']
-          when '1st Tenor'
-            section = 'T1'
-          when '2nd Tenor'
-            section = 'T2'
-          when 'Baritone'
-            section = 'B1'
-          when 'Bass'
-            section = 'B2'
-          end
-          case member['section_split']
-          when 'upper'
-            section += 'U'
-          when 'lower'
-            section += 'L'
-          end
+        section = ''
+        case member['section']
+        when '1st Tenor'
+          section = 'T1'
+        when '2nd Tenor'
+          section = 'T2'
+        when 'Baritone'
+          section = 'B1'
+        when 'Bass'
+          section = 'B2'
+        end
+        case member['section_split']
+        when 'upper'
+          section += 'U'
+        when 'lower'
+          section += 'L'
+        end
 
-          if Registration::SECTION_TO_FULL[section] != nil
-            registration.section = section
-          end
+        if Registration::SECTION_TO_FULL[section] != nil
+          registration.section = section
+        end
 
-          if registration.status != 'active'
-            registration.chorus_number = nil
-            registration.save!
-            next
-          end
+        if registration.status != 'active'
+          registration.chorus_number = nil
+          registration.save!
+          next
+        end
 
-          if match = /Member ID: (\d+)/.match(member['notes'])
-            cn = match[1].to_i
-            if cn >= 100 && cn <= 499
-              registration.chorus_number = match[1]
-            end
+        if match = /Member ID: (\d+)/.match(member['notes'])
+          cn = match[1].to_i
+          if cn >= 100 && cn <= 499
+            registration.chorus_number = match[1]
           end
+        end
 
-          if !registration.save
-            problems << member
-          end
+        if !registration.save
+          problems << member
         end
       end
     rescue Exception => e
