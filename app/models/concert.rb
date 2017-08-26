@@ -13,6 +13,18 @@ class Concert < ActiveRecord::Base
   # TODO(nharper): Add index on Concert table for is_active. Also consider some
   # sort of sort order.
   def self.active
-    return Concert.where(:is_active => true)
+    concerts = []
+    Concert.where(:is_active => true).each do |concert|
+      if concert.start_date && concert.end_date
+        if concert.start_date < DateTime.now && concert.end_date > DateTime.now
+          concerts << concert
+        end
+      else
+        if concert.rehearsals.size > 0
+          concerts << concert
+        end
+      end
+    end
+    return concerts
   end
 end
