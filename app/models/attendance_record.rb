@@ -23,17 +23,11 @@ class AttendanceRecord < ActiveRecord::Base
     # Group raw records by performer and then kind of raw record:
     records = {}
     performer_ids.each do |id|
-      records[id] = {
-        'unknown' => [],
-        'checkin' => [],
-        'pre_break' => [],
-        'post_break' => [],
-        'checkout' => [],
-      }
+      records[id] = []
     end
     raw_records.each do |record|
       next unless records[record.performer_id] and record.rehearsal == rehearsal
-      records[record.performer_id][record.kind] << record
+      records[record.performer_id] << record
     end
 
     # Calculate final records
@@ -43,27 +37,22 @@ class AttendanceRecord < ActiveRecord::Base
       final_record.performer_id = performer_id
       final_record.rehearsal = rehearsal
       checkin = false
-      pre_break = false
-      post_break = false
       checkout = false
       missed_time = 0
-      record_groups.each do |type,records|
-        records.each do |record|
-          final_record.raw_attendance_records << record
-          if record.is_swipe_or_manual?
-            if record.is_checkin_time_for(rehearsal)
-              checkin = true
-              missed_time += record.timestamp - rehearsal.start_date
-            end
-            if record.is_checkout_time_for(rehearsal)
-              checkout = true
-              missed_time += rehearsal.end_date - record.timestamp
-            end
-          elsif record.kind == 'pre_break'
-            pre_break = pre_break || record.present
-          elsif record.kind == 'post_break'
-            post_break = post_break || record.present
+      record_groups.each do |record|
+        final_record.raw_attendance_records << record
+        if record.is_swipe_or_manual?
+          if record.is_checkin_time_for(rehearsal)
+            checkin = true
+            missed_time += record.timestamp - rehearsal.start_date
           end
+          if record.is_checkout_time_for(rehearsal)
+            checkout = true
+            missed_time += rehearsal.end_date - record.timestamp
+          end
+        elsif record.is_override?
+          checkin = record.present
+          checkout = record.present
         end
       end
       if rehearsal.start_grace_period || rehearsal.end_grace_period
@@ -77,7 +66,7 @@ class AttendanceRecord < ActiveRecord::Base
       if rehearsal.max_missed_time && missed_time > rehearsal.max_missed_time
         checkout = false
       end
-      final_record.present = (checkin || pre_break) && (checkout || post_break)
+      final_record.present = checkin && checkout
       final_records << final_record
     end
     return final_records
