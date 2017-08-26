@@ -16,6 +16,28 @@ class RawAttendanceRecord < ActiveRecord::Base
   # validates_uniqueness_of :performer, :scope => [:rehearsal, :kind]
   validate :must_have_timestamp_for_checkin
 
+  def is_override?
+    return self.kind == 'pre_break' || self.kind == 'post_break'
+  end
+
+  def is_swipe_or_manual?
+    return self.kind == 'checkin' || self.kind == 'checkout'
+  end
+
+  def is_checkin_time_for(rehearsal)
+    if !rehearsal.start_grace_period || !rehearsal.start_date
+      return true
+    end
+    return self.timestamp < rehearsal.start_date + rehearsal.start_grace_period
+  end
+
+  def is_checkout_time_for(rehearsal)
+    if !rehearsal.end_grace_period || !rehearsal.end_date
+      return true
+    end
+    return self.timestamp > rehearsal.end_date - rehearsal.end_grace_period
+  end
+
   def to_s
     if self.present == true
       return "\u2713"

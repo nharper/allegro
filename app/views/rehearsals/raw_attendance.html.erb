@@ -4,9 +4,9 @@
     <th>#</th>
     <th>Name</th>
     <th>Check-in</th>
-    <th>Pre-break</th>
-    <th>Post-break</th>
+    <th>Tardy</th>
     <th>Check-out</th>
+    <th>Overrides</th>
     <th></th>
     <th>Final value</th>
   </tr>
@@ -14,19 +14,31 @@
     <tr>
       <td><%= reg.chorus_number %></td>
       <td><%= reg.performer.name %></td>
-      <% %w{checkin pre_break post_break checkout}.each do |type| %>
-        <td>
-          <% @records[reg.performer.id][type].each do |record| %>
-            <% if type == 'checkin' || type == 'checkout' %>
-              <%= record.display_timestamp %>
-            <% else %>
-              <%= record %>
-            <% end %>
-          <% end %>
-        </td>
-      <% end %>
       <%
-        final_record = @records[reg.performer.id]['final']
+        checkins = []
+        tardies = []
+        checkouts = []
+        overrides = []
+        @records[reg.performer_id].each do |record|
+          if record.is_swipe_or_manual?
+            if record.is_checkin_time_for(@rehearsal)
+              checkins << record
+            elsif record.is_checkout_time_for(@rehearsal)
+              checkouts << record
+            else
+              tardies << record
+            end
+          elsif record.is_override?
+            overrides << record
+          end
+        end
+      %>
+      <td><% checkins.each do |record| %><%= record.display_timestamp %> <% end %></td>
+      <td><% tardies.each do |record| %><%= record.display_timestamp %> <% end %></td>
+      <td><% checkouts.each do |record| %><%= record.display_timestamp %> <% end %></td>
+      <td><% overrides.each do |record| %><%= record %><% end %></td>
+      <%
+        final_record = @final_records[reg.performer_id]
         select_options = ['', 'present', 'absent']
       %>
       <%= record_tag('td', final_record, @rehearsal) %>

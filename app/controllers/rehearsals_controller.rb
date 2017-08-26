@@ -84,29 +84,23 @@ class RehearsalsController < ApplicationController
     # type. First, set up the categories for all performers we care about.
     @records = {}
     @registrations.each do |registration|
-      @records[registration.performer_id] = {
-        'unknown' => [],
-        'checkin' => [],
-        'pre_break' => [],
-        'post_break' => [],
-        'checkout' => [],
-      }
+      @records[registration.performer_id] = []
     end
     # Now, add the raw records.
     raw_records.each do |record|
       next unless @records[record.performer_id]
-      @records[record.performer_id][record.kind] << record
+      @records[record.performer_id] << record
     end
 
     # Add the computed final records
-    p final_records
+    @final_records = {}
     final_records.each do |final_record|
-      @records[final_record.performer_id]['final'] = final_record
+      @final_records[final_record.performer_id] = final_record
     end
 
     # Override computed final records with stored final records if they exist
     AttendanceRecord.where(:performer_id => performer_ids, :rehearsal => @rehearsal).each do |final_record|
-      @records[final_record.performer_id]['final'] = final_record
+      @final_records[final_record.performer_id] = final_record
     end
 
     @breadcrumbs = [
