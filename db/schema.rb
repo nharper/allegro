@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170821052103) do
+ActiveRecord::Schema.define(version: 20170830021026) do
 
   create_table "attendance_records", force: :cascade do |t|
     t.integer  "performer_id", limit: 4
@@ -134,6 +134,8 @@ ActiveRecord::Schema.define(version: 20170821052103) do
     t.integer  "user_id",            limit: 4
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
+    t.string   "access_token",       limit: 255
+    t.string   "refresh_token",      limit: 255
   end
 
   add_index "user_oauth2_accounts", ["oauth2_provider_id"], name: "index_user_oauth2_accounts_on_oauth2_provider_id", using: :btree

@@ -40,48 +40,54 @@ class AuthController < ApplicationController
 
     @provider = Oauth2Provider.where(:slug => params[:id]).first
     # Get the user id from the OAuth2 provider using the code provided.
-    id, error = id_from_code(params[:code], @provider)
-    if !id
+    id = nil
+    tokens = nil
+    begin
+      tokens = @provider.exchange_authorization_code(
+          params[:code], url_for(:action => 'finish'))
+      id = @provider.get_id(tokens['access_token'])
+    rescue Exception => e
+      err = e.to_s
+    end
+    if !id && !err
+      err = 'No ID found'
+    end
+    if err
       flash[:error] = 'There was an error when trying to log in.'
-      flash[:error_detail] = error
+      flash[:error_detail] = err
       redirect_to login_auth_index_path and return
     end
 
     # Look up the account that matches the id from the OAuth2 provider. It's
     # possible there is no account, if this is a sign-up or link flow.
     account = UserOauth2Account.where(:oauth2_provider => @provider, :provider_id => id).first
-    if session[:new_user_id]
-      new_user = User.find(session[:new_user_id])
-    end
-
-    if account
-      # Log in the current user
-      session[:user_id] = account.user_id
-      return redirect_after_login
-    # In case I forget when looking at this code later, current_user is a method
-    # defined on ApplicationController. (It's not a local variable.)
-    elsif current_user || new_user
-      if new_user
-        new_user.clear_login_token
-        user = new_user
+    if !account
+      if session[:new_user_id]
         session[:user_id] = session[:new_user_id]
         session.delete :new_user_id
-      else
-        user = current_user
       end
-      if UserOauth2Account.create(
-          :oauth2_provider => @provider,
-          :provider_id => id,
-          :user => user)
-        return redirect_after_login
-      else
-        flash[:error] = "There was an error trying to link #{@provider.name} account."
+      if !session[:user_id]
+        flash[:error] = 'Unable to find any user account for that login.'
         redirect_to login_auth_index_path and return
       end
+      account = UserOauth2Account.new(
+        :oauth2_provider => @provider,
+        :provider_id => id,
+        :user => current_user,
+      )
     end
 
-    flash[:error] = 'Unable to find any user account for that login.'
-    redirect_to login_auth_index_path
+    # Log in the current user
+    session[:user_id] = account.user_id
+
+    # Save the access/refresh tokens
+    account.access_token = tokens['access_token']
+    if tokens['refresh_token']
+      account.refresh_token = tokens['refresh_token']
+    end
+    account.save
+
+    redirect_after_login
   end
 
   def logout
@@ -102,49 +108,12 @@ class AuthController < ApplicationController
 
  private
   def id_from_code(code, provider)
-    token_uri = URI(provider[:token_url])
-    token_conn = Net::HTTP.new(token_uri.host, 443)
-    token_conn.use_ssl = true
-    data = {
-      :code => code,
-      :client_id => provider[:client_id],
-      :client_secret => provider[:client_secret],
-      :redirect_uri => url_for(:action => 'finish'),
-      :grant_type => 'authorization_code',
-    }.to_query
-    token_resp = token_conn.post(token_uri.path, data)
-
-    if token_resp.code != '200'
-      return nil, "Unexpected HTTP status #{token_resp.code} getting token"
-    end
-
-    token_json = JSON.parse(token_resp.body)
-    access_token = token_json['access_token']
-    if !access_token
-      return nil, "No access_token in response"
-    end
-
-    id_uri = URI(provider[:id_url])
-    id_uri.query = {
-      :access_token => access_token
-    }.to_query
-    id_conn = Net::HTTP.new(id_uri.host, 443)
-    id_conn.use_ssl = true
-    id_resp = id_conn.get(id_uri.to_s)
-    if id_resp.code != '200'
-      return nil, "Unexpected HTTP status #{id_resp.code} getting user id"
-    end
-
     begin
-      id_json = JSON.parse(id_resp.body)
-    rescue JSON::ParserError
-      return nil, "Failed to parse ID from response"
+      tokens = provider.exchange_authorization_code(
+          code, url_for(:action => 'finish'))
+      provider.get_id(tokens['access_token'])
+    rescue Exception => e
+      return nil, e.to_s
     end
-    id = id_json['id']
-    if !id || id.length == 0
-      return nil, "Failed to parse ID from response"
-    end
-
-    return id, nil
   end
 end
