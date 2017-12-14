@@ -1,25 +1,29 @@
-var SectionSelector = React.createClass({
-  'getInitialState': function() {
+class SectionSelector extends React.Component {
+  constructor(props) {
+    super(props);
     var sections = {};
     for (var section in this.props.sections) {
       sections[section] = this.props.initialSectionState[section];
     }
-    return {'sections':sections};
-  },
-  'handleChange': function(section, checked) {
+    this.state = {'sections':sections};
+  }
+
+  handleChange(section, checked) {
     this.props.onSectionChange(section, checked);
     this.setState(function(oldState, props) {
       oldState.sections[section] = checked;
       return oldState;
     });
-  },
-  'setAll': function(checked) {
+  }
+
+  setAll(checked) {
     for (var section in this.props.sections) {
       ReactDOM.findDOMNode(this.refs[section]).checked = checked;
       this.handleChange(section, checked);
     }
-  },
-  'render': function() {
+  }
+
+  render() {
     var checks = [];
     for (var section in this.props.sections) {
       checks.push(
@@ -46,4 +50,4 @@ var SectionSelector = React.createClass({
       </div>
     );
   }
-});
+}

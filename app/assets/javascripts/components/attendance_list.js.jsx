@@ -1,50 +1,51 @@
-var AttendanceList = React.createClass({
-  'getInitialState': function() {
+class AttendanceList extends React.Component {
+  constructor(props) {
+    super(props);
     var sections = {};
     for (var section in this.props.sections) {
       sections[section] = true;
     }
-    return {'sections': sections};
-  },
+    this.state = {'sections': sections};
+  }
 
-  'rehearsals': function() {
+  rehearsals() {
     return this.props.rehearsals.map(function(rehearsal) {
       var reh = rehearsal;
       rehearsal.start_date = new Date(rehearsal.start_date);
       rehearsal.end_date = new Date(rehearsal.end_date);
       return rehearsal;
     });
-  },
+  }
 
-  'performers': function() {
+  performers() {
     return this.props.performers.filter(function(performer) {
         return this.state.sections[performer.section];
       }.bind(this));
-  },
+  }
 
-  'update': function(section, checked) {
+  update(section, checked) {
     this.setState(function(oldState, props) {
       oldState.sections[section] = checked;
       return oldState;
     });
-  },
+  }
 
-  'render': function() {
+  render() {
     return (
       <div>
-        <SectionSelector onSectionChange={this.update} sections={this.props.sections} initialSectionState={this.state.sections}/>
+        <SectionSelector onSectionChange={this.update.bind(this)} sections={this.props.sections} initialSectionState={this.state.sections}/>
         <AttendanceTable rehearsals={this.rehearsals()} performers={this.performers()} records={this.props.records} />
       </div>
     );
   }
-});
+}
 
-var AttendanceTable = React.createClass({
-  'records': function(performer) {
+class AttendanceTable extends React.Component {
+  records(performer) {
     return this.props.records[performer.id];
-  },
+  }
 
-  'render': function() {
+  render() {
     var headers = this.props.rehearsals.map(function(rehearsal) {
       var start_date = new Date(rehearsal.start_date);
       var date_str = (start_date.getMonth() + 1) + '-' + start_date.getDate();
@@ -74,23 +75,14 @@ var AttendanceTable = React.createClass({
       </table>
     );
   }
-});
+}
 
-var AttendanceTableRow = React.createClass({
-  'performer': function() {
-    return this.props.performer;
-  },
-  'rehearsals': function() {
-    return this.props.rehearsals;
-  },
-  'records': function() {
-    return this.props.records;
-  },
-  'render': function() {
+class AttendanceTableRow extends React.Component {
+  render() {
     var missed = 0;
     var sectionals = 0;
-    var records = this.rehearsals().map(function(rehearsal) {
-      var record = this.records()[rehearsal.id];
+    var records = this.props.rehearsals.map(function(rehearsal) {
+      var record = this.props.records[rehearsal.id];
       var display_class = 'unknown';
       var symbol = '?';
       if (record) {
@@ -124,8 +116,8 @@ var AttendanceTableRow = React.createClass({
     }.bind(this));
     return (
       <tr>
-        <td>{this.performer().chorus_number}</td>
-        <td>{this.performer().name}</td>
+        <td>{this.props.performer.chorus_number}</td>
+        <td>{this.props.performer.name}</td>
         {records}
         <td>{missed}</td>
         <td>{sectionals}</td>
@@ -133,4 +125,4 @@ var AttendanceTableRow = React.createClass({
       </tr>
     );
   }
-});
+}
