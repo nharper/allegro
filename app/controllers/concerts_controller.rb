@@ -24,7 +24,7 @@ class ConcertsController < ApplicationController
     @rehearsals = @concert.rehearsals.order(:start_date)
 
     AttendanceRecord.where(:performer => @performers.map{|performer| performer['id']}, :rehearsal => @rehearsals).each do |record|
-      @records[record.performer.id][record.rehearsal.id] = record
+      @records[record.performer_id][record.rehearsal_id] = record
     end
   end
 
