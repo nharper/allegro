@@ -1,4 +1,4 @@
-class CreateOauth2Providers < ActiveRecord::Migration
+class CreateOauth2Providers < ActiveRecord::Migration[4.2]
   def change
     create_table :oauth2_providers do |t|
       t.string :name

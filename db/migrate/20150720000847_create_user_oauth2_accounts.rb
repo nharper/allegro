@@ -1,4 +1,4 @@
-class CreateUserOauth2Accounts < ActiveRecord::Migration
+class CreateUserOauth2Accounts < ActiveRecord::Migration[4.2]
   def change
     create_table :user_oauth2_accounts do |t|
       t.references :oauth2_provider, index: true

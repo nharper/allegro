@@ -1,4 +1,4 @@
-class CreateRehearsals < ActiveRecord::Migration
+class CreateRehearsals < ActiveRecord::Migration[4.2]
   def change
     create_table :rehearsals do |t|
       t.datetime :date

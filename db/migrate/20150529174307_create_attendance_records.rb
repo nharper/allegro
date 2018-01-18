@@ -1,4 +1,4 @@
-class CreateAttendanceRecords < ActiveRecord::Migration
+class CreateAttendanceRecords < ActiveRecord::Migration[4.2]
   def change
     create_table :attendance_records do |t|
       t.references :performer, index: true

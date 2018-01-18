@@ -1,4 +1,4 @@
-class AddMaxMissedTimeToRehearsal < ActiveRecord::Migration
+class AddMaxMissedTimeToRehearsal < ActiveRecord::Migration[4.2]
   def change
     add_column :rehearsals, :max_missed_time, :integer
   end

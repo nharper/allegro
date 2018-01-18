@@ -1,4 +1,4 @@
-class CreatePerformers < ActiveRecord::Migration
+class CreatePerformers < ActiveRecord::Migration[4.2]
   def change
     create_table :performers do |t|
       t.string :name

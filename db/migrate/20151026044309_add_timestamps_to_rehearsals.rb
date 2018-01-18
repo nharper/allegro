@@ -1,4 +1,4 @@
-class AddTimestampsToRehearsals < ActiveRecord::Migration
+class AddTimestampsToRehearsals < ActiveRecord::Migration[4.2]
   def change
     add_column :rehearsals, :end_date, :datetime
     add_column :rehearsals, :weight, :integer
