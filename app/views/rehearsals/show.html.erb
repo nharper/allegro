@@ -37,6 +37,8 @@
 <%= form_tag force_records_rehearsal_path(@rehearsal) do %>
   <%= submit_tag 'Create final attendance records' %>
 <% end %>
-<%= form_tag send_summaries_rehearsal_path(@rehearsal) do %>
-  <%= submit_tag 'Send summary emails' %>
+<% if user_can_send_emails %>
+  <%= form_tag send_summaries_rehearsal_path(@rehearsal) do %>
+    <%= submit_tag 'Send summary emails' %>
+  <% end %>
 <% end %>

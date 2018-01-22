@@ -27,4 +27,10 @@ class ApplicationController < ActionController::Base
   def current_user
     return User.find_by_id(session[:user_id])
   end
+
+  def user_can_send_emails
+    return current_user.permissions && current_user.permissions['sends_mail_as']
+  end
+
+  helper_method :user_can_send_emails
 end

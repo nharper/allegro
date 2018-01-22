@@ -146,18 +146,18 @@ class RehearsalsController < ApplicationController
       record.save
     end
 
+    flash[:error] = 'Final attendance records successfully created'
     redirect_to rehearsal_path(@rehearsal)
   end
 
   # TODO: This really belongs in ConcertsController instead of here.
   def send_summaries
     @rehearsal = Rehearsal.find_by_slug(params['id'])
-    user = User.find(session[:user_id])
-    if !user.permissions || !user.permissions['sends_mail_as']
+    if !user_can_send_emails
       flash[:error] = "Currently logged in user cannot send emails"
       redirect_to rehearsal_path(@rehearsal) and return
     end
-    sender = UserOauth2Account.find(user.permissions['sends_mail_as'])
+    sender = UserOauth2Account.find(current_user.permissions['sends_mail_as'])
 
     performers = {}
     Registration.where(:concert => @rehearsal.concert, :status => 'active').includes(:performer).each do |registration|
