@@ -5,4 +5,9 @@ class UserOauth2Account < ActiveRecord::Base
   validates :oauth2_provider_id, :presence => true
   validates :user_id, :presence => true
   validates :provider_id, :presence => true
+
+  def update_access_token
+    self.access_token = oauth2_provider.refresh_token(refresh_token)
+    save
+  end
 end

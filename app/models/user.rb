@@ -3,6 +3,9 @@ class User < ActiveRecord::Base
   has_many :user_oauth2_accounts
   has_many :scraper_credentials, dependent: :delete_all
 
+  serialize :permissions, JSON
+  serialize :subscriptions, JSON
+
   # TODO(nharper): Rewrite these. I'm ok with users not belonging to a
   # performer; e.g. role account or staff. I probably want to validate that
   # performer_id is unique if present (but multiple NULLs are allowed).

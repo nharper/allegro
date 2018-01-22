@@ -149,6 +149,54 @@ class RehearsalsController < ApplicationController
     redirect_to rehearsal_path(@rehearsal)
   end
 
+  # TODO: This really belongs in ConcertsController instead of here.
+  def send_summaries
+    @rehearsal = Rehearsal.find_by_slug(params['id'])
+    user = User.find(session[:user_id])
+    if !user.permissions || !user.permissions['sends_mail_as']
+      flash[:error] = "Currently logged in user cannot send emails"
+      redirect_to rehearsal_path(@rehearsal) and return
+    end
+    sender = UserOauth2Account.find(user.permissions['sends_mail_as'])
+
+    performers = {}
+    Registration.where(:concert => @rehearsal.concert, :status => 'active').includes(:performer).each do |registration|
+      performer = {}
+      performer['id'] = registration.performer_id
+      performer['name'] = registration.performer.name
+      performer['email'] = registration.performer.email
+      performer['chorus_number'] = registration.chorus_number
+      performer['section'] = registration.section
+      performer['records'] = []
+      performer['missed'] = 0
+      performers[registration.performer_id] = performer
+    end
+
+    AttendanceRecord.where(:rehearsal => @rehearsal.concert.rehearsals).includes(:rehearsal).each do |record|
+      performers[record.performer_id]['records'] << record
+      if !record.present
+        performers[record.performer_id]['missed'] += 1
+      end
+    end
+
+    User.all.each do |user|
+      next if user.subscriptions == nil
+      filtered_performers = performers.select do |_, performer|
+        user.subscriptions.include?(performer['section'])
+      end
+      next if filtered_performers.empty?
+      message = UserMailer.summary_email(user.performer.email, filtered_performers).encoded
+      if !send_email(message, sender)
+        flash[:error] = 'Failed to send email'
+        redirect_to rehearsal_path(@rehearsal) and return
+      else
+        flash[:error] = 'Sent email'
+      end
+    end
+
+    redirect_to rehearsal_path(@rehearsal)
+  end
+
   def checkin
     @rehearsal = Rehearsal.find_by_slug(params[:id])
     @manifest_path = checkin_manifest_rehearsal_path(@rehearsal)
@@ -181,5 +229,31 @@ class RehearsalsController < ApplicationController
       )
     end
     head :ok, content_type: 'text/html'
+  end
+
+ private
+  def send_email(message, sender)
+    send_message_uri = URI("https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=media")
+    mailer_conn = Net::HTTP.new(send_message_uri.host, 443)
+    mailer_conn.use_ssl = true
+
+    headers = {
+      'Authorization' => "Bearer #{sender.access_token}",
+      'Content-Type' => 'message/rfc822',
+    }
+    mail_resp = mailer_conn.post(send_message_uri.path, message, headers)
+    if mail_resp.code != '200'
+      sender.update_access_token
+    end
+    headers = {
+      'Authorization' => "Bearer #{sender.access_token}",
+      'Content-Type' => 'message/rfc822',
+    }
+    mail_resp = mailer_conn.post(send_message_uri.path, message, headers)
+    if mail_resp.code != '200'
+      flash[:error_details] = mail_resp.body
+      return false
+    end
+    return true
   end
 end

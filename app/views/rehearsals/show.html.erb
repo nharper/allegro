@@ -1,3 +1,12 @@
+<% if flash[:error] %>
+  <div class="error">
+    <%= flash[:error] %>
+    <% if flash[:error_detail] %>
+      <a href="#">Show details</a>
+      <div class="detail hidden"><%= flash[:error_detail] %></div>
+    <% end %>
+  </div>
+<% end %>
 <h2>Rehearsal: <%= @rehearsal.display_name %></h2>
 <% sections = %w{T1U T1L T2U T2L B1U B1L B2U B2L} %>
 <ul>
@@ -27,4 +36,7 @@
 
 <%= form_tag force_records_rehearsal_path(@rehearsal) do %>
   <%= submit_tag 'Create final attendance records' %>
+<% end %>
+<%= form_tag send_summaries_rehearsal_path(@rehearsal) do %>
+  <%= submit_tag 'Send summary emails' %>
 <% end %>

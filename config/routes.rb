@@ -94,6 +94,7 @@ Allegro::Application.routes.draw do
       get 'raw_attendance'
       post 'reconcile'
       post 'force_records'
+      post 'send_summaries'
     end
   end
 

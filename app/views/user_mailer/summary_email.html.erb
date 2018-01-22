@@ -1,0 +1,29 @@
+<h1>SFGMC Attendance report</h1>
+Generated <%= @date.strftime('%Y-%m-%d %l:%M:%S %p') %>
+
+<table>
+<tr>
+  <th>#</th>
+  <th>Name</th>
+  <th>Email</th>
+  <th>Absence Count</th>
+  <th>Absences</th>
+</tr>
+<% @performers.each do |performer| %>
+<tr>
+  <td><%= performer['chorus_number'] %></td>
+  <td><%= performer['name'] %></td>
+  <td><a href="mailto:<%= performer['email'] %>"><%= performer['email'] %></a></td>
+  <td><%= performer['missed'] %></td>
+  <td>
+  <%=
+  performer['records'].select {|x|
+    !x.present && x.rehearsal.attendance == 'required'
+  }.sort {|a, b|
+    a.rehearsal.start_date <=> b.rehearsal.start_date
+  }.map {|record| record.rehearsal.display_name }.join(', ')
+  %>
+  </td>
+</tr>
+<% end %>
+</table>
