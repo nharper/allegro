@@ -8,6 +8,7 @@ Generated <%= @date.strftime('%Y-%m-%d %l:%M:%S %p') %>
   <th>Email</th>
   <th>Absence Count</th>
   <th>Absences</th>
+  <th>Makeups</th>
 </tr>
 <% @performers.each do |performer| %>
 <tr>
@@ -21,7 +22,16 @@ Generated <%= @date.strftime('%Y-%m-%d %l:%M:%S %p') %>
     !x.present && x.rehearsal.attendance == 'required'
   }.sort {|a, b|
     a.rehearsal.start_date <=> b.rehearsal.start_date
-  }.map {|record| record.rehearsal.display_name }.join(', ')
+  }.map {|record| record.rehearsal.local_date.strftime('%m/%d') }.join(', ')
+  %>
+  </td>
+  <td>
+  <%=
+  performer['records'].select {|x|
+    x.present && x.rehearsal.attendance == 'optional'
+  }.sort {|a, b|
+    a.rehearsal.start_date <=> b.rehearsal.start_date
+  }.map {|record| record.rehearsal.local_date.strftime('%m/%d') }.join(', ')
   %>
   </td>
 </tr>
