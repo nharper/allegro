@@ -38,21 +38,22 @@ class AttendanceRecord < ActiveRecord::Base
       final_record.rehearsal = rehearsal
       checkin = false
       checkout = false
-      missed_time = 0
+      has_override = false
+      timestamps = []
       record_groups.each do |record|
         final_record.raw_attendance_records << record
         if record.is_swipe_or_manual?
+            timestamps << record.timestamp
           if record.is_checkin_time_for(rehearsal)
             checkin = true
-            missed_time += record.timestamp - rehearsal.start_date
           end
           if record.is_checkout_time_for(rehearsal)
             checkout = true
-            missed_time += rehearsal.end_date - record.timestamp
           end
         elsif record.is_override?
           checkin = record.present
           checkout = record.present
+          has_override = true
         end
       end
       if rehearsal.start_grace_period || rehearsal.end_grace_period
@@ -63,10 +64,15 @@ class AttendanceRecord < ActiveRecord::Base
           checkout = true
         end
       end
-      if rehearsal.max_missed_time && missed_time > rehearsal.max_missed_time
-        checkout = false
-      end
       final_record.present = checkin && checkout
+      if rehearsal.max_missed_time && timestamps.size > 0 && !has_override
+        timestamps.sort!
+        missed_time = timestamps.first - rehearsal.start_date
+        missed_time += rehearsal.end_date - timestamps.last
+        if missed_time > rehearsal.max_missed_time
+          final_record.present = false
+        end
+      end
       final_records << final_record
     end
     return final_records
