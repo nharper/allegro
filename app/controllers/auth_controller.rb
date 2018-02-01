@@ -20,6 +20,9 @@ class AuthController < ApplicationController
         session[:new_user_id] = user.id
       end
     end
+    if current_user && !is_logged_in?
+      flash[:error] = 'User account disabled'
+    end
     @providers = Oauth2Provider.all
   end
 
