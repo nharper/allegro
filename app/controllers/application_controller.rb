@@ -21,10 +21,13 @@ class ApplicationController < ActionController::Base
   end
 
   def is_logged_in?
-    if !current_user || !current_user.permissions
+    if !current_user
       return false
     end
-    return current_user.permissions['disabled'] != true
+    if !current_user.permissions
+      return true
+    end
+    return !(current_user.permissions['disabled'] === true)
   end
 
   def current_user
