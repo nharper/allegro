@@ -2,7 +2,7 @@
 <div id="tiles">
   <% @performers.each do |performer| %>
   <div class="tile">
-    <%= image_tag photo_performer_path(performer) %>
+    <%= image_tag photo_performer_path(performer[:id]) %>
     <p>
       <span class="ch_num"><%= performer[:chorus_number] %></span>
       <span class="name"><%= performer[:name] %></span>
