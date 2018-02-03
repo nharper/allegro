@@ -11,17 +11,10 @@
 <% sections = %w{T1U T1L T2U T2L B1U B1L B2U B2L} %>
 <ul>
   <li><%= link_to 'Checkin system on tablet', checkin_rehearsal_path(@rehearsal) %></li>
-  <li>Take attendance (pre-break):
+  <li>Take attendance:
     <ul>
     <% sections.each do |section| %>
       <li><%= link_to section, attendance_rehearsal_path(@rehearsal, section: section, type: 2) %></li>
-    <% end %>
-    </ul>
-  </li>
-  <li>Take attendance (post-break):
-    <ul>
-    <% sections.each do |section| %>
-      <li><%= link_to section, attendance_rehearsal_path(@rehearsal, section: section, type: 3) %></li>
     <% end %>
     </ul>
   </li>
