@@ -117,7 +117,7 @@ class AttendanceTableRow extends React.Component {
     return (
       <tr>
         <td>{this.props.performer.chorus_number}</td>
-        <td>{this.props.performer.name}</td>
+        <td><a href={'/concerts/details/' + this.props.performer.registration_id}>{this.props.performer.name}</a></td>
         {records}
         <td>{missed}</td>
         <td>{sectionals}</td>

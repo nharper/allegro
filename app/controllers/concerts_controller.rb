@@ -15,6 +15,7 @@ class ConcertsController < ApplicationController
     @records = {}
     Registration.where(:concert => @concert, :status => 'active').includes(:performer).order(:chorus_number).each do |registration|
       performer = registration.performer.attributes
+      performer['registration_id'] = registration.id
       performer.delete('photo')
       @records[performer['id']] = {}
       performer['chorus_number'] = registration.chorus_number

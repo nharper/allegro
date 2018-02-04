@@ -76,8 +76,7 @@ Allegro::Application.routes.draw do
     end
   end
 
-  resources :registrations do
-  end
+  resources :registrations, :only => ['index']
 
   # TODO(nharper): Most of these routes are incomplete right now
   resources :cards do
@@ -103,6 +102,10 @@ Allegro::Application.routes.draw do
       get 'rehearsals'
       get 'attendance'
       get 'audit'
+    end
+    collection do
+      get 'details/:performer_id', to: 'registrations#show', as: 'performer_details'
+      post 'send_details/:performer_id', to: 'registrations#send_details', as: 'send_performer_details'
     end
   end
 

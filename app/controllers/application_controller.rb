@@ -39,4 +39,29 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :user_can_send_emails
+
+  def send_email(message, sender)
+    send_message_uri = URI("https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=media")
+    mailer_conn = Net::HTTP.new(send_message_uri.host, 443)
+    mailer_conn.use_ssl = true
+
+    headers = {
+      'Authorization' => "Bearer #{sender.access_token}",
+      'Content-Type' => 'message/rfc822',
+    }
+    mail_resp = mailer_conn.post(send_message_uri.path, message, headers)
+    if mail_resp.code != '200'
+      sender.update_access_token
+    end
+    headers = {
+      'Authorization' => "Bearer #{sender.access_token}",
+      'Content-Type' => 'message/rfc822',
+    }
+    mail_resp = mailer_conn.post(send_message_uri.path, message, headers)
+    if mail_resp.code != '200'
+      flash[:error_details] = mail_resp.body
+      return false
+    end
+    return true
+  end
 end
