@@ -312,8 +312,12 @@ function performerStoreLoaded() {
   };
   var k = new KeyboardListener(
       callback.bind(this, store.lookupPerformer.bind(store)));
-  var numpad = new Numpad(document.getElementById('numpad'),
-      callback.bind(this, store.lookupByChorusNumber.bind(store)));
+  if (document.location.hash.match(/numpad=false/)) {
+    document.getElementById('numpad-instructions').innerText = 'Cards only';
+  } else {
+    var numpad = new Numpad(document.getElementById('numpad'),
+        callback.bind(this, store.lookupByChorusNumber.bind(store)));
+  }
 
   displayTime();
   setInterval(displayTime, 5000);

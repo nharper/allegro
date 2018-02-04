@@ -11,6 +11,7 @@
 <% sections = %w{T1U T1L T2U T2L B1U B1L B2U B2L} %>
 <ul>
   <li><%= link_to 'Checkin system on tablet', checkin_rehearsal_path(@rehearsal) %></li>
+  <li><%= link_to 'Checkin without keypad', checkin_rehearsal_path(@rehearsal, :anchor => 'numpad=false') %></li>
   <li>Take attendance:
     <ul>
     <% sections.each do |section| %>
