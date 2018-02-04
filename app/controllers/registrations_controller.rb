@@ -38,6 +38,7 @@ class RegistrationsController < ApplicationController
     @concert.rehearsals.each do |rehearsal|
       @rehearsals[rehearsal.id] = {
         :name => rehearsal.display_name,
+        :timestamp => rehearsal.start_date,
         :present => nil,
         :override => nil,
         :raw_records => [],
@@ -55,7 +56,11 @@ class RegistrationsController < ApplicationController
       @rehearsals[final_record.rehearsal_id][:present] = final_record.present
     end
 
-    @rehearsals.each do |id, rehearsal|
+    @rehearsals = @rehearsals.values.sort do |a, b|
+      a[:timestamp] <=> b[:timestamp]
+    end
+
+    @rehearsals.each do |rehearsal|
       rehearsal[:raw_records].sort! do |a, b|
         a.timestamp <=> b.timestamp
       end

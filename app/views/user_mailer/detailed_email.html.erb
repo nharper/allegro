@@ -11,7 +11,7 @@ Generated:  <%= @date.strftime('%Y-%m-%d %l:%M:%S %p') %></p>
 <th>Timestamps</th>
 <th>Override</th>
 </tr>
-<% @rehearsals.each do |_, rehearsal| %>
+<% @rehearsals.each do |rehearsal| %>
   <tr>
   <td><%= rehearsal[:name] %></td>
   <td><%= if rehearsal[:present] === nil; 'Unknown'; elsif rehearsal[:present]; 'Present'; else 'Absent'; end %></td>
