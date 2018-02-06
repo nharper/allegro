@@ -183,7 +183,7 @@ class RehearsalsController < ApplicationController
     end
 
     User.all.each do |user|
-      next if user.subscriptions == nil
+      next if user.subscriptions == nil || !user.performer
       filtered_performers = performers.select do |_, performer|
         user.subscriptions.include?(performer['section'])
       end
