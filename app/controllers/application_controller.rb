@@ -50,7 +50,9 @@ class ApplicationController < ActionController::Base
       'Content-Type' => 'message/rfc822',
     }
     mail_resp = mailer_conn.post(send_message_uri.path, message, headers)
-    if mail_resp.code != '200'
+    if mail_resp.code == '200'
+      return true
+    else
       sender.update_access_token
     end
     headers = {
