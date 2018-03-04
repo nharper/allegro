@@ -137,10 +137,13 @@ class RehearsalsController < ApplicationController
 
     final_records = AttendanceRecord.load_or_create_from_raw(raw_records, @rehearsal, performer_ids)
 
-    final_records.each do |record|
-      if record.id == nil || !record.present
-        record.save
-      end
+    new_records = final_records.select do |record|
+      record.id == nil
+    end
+
+    # Only save new records
+    new_records.each do |record|
+      record.save
     end
 
     flash[:error] = 'Final attendance records successfully created'
