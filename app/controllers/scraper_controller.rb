@@ -123,14 +123,18 @@ class ScraperController < ApplicationController
         end
 
         case member['status']
-        when 'Active'
+        when 'Active Singing'
           registration.status = 'active'
-        when 'Inactive'
+        when 'Inactive', 'Active NonSinging'
           registration.status = 'inactive'
         when 'Alumni'
           registration.status = 'alumni'
         else
           puts "Unknown status '#{member['status']}'"
+        end
+
+        if registration.status != 'active' && registration.id == nil
+          next
         end
 
         section = ''
