@@ -13,12 +13,9 @@ CACHE MANIFEST
 <%= cards_path(:format => :json) %>
 <%= registrations_path(:format => :json) %>
 
-# TODO(nharper): change photo paths to be based on content so that the contents
-# of this file change whenver a photo changes.
-# Photos
-<% @performers.each do |performer| %>
-<%= photo_performer_path(performer) %>
-<% end %>
+# check and x images
+/img/x.png
+/img/check.png
 
 NETWORK:
 *

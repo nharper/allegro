@@ -117,11 +117,11 @@ function CheckinDisplay(parent_node) {
 CheckinDisplay.prototype._cardFromCheckin = function(checkin) {
   var name = "Card not recognized";
   var section = "";
-  var photo_path = "";
+  var photo_path = '/img/x.png';
   if (checkin.performer != null) {
     name = checkin.performer.name;
     section = checkin.performer.section;
-    photo_path = checkin.performer.photo_path;
+    photo_path = '/img/check.png';
   }
   var div = document.createElement('div');
   div.setAttribute('class', 'card');
