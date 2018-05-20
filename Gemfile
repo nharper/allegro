@@ -5,7 +5,7 @@ gem 'rails', '5.1'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
-gem 'mysql2'
+gem 'mysql2', '~> 0.4.0'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'
