@@ -159,17 +159,12 @@ class ScraperController < ApplicationController
           registration.section = section
         end
 
-        if registration.status != 'active'
+        if registration.status == 'active'
+          registration.chorus_number = get_chorus_number(member['id'], scraper)
+        else
           registration.chorus_number = nil
           registration.save!
           next
-        end
-
-        if match = /Member ID: (\d+)/.match(member['notes'])
-          cn = match[1].to_i
-          if cn >= 100 && cn <= 499
-            registration.chorus_number = match[1]
-          end
         end
 
         if !registration.save
@@ -193,6 +188,19 @@ class ScraperController < ApplicationController
   end
 
   private
+
+  def get_chorus_number(member_id, scraper)
+    custom_fields = scraper.scrape_api("/api/choruses/sfgmc/custom_field_values/MEMBER/#{member_id}")
+    custom_fields.each do |field|
+      if field['label'] == 'Member ID'
+        values = field['values']
+        if values.size > 0
+          return values[0]['value']
+        end
+      end
+    end
+    return nil
+  end
 end
 
 class CCScraper
