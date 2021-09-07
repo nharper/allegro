@@ -44,7 +44,7 @@ class ScraperController < ApplicationController
         c.save
         next unless concert['is_active']
 
-        concert['events'].each do |event|
+        concert['calendar_events'].each do |event|
           next unless event['track_attendance']
           rehearsal = Rehearsal.find_or_initialize_by(:foreign_key => event['id'])
           rehearsal.concert = c
