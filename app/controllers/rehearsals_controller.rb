@@ -175,10 +175,11 @@ class RehearsalsController < ApplicationController
     AttendanceRecord.where(:rehearsal => @rehearsal.concert.rehearsals).includes(:rehearsal).each do |record|
       next unless performers.has_key?(record.performer_id)
       performers[record.performer_id]['records'] << record
+      weight = record.rehearsal.weight
       if !record.present && record.rehearsal.attendance == 'required'
-        performers[record.performer_id]['missed'] += 1
+        performers[record.performer_id]['missed'] += weight
       elsif record.present && record.rehearsal.attendance == 'optional'
-        performers[record.performer_id]['missed'] -= 1
+        performers[record.performer_id]['missed'] -= weight
       end
     end
 
