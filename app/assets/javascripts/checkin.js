@@ -180,10 +180,11 @@ function Checkin(performer, time, type) {
  */
 function Checkins(performer_store) {
   this.checkins_ = [];
+  this.uploaded_checkins_ = [];
   this.checkin_type_ = 'checkin';
   this.performer_store_ = performer_store;
   // TODO(nharper): consider using a different storage key?
-  this.storage_key_ = window.location.pathname;
+  this.storage_key_ = window.location.pathname + ":v2";
   // TODO(nharper): this is horribly hacky to get a feature in quickly. Change
   // this when you rewrite this later.
   this.status_node_ = document.getElementById('status');
@@ -218,28 +219,18 @@ Checkins.prototype._updateLocalStorage = function() {
   window.localStorage.setItem(this.storage_key_, this.serialize());
 }
 
-Checkins.prototype._clear = function() {
-  window.localStorage.removeItem(this.storage_key_);
-  this.checkins_ = [];
-  // TODO(nharper): view will also want to know that data is cleared. Is caller
-  // going to relay this call to the view, or is this going to propogate it
-  // somehow?
-}
-
-Checkins.prototype._loadFromLocalStorage = function(callback) {
+Checkins.prototype._loadFromLocalStorage = function() {
   try {
-    var checkins = JSON.parse(window.localStorage.getItem(this.storage_key_));
-    for (i in checkins) {
+    var checkinObject = JSON.parse(window.localStorage.getItem(this.storage_key_));
+    for (i in checkinObject.checkins) {
       console.log(checkins[i].performer);
       var checkin = new Checkin(
           this.performer_store_.lookupById(checkins[i].performer),
           new Date(checkins[i].time),
           checkins[i].type);
       this.checkins_.push(checkin);
-      if (callback) {
-        callback(checkin);
-      }
     }
+    this.uploaded_checkins_ = checkinObject.uploaded;
   } catch (e) {
     console.log(e);
   }
@@ -247,24 +238,42 @@ Checkins.prototype._loadFromLocalStorage = function(callback) {
 
 
 Checkins.prototype.serialize = function() {
-  return JSON.stringify(this.checkins_.map(function(checkin) {
+  var checkinMap = function(checkin) {
     return {
       'performer': checkin.performer.id,
       'time': checkin.time.getTime(),
       'type': checkin.type,
     };
-  }));
+  };
+  return JSON.stringify({
+    "checkins": this.checkins_.map(checkinMap),
+    "uploaded": this.uploaded_checkins_.map(checkinMap)
+  });
+}
+
+Checkins.prototype.serializeForUpload = function() {
+  var checkinMap = function(checkin) {
+    return {
+      'performer': checkin.performer.id,
+      'time': checkin.time.getTime(),
+      'type': checkin.type,
+    };
+  };
+  return JSON.stringify(this.checkins_.map(checkinMap));
 }
 
 Checkins.prototype.saveToServer = function() {
   this.status_node_.innerHTML = "Starting upload";
-  var request_data = this.serialize();
+  var request_data = this.serializeForUpload();
   var csrf_token = document.getElementsByTagName('meta')['csrf-token'].content;
   var post_request = new XMLHttpRequest();
   post_request.addEventListener('load', function(e) {
     if (e.target.status == 200) {
       this._callListeners('load', e);
       this.status_node_.innerHTML = "Data uploaded successfully";
+      this.uploaded_checkins_ = this.uploaded_checkins_.concat(this.checkins_);
+      this.checkins_ = [];
+      this._updateLocalStorage();
     } else {
       this._callListeners('error', e);
       this.status_node_.innerHTML = "Error uploading data";
