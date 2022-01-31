@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_31_000627) do
+ActiveRecord::Schema.define(version: 2022_01_31_020537) do
 
   create_table "attendance_records", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "performer_id"
@@ -107,7 +107,7 @@ ActiveRecord::Schema.define(version: 2022_01_31_000627) do
     t.integer "end_grace_period"
     t.string "foreign_key"
     t.integer "max_missed_time"
-    t.string "policy"
+    t.string "policy", limit: 16384
     t.index ["concert_id"], name: "index_rehearsals_on_concert_id"
     t.index ["slug"], name: "index_rehearsals_on_slug"
   end
