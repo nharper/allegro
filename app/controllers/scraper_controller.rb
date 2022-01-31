@@ -47,6 +47,7 @@ class ScraperController < ApplicationController
         concert['calendar_events'].each do |event|
           next unless event['track_attendance']
           rehearsal = Rehearsal.find_or_initialize_by(:foreign_key => event['id'])
+          next if rehearsal.id
           rehearsal.concert = c
           rehearsal.attendance = event['attendance_points'] > 0 ? :required : :optional
           rehearsal.weight = [event['attendance_points'], 1].max
