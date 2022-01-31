@@ -53,22 +53,28 @@ class AttendanceRecord < ActiveRecord::Base
 
       present = false
       timestamps.sort!
+      if timestamps.empty?
+        final_record.present = false
+        final_records << final_record
+        next
+      end
+
       rehearsal.policy.each do |policy|
         checkin = false
         checkout = false
-        if !policy.start_date || !policy.start_grace_period ||
-            timestamps.first < policy.start_date + policy.start_grace_period
+        if !policy['start_date'].to_datetime || !policy['start_grace_period'] ||
+            timestamps.first < policy['start_date'].to_datetime + policy['start_grace_period']
           checkin = true
         end
-        if !policy.end_date || !policy.end_grace_period ||
-            timestamps.last > policy.end_date - policy.end_grace_period
+        if !policy['end_date'].to_datetime || !policy['end_grace_period'] ||
+            timestamps.last > policy['end_date'].to_datetime - policy['end_grace_period']
           checkout = true
         end
         present = checkin && checkout
-        if policy.max_missed_time && timestamps.size > 0
-          missed_time = timestamps.first - policy.start_date
-          missed_time += policy.end_date - timestamps.last
-          if missed_time > policy.max_missed_time
+        if policy['max_missed_time'] && timestamps.size > 0
+          missed_time = timestamps.first - policy['start_date'].to_datetime
+          missed_time += policy['end_date'].to_datetime - timestamps.last
+          if missed_time > policy['max_missed_time']
             present = false
           end
         end
