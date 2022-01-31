@@ -2,6 +2,8 @@ class Rehearsal < ActiveRecord::Base
   has_many :attendance_records
   belongs_to :concert
 
+  serialize :policy, JSON
+
   before_validation :update_slug
   validates :slug, presence: true, uniqueness: true
   validates :concert, presence: true
