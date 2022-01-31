@@ -3,9 +3,7 @@
   <tr>
     <th>#</th>
     <th>Name</th>
-    <th>Check-in</th>
-    <th>Tardy</th>
-    <th>Check-out</th>
+    <th>Tap in/out times</th>
     <th>Overrides</th>
     <th></th>
     <th>Final value</th>
@@ -15,27 +13,17 @@
       <td><%= reg.chorus_number %></td>
       <td><%= reg.performer.name %></td>
       <%
-        checkins = []
-        tardies = []
-        checkouts = []
+        times = []
         overrides = []
         @records[reg.performer_id].each do |record|
           if record.is_swipe_or_manual?
-            if record.is_checkin_time_for(@rehearsal)
-              checkins << record
-            elsif record.is_checkout_time_for(@rehearsal)
-              checkouts << record
-            else
-              tardies << record
-            end
+            times << record
           elsif record.is_override?
             overrides << record
           end
         end
       %>
-      <td><% checkins.each do |record| %><%= record.display_timestamp %> <% end %></td>
-      <td><% tardies.each do |record| %><%= record.display_timestamp %> <% end %></td>
-      <td><% checkouts.each do |record| %><%= record.display_timestamp %> <% end %></td>
+      <td><% times.each do |record| %><%= record.display_timestamp %> <% end %></td>
       <td><% overrides.each do |record| %><%= record %><% end %></td>
       <%
         final_record = @final_records[reg.performer_id]
@@ -48,8 +36,6 @@
     </tr>
   <% end %>
   <tr>
-    <td></td>
-    <td></td>
     <td></td>
     <td></td>
     <td></td>

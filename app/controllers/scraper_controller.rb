@@ -51,11 +51,15 @@ class ScraperController < ApplicationController
           rehearsal.concert = c
           rehearsal.attendance = event['attendance_points'] > 0 ? :required : :optional
           rehearsal.weight = [event['attendance_points'], 1].max
-          rehearsal.start_grace_period = 20.minutes
           rehearsal.start_date = time_zone.local_to_utc(Time.at(event['start_time_ms']/1000).utc)
-          rehearsal.end_grace_period = 20.minutes
           rehearsal.end_date = time_zone.local_to_utc(Time.at(event['end_time_ms']/1000).utc)
-          rehearsal.max_missed_time = 20.minutes
+          policy = {}
+          policy['start_grace_period'] = 20.minutes
+          policy['start_date'] = time_zone.local_to_utc(Time.at(event['start_time_ms']/1000).utc)
+          policy['end_grace_period'] = 20.minutes
+          policy['end_date'] = time_zone.local_to_utc(Time.at(event['end_time_ms']/1000).utc)
+          policy['max_missed_time'] = 20.minutes
+          rehearsal.policy = [policy]
           if event['name'] != 'Rehearsal'
             rehearsal.name = event['name']
           end

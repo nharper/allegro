@@ -36,43 +36,45 @@ class AttendanceRecord < ActiveRecord::Base
       final_record = AttendanceRecord.where(:performer_id => performer_id, :rehearsal => rehearsal).first_or_initialize
       final_record.performer_id = performer_id
       final_record.rehearsal = rehearsal
-      checkin = false
-      checkout = false
       has_override = false
       timestamps = []
       record_groups.each do |record|
         final_record.raw_attendance_records << record
         if record.is_swipe_or_manual?
-            timestamps << record.timestamp
-          if record.is_checkin_time_for(rehearsal)
-            checkin = true
-          end
-          if record.is_checkout_time_for(rehearsal)
-            checkout = true
-          end
+          timestamps << record.timestamp
         elsif record.is_override?
-          checkin = record.present
-          checkout = record.present
+          final_record.present = record.present
+          final_records << final_record
           has_override = true
+          break
         end
       end
-      if rehearsal.start_grace_period || rehearsal.end_grace_period
-        if !rehearsal.start_grace_period
+      next if has_override
+
+      present = false
+      timestamps.sort!
+      rehearsal.policy.each do |policy|
+        checkin = false
+        checkout = false
+        if !policy.start_date || !policy.start_grace_period ||
+            timestamps.first < policy.start_date + policy.start_grace_period
           checkin = true
         end
-        if !rehearsal.end_grace_period
+        if !policy.end_date || !policy.end_grace_period ||
+            timestamps.last > policy.end_date - policy.end_grace_period
           checkout = true
         end
-      end
-      final_record.present = checkin && checkout
-      if rehearsal.max_missed_time && timestamps.size > 0 && !has_override
-        timestamps.sort!
-        missed_time = timestamps.first - rehearsal.start_date
-        missed_time += rehearsal.end_date - timestamps.last
-        if missed_time > rehearsal.max_missed_time
-          final_record.present = false
+        present = checkin && checkout
+        if policy.max_missed_time && timestamps.size > 0
+          missed_time = timestamps.first - policy.start_date
+          missed_time += policy.end_date - timestamps.last
+          if missed_time > policy.max_missed_time
+            present = false
+          end
         end
+        break if present = true
       end
+      final_record.present = present
       final_records << final_record
     end
     return final_records
