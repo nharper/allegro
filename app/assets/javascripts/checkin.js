@@ -241,7 +241,7 @@ Checkins.prototype.serialize = function() {
   var checkinMap = function(checkin) {
     return {
       'performer': checkin.performer.id,
-      'time': checkin.time.getTime(),
+      'time': checkin.time.getTime ? checkin.time.getTime() : checkin.time,
       'type': checkin.type,
     };
   };
