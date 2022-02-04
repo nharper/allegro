@@ -36,7 +36,7 @@ class RawAttendanceRecord < ActiveRecord::Base
 
   def display_timestamp
     local_time = ActiveSupport::TimeZone['Pacific Time (US & Canada)'].utc_to_local(self.timestamp)
-    return local_time.strftime('%H:%M')
+    return local_time.strftime('%a %H:%M')
   end
 
  private

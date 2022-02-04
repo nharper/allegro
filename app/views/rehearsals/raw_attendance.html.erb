@@ -23,7 +23,7 @@
           end
         end
       %>
-      <td><% times.each do |record| %><%= record.display_timestamp %> <% end %></td>
+      <td><%= times.map { |record| record.display_timestamp }.join(', ') %></td>
       <td><% overrides.each do |record| %><%= record %><% end %></td>
       <%
         final_record = @final_records[reg.performer_id]

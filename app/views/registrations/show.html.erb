@@ -24,9 +24,7 @@ Generated:  <%= @date.strftime('%Y-%m-%d %l:%M:%S %p') %></p>
   <tr>
   <td><%= rehearsal[:name] %></td>
   <td><%= if rehearsal[:present] === nil; 'Unknown'; elsif rehearsal[:present]; 'Present'; else 'Absent'; end %></td>
-  <td><% rehearsal[:raw_records].each do |record| %>
-  <%= record.display_timestamp %>
-  <% end %></td>
+  <td><%= rehearsal[:raw_records].map { |record| record.display_timestamp }.join(', ') %></td>
   <td>
   <% if !(rehearsal[:override] === nil) %>
   <%= rehearsal[:override] ? 'Present' : 'Absent' %>
