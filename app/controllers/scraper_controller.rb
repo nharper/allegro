@@ -81,7 +81,7 @@ class ScraperController < ApplicationController
     concert = Concert.find(params[:concert][:id])
     user = User.find_by_id(session[:user_id])
     scraper = CCScraper.new(user.scraper_credentials)
-    members = scraper.scrape_api('/api/choruses/sfgmc/chorus_members')
+    members = scraper.scrape_api('/api/choruses/sfgmc/chorus_members?a=t')
 
     if members.is_a?(Hash) and members['error'] != nil
       flash[:error] = members['error']
@@ -165,7 +165,7 @@ class ScraperController < ApplicationController
         end
 
         if registration.status == 'active'
-          registration.chorus_number = get_chorus_number(member['id'], scraper)
+          registration.chorus_number = get_chorus_number(member['username'], scraper)
         else
           registration.chorus_number = nil
           registration.save!
@@ -194,9 +194,9 @@ class ScraperController < ApplicationController
 
   private
 
-  def get_chorus_number(member_id, scraper)
-    custom_fields = scraper.scrape_api("/api/choruses/sfgmc/custom_field_values/MEMBER/#{member_id}")
-    custom_fields.each do |field|
+  def get_chorus_number(username, scraper)
+    about_member = scraper.scrape_api("/api/choruses/sfgmc/chorus_members/#{username}?a=t&id_field=username")
+    about_member['custom_fields'].each do |field|
       if field['label'] == 'Member ID'
         values = field['values']
         if values.size > 0
