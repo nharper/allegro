@@ -132,7 +132,7 @@ class ScraperController < ApplicationController
           registration.status = 'active'
         when 'Inactive', 'Active NonSinging'
           registration.status = 'inactive'
-        when 'Alumni', 'Dropped'
+        when 'Alumni', 'Dropped', 'DoNotContact'
           registration.status = 'alumni'
         else
           puts "Unknown status '#{member['status']}'"
