@@ -197,7 +197,7 @@ class ScraperController < ApplicationController
   def get_chorus_number(username, scraper)
     about_member = scraper.scrape_api("/api/choruses/sfgmc/chorus_members/#{username}?a=t&id_field=username")
     about_member['custom_fields'].each do |field|
-      if field['label'] == 'Member ID'
+      if field['label'] == 'Chorus Number'
         values = field['values']
         if values.size > 0
           return values[0]['value']
