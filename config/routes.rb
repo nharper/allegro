@@ -85,7 +85,6 @@ Allegro::Application.routes.draw do
       get 'attendance'
       post 'attendance', action: 'update_attendance'
       get 'checkin'
-      get 'checkin_manifest'
       post 'checkin', action: 'update_checkin'
       get 'raw_attendance'
       post 'reconcile'
