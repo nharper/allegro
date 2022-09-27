@@ -221,13 +221,16 @@ Checkins.prototype._updateLocalStorage = function() {
 
 Checkins.prototype._loadFromLocalStorage = function() {
   try {
-    var checkinObject = JSON.parse(window.localStorage.getItem(this.storage_key_));
+    var storedObject = window.localStorage.getItem(this.storage_key_);
+    // Back up the stored value so we have it for forensic purposes if something goes wrong.
+    window.localStorage.setItem(window.location.pathname + ":backup:" + new Date().getTime(), storedObject);
+    var checkinObject = JSON.parse(storedObject);
     for (i in checkinObject.checkins) {
-      console.log(checkins[i].performer);
       var checkin = new Checkin(
-          this.performer_store_.lookupById(checkins[i].performer),
-          new Date(checkins[i].time),
-          checkins[i].type);
+          this.performer_store_.lookupById(checkinObject.checkins[i].performer),
+          new Date(checkinObject.checkins[i].time),
+          checkinObject.checkins[i].type);
+      console.log('loaded checkin', checkin);
       this.checkins_.push(checkin);
     }
     this.uploaded_checkins_ = checkinObject.uploaded;
