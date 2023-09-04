@@ -2,48 +2,47 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[6.1].define(version: 2022_01_31_020537) do
-
-  create_table "attendance_records", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+ActiveRecord::Schema[7.0].define(version: 2023_09_04_055327) do
+  create_table "attendance_records", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "performer_id"
     t.integer "rehearsal_id"
     t.boolean "present"
     t.string "notes"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["performer_id"], name: "index_attendance_records_on_performer_id"
     t.index ["rehearsal_id"], name: "index_attendance_records_on_rehearsal_id"
   end
 
-  create_table "cards", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "cards", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "card_id"
     t.integer "performer_id"
     t.boolean "active"
-    t.datetime "expiration_date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "expiration_date", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["performer_id"], name: "index_cards_on_performer_id"
   end
 
-  create_table "concerts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "concerts", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.date "start_date"
     t.date "end_date"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "foreign_key"
     t.boolean "is_active"
   end
 
-  create_table "oauth2_providers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "oauth2_providers", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.string "slug"
     t.string "auth_url"
@@ -52,56 +51,56 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_31_020537) do
     t.string "client_id"
     t.string "client_secret"
     t.text "auth_params"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["slug"], name: "index_oauth2_providers_on_slug", unique: true
   end
 
-  create_table "performers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "performers", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
-    t.binary "photo", limit: 16777215
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.binary "photo", size: :medium
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "foreign_key"
     t.string "email"
     t.string "photo_handle"
   end
 
-  create_table "raw_attendance_records", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "raw_attendance_records", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "performer_id"
     t.integer "rehearsal_id"
     t.integer "kind"
     t.boolean "present"
-    t.datetime "timestamp"
+    t.datetime "timestamp", precision: nil
     t.integer "attendance_record_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["attendance_record_id"], name: "index_raw_attendance_records_on_attendance_record_id"
     t.index ["performer_id"], name: "index_raw_attendance_records_on_performer_id"
     t.index ["rehearsal_id"], name: "index_raw_attendance_records_on_rehearsal_id"
   end
 
-  create_table "registrations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "registrations", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "section"
     t.string "chorus_number"
     t.string "status"
     t.integer "performer_id"
     t.integer "concert_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["concert_id"], name: "index_registrations_on_concert_id"
     t.index ["performer_id"], name: "index_registrations_on_performer_id"
   end
 
-  create_table "rehearsals", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.datetime "start_date"
+  create_table "rehearsals", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
+    t.datetime "start_date", precision: nil
     t.integer "attendance"
     t.integer "concert_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "name"
     t.string "slug"
-    t.datetime "end_date"
+    t.datetime "end_date", precision: nil
     t.integer "weight"
     t.integer "start_grace_period"
     t.integer "end_grace_period"
@@ -112,31 +111,31 @@ ActiveRecord::Schema[6.1].define(version: 2022_01_31_020537) do
     t.index ["slug"], name: "index_rehearsals_on_slug"
   end
 
-  create_table "scraper_credentials", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "scraper_credentials", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "user_id"
     t.string "cookie_name"
     t.string "cookie_value", limit: 4096
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["user_id"], name: "index_scraper_credentials_on_user_id"
   end
 
-  create_table "user_oauth2_accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "user_oauth2_accounts", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "oauth2_provider_id"
     t.string "provider_id"
     t.integer "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "access_token"
     t.string "refresh_token"
     t.index ["oauth2_provider_id"], name: "index_user_oauth2_accounts_on_oauth2_provider_id"
     t.index ["user_id"], name: "index_user_oauth2_accounts_on_user_id"
   end
 
-  create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "users", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "performer_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "login_token"
     t.string "permissions"
     t.string "subscriptions"

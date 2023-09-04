@@ -158,6 +158,13 @@ GEM
       pkg-config (~> 1.4)
     sdoc (2.6.1)
       rdoc (>= 5.0)
+    sprockets (4.2.0)
+      concurrent-ruby (~> 1.0)
+      rack (>= 2.2.4, < 4)
+    sprockets-rails (3.4.2)
+      actionpack (>= 5.2)
+      activesupport (>= 5.2)
+      sprockets (>= 3.0.0)
     sqlite3 (1.6.4)
       mini_portile2 (~> 2.8.0)
     sqlite3 (1.6.4-x86_64-linux)
@@ -168,6 +175,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode_utils (1.4.0)
+    webrick (1.8.1)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -183,8 +191,10 @@ DEPENDENCIES
   react-rails
   rmagick
   sdoc
+  sprockets-rails
   sqlite3
   unicode_utils
+  webrick
 
 BUNDLED WITH
    2.4.19
