@@ -1,4 +1,13 @@
 class RehearsalsController < ApplicationController
+  def rehearsals_breadcrumb_path
+    path = rehearsals_path
+    concert = Concert.active
+    if concert
+      path = rehearsals_concert_path(concert[0])
+    end
+    return path
+  end
+
   def index
     @breadcrumbs = ['Rehearsals']
     @rehearsals = Rehearsal.where('start_date > ?', DateTime.now).order('start_date ASC')
@@ -9,7 +18,7 @@ class RehearsalsController < ApplicationController
     @rehearsal = Rehearsal.find_by_slug(params['id'])
 
     @breadcrumbs = [
-      ['Rehearsals', rehearsals_path],
+      ['Rehearsals', rehearsals_breadcrumb_path],
       @rehearsal.display_name,
     ]
   end
@@ -38,7 +47,7 @@ class RehearsalsController < ApplicationController
     @performers.sort! { |a,b| a[:chorus_number] <=> b[:chorus_number] }
 
     @breadcrumbs = [
-      ['Rehearsals', rehearsals_path],
+      ['Rehearsals', rehearsals_breadcrumb_path],
       [@rehearsal.display_name, rehearsal_path(@rehearsal)],
       'Take Attendance'
     ]
@@ -104,7 +113,7 @@ class RehearsalsController < ApplicationController
     end
 
     @breadcrumbs = [
-      ['Rehearsals', rehearsals_path],
+      ['Rehearsals', rehearsals_breadcrumb_path],
       [@rehearsal.display_name, rehearsal_path(@rehearsal)],
       'View Attendance',
     ]
