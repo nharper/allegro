@@ -40,6 +40,8 @@ nor does it indicate whether it counts for more than one rehearsal. The
 marked the performer as present or absent, as indicated by the value in that
 column.</p>
 
+<p><%= link_to 'History', performer_path(@performer) %></p>
+
 <% if user_can_send_emails %>
   <%= form_tag send_performer_details_concerts_path(@registration) do %>
     <%= submit_tag 'Send report in email' %>

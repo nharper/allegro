@@ -1,0 +1,7 @@
+<h1><%= @performer.name %></h1>
+<dl>
+<% @registrations.each do |registration| %>
+<dt><%= registration.concert.name %> (<%= registration.concert.start_date %> thru <%= registration.concert.end_date %>)</dt>
+<dd><%= registration.status %> (<%= registration.section %>, <%= registration.chorus_number %>)</dd>
+<% end %>
+</dl>

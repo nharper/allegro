@@ -5,6 +5,11 @@ class PerformersController < ApplicationController
     @performers = Performer.all.includes(:registrations)
   end
 
+  def show
+    @performer = Performer.find(params[:id])
+    @registrations = Registration.where(:performer => @performer)
+  end
+
   def printcards
     @concert = Concert.current
     @registrations = Registration.where(:concert => @concert).includes(:performer).order('chorus_number')
