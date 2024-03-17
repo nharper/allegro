@@ -46,4 +46,8 @@ class ConcertsController < ApplicationController
       end
     end
   end
+
+  def index
+    @concerts = Concert.all.order(:start_date)
+  end
 end

@@ -93,7 +93,7 @@ Allegro::Application.routes.draw do
     end
   end
 
-  resources :concerts, :only => [] do
+  resources :concerts, :only => ['index'] do
     member do
       get 'rehearsals'
       get 'attendance'

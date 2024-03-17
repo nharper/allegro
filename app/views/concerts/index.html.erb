@@ -1,0 +1,7 @@
+<h1>Concerts</h1>
+<% @concerts.each do |concert| %>
+<h2><%= concert.name %></h2>
+<p><strong>Dates:</strong> <%= concert.start_date %> thru <%= concert.end_date %></p>
+<p><%= link_to 'Attendance', attendance_concert_path(concert) %></p>
+<p><%= link_to 'Rehearsals', rehearsals_concert_path(concert) %></p>
+<% end %>
