@@ -1,0 +1,6 @@
+<h1>Performers matching search query</h1>
+<% @performers.each do |performer| %>
+<h2><%= performer.name %></h2>
+<p><strong>Email:</strong> <%= performer.email %></p>
+<p><%= link_to 'History', performer_path(performer) %></p>
+<% end %>

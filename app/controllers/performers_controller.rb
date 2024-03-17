@@ -43,4 +43,8 @@ class PerformersController < ApplicationController
   def newcard
     @card = Card.new(:performer => Performer.find(params[:id]))
   end
+
+  def search
+    @performers = Performer.where(:name => params[:name])
+  end
 end

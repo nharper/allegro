@@ -70,6 +70,7 @@ Allegro::Application.routes.draw do
     end
     collection do
       get 'printcards'
+      get 'search'
     end
   end
 
