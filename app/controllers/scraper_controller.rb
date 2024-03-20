@@ -213,7 +213,7 @@ class CCScraper
     @http_conn = Net::HTTP.new('app.chorusconnection.com', 443)
     @http_conn.use_ssl = true
 
-    @headers = {}
+    @headers = {'Asset-Version': '10.15.2'}
     @cookies = []
     if cookies
       @cookies = cookies
@@ -227,6 +227,7 @@ class CCScraper
 
     post_headers = @headers.clone
     post_headers['Content-Type'] = 'application/json;charset=UTF-8'
+    post_headers['X-Xsrf-Token'] = @xsrf_token
     auth_api_resp = @http_conn.post('/api/auth', {:email => username, :password => password}.to_json, post_headers)
     update_cookies(auth_api_resp.get_fields('Set-Cookie'))
     body = JSON.parse(auth_api_resp.body)
@@ -240,7 +241,8 @@ class CCScraper
   end
 
   def scrape_api(api_path)
-    return JSON.parse(@http_conn.get(api_path, @headers).body)
+    resp = @http_conn.get(api_path, @headers)
+    return JSON.parse(resp.body)
   end
 
   private
@@ -251,6 +253,9 @@ class CCScraper
       name, value = cookie.split('=')
       c = ScraperCredential.new(:cookie_name => name, :cookie_value => value)
       @cookies << c
+      if name == 'XSRF-TOKEN'
+        @xsrf_token = value
+      end
     end
     update_cookie_header
   end
