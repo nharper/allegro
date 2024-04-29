@@ -213,7 +213,7 @@ class CCScraper
     @http_conn = Net::HTTP.new('app.chorusconnection.com', 443)
     @http_conn.use_ssl = true
 
-    @headers = {'Asset-Version': '10.15.2'}
+    @headers = {'Asset-Version': '10.16.0'}
     @cookies = []
     if cookies
       @cookies = cookies
