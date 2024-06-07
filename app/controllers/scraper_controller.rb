@@ -213,7 +213,7 @@ class CCScraper
     @http_conn = Net::HTTP.new('app.chorusconnection.com', 443)
     @http_conn.use_ssl = true
 
-    @headers = {'Asset-Version': '10.16.0'}
+    @headers = {'Asset-Version': '10.17.2'}
     @cookies = []
     if cookies
       @cookies = cookies
@@ -229,6 +229,7 @@ class CCScraper
     post_headers['Content-Type'] = 'application/json;charset=UTF-8'
     post_headers['X-Xsrf-Token'] = @xsrf_token
     auth_api_resp = @http_conn.post('/api/auth', {:email => username, :password => password}.to_json, post_headers)
+    p auth_api_resp
     update_cookies(auth_api_resp.get_fields('Set-Cookie'))
     body = JSON.parse(auth_api_resp.body)
     if body['errors']
@@ -248,6 +249,7 @@ class CCScraper
   private
 
   def update_cookies(cookies)
+    return if cookies == nil
     cookies.each do |cookie|
       cookie = cookie.split(';')[0]
       name, value = cookie.split('=')
