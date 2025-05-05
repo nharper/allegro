@@ -210,7 +210,7 @@ end
 
 class CCScraper
   def initialize(cookies = nil)
-    @http_conn = Net::HTTP.new('app.chorusconnection.com', 443)
+    @http_conn = Net::HTTP.new('api.chorusconnection.com', 443)
     @http_conn.use_ssl = true
 
     @headers = {'Release-Version': '11.0.0'}
