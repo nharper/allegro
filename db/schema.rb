@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_04_055327) do
+ActiveRecord::Schema[7.0].define(version: 2025_06_24_022917) do
   create_table "attendance_records", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "performer_id"
     t.integer "rehearsal_id"
@@ -126,8 +126,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_04_055327) do
     t.integer "user_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.string "access_token"
-    t.string "refresh_token"
+    t.text "access_token"
+    t.text "refresh_token"
     t.index ["oauth2_provider_id"], name: "index_user_oauth2_accounts_on_oauth2_provider_id"
     t.index ["user_id"], name: "index_user_oauth2_accounts_on_user_id"
   end
