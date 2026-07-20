@@ -66,6 +66,7 @@ class ScraperController < ApplicationController
           end
           rehearsal.save
         end
+        next unless concert['singers']
         registrations = Registration.where(:concert => c).index_by {|registration|
           ":#{registration.performer_id}"
         }
