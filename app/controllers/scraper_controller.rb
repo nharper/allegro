@@ -36,7 +36,6 @@ class ScraperController < ApplicationController
       redirect_to scraper_path and return
     end
 
-    performers = Performer.all.index_by(&:foreign_key)
     begin
       concerts.each do |concert|
         c = Concert.find_or_initialize_by(:foreign_key => concert['id'])
@@ -65,20 +64,6 @@ class ScraperController < ApplicationController
             rehearsal.name = event['name']
           end
           rehearsal.save
-        end
-        next unless concert['singers']
-        registrations = Registration.where(:concert => c).index_by {|registration|
-          ":#{registration.performer_id}"
-        }
-        concert['singers'].each do |singer|
-          next if singer['is_singing']
-          performer = performers[singer['chorus_member_id'].to_s]
-          next if performer == nil
-          key = ":#{performer.id}"
-          registration = registrations[key]
-          next if registration == nil
-          registration.status = 'inactive'
-          registration.save!
         end
       end
     rescue Exception => e
